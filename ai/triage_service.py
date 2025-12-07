@@ -4,7 +4,12 @@ import json
 from .prompts import TRIAGE_SYSTEM_PROMPT, INTENT_CLASSIFICATION_PROMPT
 
 # Configure Gemini
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+api_key = os.getenv("GEMINI_API_KEY")
+if not api_key:
+    # Warn or handle missing key. For now, we'll just print a warning.
+    print("WARNING: GEMINI_API_KEY is not set. AI features will fail.")
+
+genai.configure(api_key=api_key)
 
 model = genai.GenerativeModel('gemini-pro')
 

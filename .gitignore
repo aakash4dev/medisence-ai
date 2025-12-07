@@ -38,3 +38,4 @@ pnpm-debug.log*
 # Cloud / Secrets
 secrets.yaml
 key.json
+*.db

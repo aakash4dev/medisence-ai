@@ -1,7 +1,7 @@
 # MedicSense AI – Intelligent Healthcare Triage & Appointment Assistant
 
 > **⚠️ STATUS: UNDER PRODUCTION**
-> This project is currently under active development and is intended for demonstration and testing purposes only. It is NOT a certified medical device and should not be used for actual medical emergencies.
+> This project is currently under active development and is intended for demonstration and testing purposes only.
 
 ## 📌 Project Overview
 MedicSense AI is an AI-powered healthcare assistant designed to streamline patient triage and appointment management. It leverages Google's Gemini API to analyze symptoms and provide preliminary triage recommendations, while also offering a robust appointment scheduling system for doctors and administrators.
@@ -67,5 +67,3 @@ medisence-ai/
 └── shared/             # Shared types/interfaces
 ```
 
-## 🛡️ Disclaimer
-MedicSense AI provides informational suggestions based on user input. It does not provide medical diagnosis or treatment. Always consult a qualified healthcare professional for medical advice. In case of a medical emergency, contact your local emergency services immediately.

@@ -8,7 +8,7 @@ import { Send, Bot, User, Loader2 } from "lucide-react"
 import axios from 'axios'
 
 // TODO: Move to environment variable
-const API_BASE_URL = "http://localhost:8000"
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
 
 interface Message {
     id: string
@@ -125,8 +125,8 @@ export function ChatInterface() {
 
                             <div
                                 className={`rounded-lg p-3 text-sm ${msg.role === 'user'
-                                        ? 'bg-primary text-primary-foreground'
-                                        : 'bg-muted text-foreground'
+                                    ? 'bg-primary text-primary-foreground'
+                                    : 'bg-muted text-foreground'
                                     }`}
                             >
                                 <div className="whitespace-pre-wrap">{msg.content}</div>

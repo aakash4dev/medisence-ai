@@ -13,7 +13,7 @@ class PatientCreate(PatientBase):
 class Patient(PatientBase):
     id: int
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class DoctorBase(BaseModel):
     name: str
@@ -26,7 +26,7 @@ class DoctorCreate(DoctorBase):
 class Doctor(DoctorBase):
     id: int
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class AppointmentBase(BaseModel):
     patient_id: int
@@ -38,9 +38,16 @@ class AppointmentBase(BaseModel):
 class AppointmentCreate(AppointmentBase):
     pass
 
+from enum import Enum
+
+class AppointmentStatus(str, Enum):
+    SCHEDULED = "scheduled"
+    COMPLETED = "completed"
+    CANCELLED = "cancelled"
+
 class Appointment(AppointmentBase):
     id: int
-    status: str
+    status: AppointmentStatus
     class Config:
         orm_mode = True
 
