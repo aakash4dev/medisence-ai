@@ -370,6 +370,10 @@ body {
   color: var(--primary-600);
 }
 
+.notification-btn {
+  position: relative;
+}
+
 .notification-btn .badge {
   position: absolute;
   top: -5px;
@@ -380,6 +384,12 @@ body {
   font-weight: 600;
   padding: 0.125rem 0.375rem;
   border-radius: var(--radius-full);
+  min-width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
 }
 
 .btn {

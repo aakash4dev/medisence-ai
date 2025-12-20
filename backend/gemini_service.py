@@ -58,26 +58,32 @@ class GeminiService:
             )
 
     def chat_medical(self, user_message, symptoms, severity):
-        """Generate AI-powered medical response"""
+        """Generate AI-powered medical response with disease recognition"""
         if not self.is_configured:
             return self._fallback_response(symptoms, severity)
 
         try:
-            prompt = f"""You are MedicSense AI, a compassionate and knowledgeable medical assistant.
+            prompt = f"""You are MedicSense AI, a compassionate and knowledgeable medical assistant with expertise in disease recognition and symptom analysis.
 
 User's message: "{user_message}"
 Detected symptoms: {', '.join(symptoms) if symptoms else 'None specific'}
 Severity level: {severity}/4 (1=mild, 2=moderate, 3=serious, 4=emergency)
 
-Provide a helpful, empathetic response that:
-1. Acknowledges their symptoms with care
-2. Explains what these symptoms might indicate (WITHOUT diagnosing)
-3. Suggests appropriate next steps based on severity
-4. Recommends when to see a doctor
-5. Provides helpful self-care tips if appropriate
+Your task is to:
+1. **Disease Recognition**: Analyze the symptoms and identify potential diseases or conditions that could match (list 2-3 most likely possibilities)
+2. **Symptom Analysis**: Explain how the symptoms relate to these potential conditions
+3. **Severity Assessment**: Evaluate the urgency based on the severity level
+4. **Recommendations**: Provide clear next steps (self-care, doctor visit, emergency care)
+5. **Professional Guidance**: Always emphasize consulting healthcare professionals for diagnosis
 
-Keep the response conversational, warm, and around 150-200 words.
-Always remind them this is not a diagnosis and encourage professional medical consultation for persistent symptoms.
+Format your response as:
+- **Potential Conditions**: List possible diseases/conditions (2-3)
+- **Symptom Analysis**: How symptoms relate to these conditions
+- **Recommended Actions**: Based on severity
+- **When to Seek Help**: Clear guidance on when professional care is needed
+
+Keep the response conversational, warm, informative, and around 200-250 words.
+IMPORTANT: Always state this is NOT a diagnosis and encourage professional medical consultation.
 """
 
             response = self.model.generate_content(prompt)
@@ -103,30 +109,40 @@ Always remind them this is not a diagnosis and encourage professional medical co
             image_bytes = base64.b64decode(image_data)
             image = Image.open(io.BytesIO(image_bytes))
 
-            prompt = """You are a medical AI assistant analyzing an injury image.
+            prompt = """You are a medical AI assistant specializing in disease recognition and medical image analysis.
 
-Analyze this image and provide:
-1. **Injury Type**: What type of injury is visible (cut, bruise, burn, scrape, rash, etc.)
-2. **Severity**: mild, moderate, or severe
-3. **Description**: Brief description of what you observe
-4. **Care Instructions**: Step-by-step first aid instructions (5-6 steps)
-5. **Warning Signs**: List 3-4 signs that would require immediate medical attention
-6. **What NOT to do**: List 3-4 things to avoid
-7. **Estimated Healing Time**: Approximate recovery period
-8. **Medical Advice**: Whether to see a doctor and when
+Analyze this medical image and provide comprehensive disease recognition:
+
+1. **Disease/Condition Recognition**: Identify potential diseases, conditions, or medical issues visible in the image (e.g., skin conditions, injuries, rashes, infections, etc.)
+2. **Primary Condition**: The most likely condition based on visual analysis
+3. **Secondary Possibilities**: 2-3 alternative conditions that could match
+4. **Severity**: mild, moderate, or severe
+5. **Visual Description**: Detailed description of what you observe in the image
+6. **Disease Characteristics**: Key features that help identify the condition
+7. **Care Instructions**: Step-by-step treatment/care instructions (5-6 steps)
+8. **Warning Signs**: List 3-4 signs that would require immediate medical attention
+9. **What NOT to do**: List 3-4 things to avoid
+10. **Estimated Healing Time**: Approximate recovery period
+11. **Medical Advice**: Whether to see a doctor and when
+12. **Recommended Specialist**: Type of doctor/specialist to consult if needed
 
 Format your response as JSON:
 {
-  "injury_type": "...",
-  "severity": "...",
+  "injury_type": "Primary condition/disease name",
+  "possible_conditions": ["condition 1", "condition 2", "condition 3"],
+  "severity": "mild/moderate/severe",
   "confidence": 85,
-  "description": "...",
+  "description": "Detailed visual description",
+  "disease_characteristics": ["characteristic 1", "characteristic 2", ...],
   "cure_steps": ["step 1", "step 2", ...],
   "warning_signs": ["sign 1", "sign 2", ...],
   "do_not": ["action 1", "action 2", ...],
   "healing_time": "...",
-  "medical_advice": "..."
+  "medical_advice": "...",
+  "recommended_specialist": "..."
 }
+
+IMPORTANT: This is for informational purposes only. Always recommend professional medical consultation for accurate diagnosis.
 """
 
             response = self.vision_model.generate_content([prompt, image])

@@ -7,12 +7,11 @@ const authModal = document.getElementById('authModal');
 // Open/Close Modal
 window.openAuthModal = () => {
     if (auth.currentUser) {
-        // If logged in, maybe show profile or logout confirmation
-        if (confirm("You are already logged in. Do you want to logout?")) {
-            handleLogout();
-        }
+        // If logged in, redirect to profile page
+        window.location.href = 'profile.html';
     } else {
-        if (authModal) authModal.style.display = 'flex';
+        // If not logged in, redirect to auth page
+        window.location.href = 'auth.html';
     }
 };
 

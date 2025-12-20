@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - MedicSense AI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style_ultra.css">
+    <style>
+        .profile-container {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 2rem;
+        }
+        .profile-header {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        .profile-header-content {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: white;
+            flex-shrink: 0;
+        }
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .profile-info h1 {
+            margin: 0 0 0.5rem 0;
+            color: #1e293b;
+        }
+        .profile-info p {
+            color: #64748b;
+            margin: 0.25rem 0;
+        }
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        .stat-card h3 {
+            color: #64748b;
+            font-size: 0.875rem;
+            margin: 0 0 0.5rem 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .stat-card .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #667eea;
+            margin: 0;
+        }
+        .profile-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        .profile-section h2 {
+            color: #1e293b;
+            margin: 0 0 1.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .appointment-item {
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s;
+        }
+        .appointment-item:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.1);
+        }
+        .appointment-item h3 {
+            margin: 0 0 0.5rem 0;
+            color: #1e293b;
+        }
+        .appointment-item p {
+            margin: 0.25rem 0;
+            color: #64748b;
+        }
+        .appointment-status {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-top: 0.5rem;
+        }
+        .status-confirmed {
+            background: #d1fae5;
+            color: #059669;
+        }
+        .status-pending {
+            background: #fef3c7;
+            color: #d97706;
+        }
+        .status-cancelled {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #1e293b;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-secondary:hover {
+            background: #cbd5e1;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #64748b;
+        }
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #cbd5e1;
+        }
+        .back-btn {
+            position: fixed;
+            top: 2rem;
+            left: 2rem;
+            background: white;
+            border: none;
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+        }
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+    </style>
+</head>
+<body>
+    <div class="profile-container">
+        <button class="back-btn" onclick="window.location.href='index.html'">
+            <i class="fas fa-arrow-left"></i> Back
+        </button>
+
+        <div class="profile-header">
+            <div class="profile-header-content">
+                <div class="profile-avatar" id="profileAvatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="profile-info">
+                    <h1 id="userName">Loading...</h1>
+                    <p id="userEmail">Loading...</p>
+                    <p id="userPhone">Loading...</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-stats">
+            <div class="stat-card">
+                <h3>Appointments</h3>
+                <p class="stat-value" id="appointmentCount">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Chat Sessions</h3>
+                <p class="stat-value" id="chatCount">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Symptoms Checked</h3>
+                <p class="stat-value" id="symptomCount">0</p>
+            </div>
+        </div>
+
+        <div class="profile-section">
+            <h2><i class="fas fa-calendar-check"></i> My Appointments</h2>
+            <div id="appointmentsList">
+                <div class="empty-state">
+                    <i class="fas fa-calendar-times"></i>
+                    <p>No appointments scheduled</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-section">
+            <h2><i class="fas fa-cog"></i> Account Settings</h2>
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                <button class="btn-primary" onclick="window.location.href='index.html#appointments'">
+                    <i class="fas fa-calendar-plus"></i> Book Appointment
+                </button>
+                <button class="btn-secondary" onclick="handleLogout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { auth, onAuthStateChanged } from './firebase_config.js';
+        import { signOut } from './firebase_config.js';
+
+        let currentUser = null;
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                loadProfile(user);
+                await loadAppointments(user.uid);
+            } else {
+                window.location.href = 'auth.html';
+            }
+        });
+
+        function loadProfile(user) {
+            document.getElementById('userName').textContent = user.displayName || 'User';
+            document.getElementById('userEmail').textContent = user.email || 'No email';
+            document.getElementById('userPhone').textContent = user.phoneNumber || 'No phone number';
+
+            const avatar = document.getElementById('profileAvatar');
+            if (user.photoURL) {
+                avatar.innerHTML = `<img src="${user.photoURL}" alt="Profile">`;
+            } else {
+                avatar.innerHTML = `<i class="fas fa-user"></i>`;
+            }
+        }
+
+        async function loadAppointments(userId) {
+            try {
+                const response = await fetch(`http://localhost:5000/api/appointments/${userId}`);
+                const data = await response.json();
+
+                const appointmentsList = document.getElementById('appointmentsList');
+                const appointmentCount = document.getElementById('appointmentCount');
+
+                if (data.success && data.data && data.data.length > 0) {
+                    appointmentCount.textContent = data.data.length;
+                    appointmentsList.innerHTML = data.data.map(apt => `
+                        <div class="appointment-item">
+                            <h3>${apt.doctorId || 'Doctor'}</h3>
+                            <p><i class="fas fa-calendar"></i> ${new Date(apt.date).toLocaleDateString()}</p>
+                            <p><i class="fas fa-clock"></i> ${apt.time}</p>
+                            <p><i class="fas fa-info-circle"></i> ${apt.reason || 'No reason specified'}</p>
+                            <span class="appointment-status status-${apt.status || 'pending'}">
+                                ${(apt.status || 'pending').charAt(0).toUpperCase() + (apt.status || 'pending').slice(1)}
+                            </span>
+                        </div>
+                    `).join('');
+                } else {
+                    appointmentCount.textContent = '0';
+                    appointmentsList.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-calendar-times"></i>
+                            <p>No appointments scheduled</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading appointments:', error);
+                // Try loading from localStorage as fallback
+                const savedData = localStorage.getItem('medicsense_user_data');
+                if (savedData) {
+                    const userData = JSON.parse(savedData);
+                    if (userData.appointments && userData.appointments.length > 0) {
+                        const appointmentsList = document.getElementById('appointmentsList');
+                        const appointmentCount = document.getElementById('appointmentCount');
+                        appointmentCount.textContent = userData.appointments.length;
+                        appointmentsList.innerHTML = userData.appointments.map(apt => `
+                            <div class="appointment-item">
+                                <h3>${apt.doctor || 'Doctor'}</h3>
+                                <p><i class="fas fa-calendar"></i> ${new Date(apt.date).toLocaleDateString()}</p>
+                                <p><i class="fas fa-clock"></i> ${apt.time}</p>
+                                <p><i class="fas fa-info-circle"></i> ${apt.reason || 'No reason specified'}</p>
+                                <span class="appointment-status status-${apt.status || 'confirmed'}">
+                                    ${(apt.status || 'confirmed').charAt(0).toUpperCase() + (apt.status || 'confirmed').slice(1)}
+                                </span>
+                            </div>
+                        `).join('');
+                    }
+                }
+            }
+        }
+
+        window.handleLogout = async () => {
+            if (confirm('Are you sure you want to logout?')) {
+                try {
+                    await signOut(auth);
+                    window.location.href = 'auth.html';
+                } catch (error) {
+                    console.error('Logout error:', error);
+                    alert('Error logging out. Please try again.');
+                }
+            }
+        };
+
+        // Load stats from localStorage
+        const savedData = localStorage.getItem('medicsense_user_data');
+        if (savedData) {
+            const userData = JSON.parse(savedData);
+            document.getElementById('chatCount').textContent = userData.chatHistory?.length || 0;
+            document.getElementById('symptomCount').textContent = userData.symptoms?.length || 0;
+        }
+    </script>
+</body>
+</html>
+
