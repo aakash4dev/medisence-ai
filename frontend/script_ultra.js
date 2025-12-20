@@ -40,12 +40,15 @@ document.addEventListener("DOMContentLoaded", function () {
   updateSeverityDisplay();
 
   // Show welcome notification
+  // Show welcome notification removed as per request
+  /*
   setTimeout(() => {
     showToast(
       "Welcome to MedicSense AI! Solving healthcare automation challenges.",
       "success"
     );
   }, 1500);
+  */
 });
 
 function initializeApp() {
@@ -220,17 +223,15 @@ function displaySymptomResults(analysis, severity) {
         <div class="recommendations">
             <h4><i class="fas fa-lightbulb"></i> Recommendations</h4>
             <ul>
-                <li><i class="fas fa-check"></i> ${
-                  severity > 7
-                    ? "Seek immediate medical attention"
-                    : "Monitor symptoms closely"
-                }</li>
+                <li><i class="fas fa-check"></i> ${severity > 7
+      ? "Seek immediate medical attention"
+      : "Monitor symptoms closely"
+    }</li>
                 <li><i class="fas fa-check"></i> Stay hydrated and rest</li>
-                <li><i class="fas fa-check"></i> ${
-                  severity > 5
-                    ? "Consider booking an appointment"
-                    : "Track your symptoms"
-                }</li>
+                <li><i class="fas fa-check"></i> ${severity > 5
+      ? "Consider booking an appointment"
+      : "Track your symptoms"
+    }</li>
             </ul>
         </div>
     `;
@@ -591,19 +592,17 @@ function addMessageToChat(role, content, metadata = {}) {
   metaDiv.className = "message-meta";
   metaDiv.innerHTML = `
         <span class="message-time">${new Date().toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        })}</span>
-        ${
-          metadata.context
-            ? `<span class="context-badge"><i class="fas fa-tag"></i> ${metadata.context}</span>`
-            : ""
-        }
-        ${
-          metadata.severity && metadata.severity !== "low"
-            ? `<span class="severity-badge ${metadata.severity}"><i class="fas fa-exclamation-circle"></i> ${metadata.severity}</span>`
-            : ""
-        }
+    hour: "2-digit",
+    minute: "2-digit",
+  })}</span>
+        ${metadata.context
+      ? `<span class="context-badge"><i class="fas fa-tag"></i> ${metadata.context}</span>`
+      : ""
+    }
+        ${metadata.severity && metadata.severity !== "low"
+      ? `<span class="severity-badge ${metadata.severity}"><i class="fas fa-exclamation-circle"></i> ${metadata.severity}</span>`
+      : ""
+    }
     `;
 
   contentDiv.appendChild(bubbleDiv);
