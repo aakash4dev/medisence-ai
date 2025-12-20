@@ -1,0 +1,102 @@
+{
+    "doctors": [
+        {
+            "id": 1,
+            "name": "Dr. Sarah Johnson",
+            "specialization": "General Physician",
+            "city": "New York",
+            "experience": "15 years",
+            "contact": "+1-555-0101",
+            "available": "Mon-Fri, 9AM-5PM"
+        },
+        {
+            "id": 2,
+            "name": "Dr. Michael Chen",
+            "specialization": "Cardiologist",
+            "city": "New York",
+            "experience": "20 years",
+            "contact": "+1-555-0102",
+            "available": "By appointment"
+        },
+        {
+            "id": 3,
+            "name": "Dr. Emily White",
+            "specialization": "Dermatologist",
+            "city": "Boston",
+            "experience": "12 years",
+            "contact": "+1-555-0103",
+            "available": "Tue-Thu, 10AM-4PM"
+        },
+        {
+            "id": 4,
+            "name": "Dr. Robert Kim",
+            "specialization": "Orthopedic",
+            "city": "Chicago",
+            "experience": "18 years",
+            "contact": "+1-555-0104",
+            "available": "Mon-Wed-Fri"
+        },
+        {
+            "id": 5,
+            "name": "Dr. Lisa Martinez",
+            "specialization": "Pediatrician",
+            "city": "Los Angeles",
+            "experience": "10 years",
+            "contact": "+1-555-0105",
+            "available": "Mon-Sat, 8AM-6PM"
+        }
+    ],
+    "hospitals": [
+        {
+            "id": 1,
+            "name": "City General Hospital",
+            "city": "New York",
+            "emergency": true,
+            "contact": "+1-555-EMERGENCY",
+            "services": [
+                "Emergency",
+                "Surgery",
+                "ICU",
+                "Radiology"
+            ]
+        },
+        {
+            "id": 2,
+            "name": "Metropolitan Medical Center",
+            "city": "Boston",
+            "emergency": true,
+            "contact": "+1-555-9111",
+            "services": [
+                "24/7 Emergency",
+                "Trauma Center",
+                "Cardiac Care"
+            ]
+        },
+        {
+            "id": 3,
+            "name": "Unity Health Clinic",
+            "city": "Chicago",
+            "emergency": false,
+            "contact": "+1-555-HEALTH",
+            "services": [
+                "Primary Care",
+                "Lab Services",
+                "Pharmacy"
+            ]
+        }
+    ],
+    "specializations": [
+        "General Physician",
+        "Cardiologist",
+        "Dermatologist",
+        "Orthopedic",
+        "Neurologist",
+        "Oncologist",
+        "Pediatrician",
+        "Psychiatrist",
+        "ENT Specialist",
+        "Gynecologist",
+        "Urologist",
+        "Endocrinologist"
+    ]
+}

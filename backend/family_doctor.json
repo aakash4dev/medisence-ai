@@ -1,0 +1,62 @@
+[
+  {
+    "name": "Dr. Test Doctor",
+    "contact": "+1-555-TEST",
+    "specialization": "General Physician",
+    "user_id": "test_user_123"
+  },
+  {
+    "name": "jnnn",
+    "contact": "4444",
+    "specialization": "General Physician",
+    "user_id": "user_p5jw4kyi0"
+  },
+  {
+    "user_id": "user_5kkrj3woi",
+    "name": "rahul",
+    "contact": "99999",
+    "specialization": "General Physician"
+  },
+  {
+    "user_id": "user_nuotz6os6",
+    "name": "rahul",
+    "contact": "99999",
+    "specialization": "General Physician"
+  },
+  {
+    "user_id": "user_quick_test",
+    "name": "Dr. Quick Test",
+    "contact": "555-9999",
+    "specialization": "General Physician"
+  },
+  {
+    "user_id": "user_9ql53of2b",
+    "name": "rahut",
+    "contact": "99999",
+    "specialization": "General Physician"
+  },
+  {
+    "user_id": "user_0vao4t1mn",
+    "name": "munna ji",
+    "contact": "580uth kr",
+    "specialization": "General Physician"
+  },
+  {
+    "user_id": "user_4f2uqtre9",
+    "name": "eee",
+    "contact": "33",
+    "specialization": "General Physician"
+  },
+  {
+    "user_id": "user_c9tgy1w3b",
+    "name": "ssd",
+    "contact": "22",
+    "specialization": "General Physician"
+  },
+  {
+    "user_id": "user_vbmms3f4h",
+    "name": "rahul",
+    "contact": "+91 1234567890",
+    "specialization": "General Physician"
+  }
+]

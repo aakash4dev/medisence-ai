@@ -1,0 +1,70 @@
+{
+  "symptoms": {
+    "headache": {
+      "description": "Pain in head or neck region",
+      "urgency": "low",
+      "common_causes": ["Tension", "Migraine", "Dehydration", "Sinusitis"],
+      "keywords": ["headache", "head pain", "migraine", "head hurts"]
+    },
+    "fever": {
+      "description": "Elevated body temperature",
+      "urgency": "moderate",
+      "common_causes": ["Infection", "Inflammation", "Viral illness"],
+      "keywords": ["fever", "temperature", "hot", "chills"]
+    },
+    "cough": {
+      "description": "Sudden expulsion of air from lungs",
+      "urgency": "low",
+      "common_causes": ["Cold", "Flu", "Allergy", "Infection"],
+      "keywords": ["cough", "coughing", "hacking", "clear throat"]
+    },
+    "chest pain": {
+      "description": "Pain or discomfort in chest area",
+      "urgency": "high",
+      "common_causes": ["Heart issues", "Muscle strain", "Anxiety", "Acid reflux"],
+      "keywords": ["chest pain", "chest tightness", "heart pain"]
+    },
+    "shortness of breath": {
+      "description": "Difficulty breathing",
+      "urgency": "high",
+      "common_causes": ["Asthma", "Anxiety", "Heart problems", "Lung issues"],
+      "keywords": ["short of breath", "can't breathe", "breathing difficulty"]
+    },
+    "nausea": {
+      "description": "Feeling of wanting to vomit",
+      "urgency": "moderate",
+      "common_causes": ["Food poisoning", "Migraine", "Pregnancy", "Infection"],
+      "keywords": ["nausea", "nauseous", "queasy", "sick to stomach"]
+    }
+  },
+  
+  "symptom_synonyms": {
+    "headache": ["head ache", "head pain", "migraine", "head pounding"],
+    "fever": ["temperature", "feverish", "hot", "burning up"],
+    "cough": ["hacking", "coughing fit", "dry cough", "wet cough"],
+    "nausea": ["sick to stomach", "queasy", "want to vomit", "upset stomach"]
+  },
+  
+  "severity_guidelines": {
+    "level_1": {
+      "description": "Mild symptoms",
+      "action": "Self-care, monitor, consult if persists",
+      "timeframe": "1-3 days"
+    },
+    "level_2": {
+      "description": "Moderate symptoms",
+      "action": "Doctor consultation recommended",
+      "timeframe": "24-48 hours"
+    },
+    "level_3": {
+      "description": "Serious symptoms",
+      "action": "Urgent medical attention needed",
+      "timeframe": "Within 24 hours"
+    },
+    "level_4": {
+      "description": "Emergency",
+      "action": "Immediate emergency care",
+      "timeframe": "NOW"
+    }
+  }
+}
