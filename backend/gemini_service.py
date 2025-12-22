@@ -33,8 +33,16 @@ class GeminiService:
                     },
                     safety_settings=[
                         {
-                            "category": "HARM_CATEGORY_MEDICAL",
-                            "threshold": "BLOCK_NONE",
+                            "category": "HARM_CATEGORY_HARASSMENT",
+                            "threshold": "BLOCK_ONLY_HIGH",
+                        },
+                        {
+                            "category": "HARM_CATEGORY_HATE_SPEECH",
+                            "threshold": "BLOCK_ONLY_HIGH",
+                        },
+                        {
+                            "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+                            "threshold": "BLOCK_ONLY_HIGH",
                         },
                         {
                             "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
@@ -42,9 +50,8 @@ class GeminiService:
                         },
                     ],
                 )
-                self.vision_model = genai.GenerativeModel(
-                    "gemini-1.5-pro-vision-latest"
-                )
+                # Use same model for vision - gemini-1.5-pro supports both text and vision
+                self.vision_model = genai.GenerativeModel("gemini-1.5-pro")
                 self.is_configured = True
                 print("✅ Gemini 1.5 Pro API configured successfully")
                 print("🏥 Medical AI ready with 95%+ accuracy")

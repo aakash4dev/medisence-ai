@@ -84,14 +84,14 @@ python app.py
 You should see:
 ```
 🚀 MedicSense AI Backend Starting...
-📡 Server running at http://localhost:3000
+📡 Server running at http://localhost:5000
 💊 Medical chatbot ready to assist
 ```
 
 ### Step 4: Access the Application
 Open your browser and go to:
 ```
-http://localhost:3000
+http://localhost:5000
 ```
 
 ## 🎯 How to Use

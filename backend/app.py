@@ -1138,16 +1138,6 @@ def resend_otp():
         return jsonify({"success": False, "message": str(e)}), 500
 
 
-
-# ================================
-# NOTIFICATION ENDPOINTS
-# ================================
-
-
-
-
-
-
 # ================================
 # WHATSAPP NOTIFICATION ENDPOINTS
 # ================================
@@ -1303,39 +1293,9 @@ def send_whatsapp():
         )
 
 
-@app.route("/api/auth/login", methods=["POST"])
-def login_email():
-    """Mock Email Login"""
-    try:
-        data = request.json
-        email = data.get("email", "").strip()
-        password = data.get("password", "").strip()
-
-        if not email or not password:
-             return jsonify({"success": False, "message": "Email and password required"}), 400
-
-        # Mock authentication (accept any password for demo)
-        import uuid
-        user_id = "user_" + str(uuid.uuid4())[:8]
-
-        return jsonify({
-            "success": True,
-            "token": f"mock_token_{user_id}",
-            "sessionId": f"session_{user_id}",
-            "user": {
-                "id": user_id,
-                "name": email.split("@")[0],
-                "email": email,
-                "photoURL": "https://ui-avatars.com/api/?name=" + email.split("@")[0]
-            }
-        })
-    except Exception as e:
-        return jsonify({"success": False, "message": str(e)}), 500
-
-
 if __name__ == "__main__":
     print("🚀 MedicSense AI Backend Starting...")
-    print("📡 Server running at http://localhost:3000")
+    print("📡 Server running at http://localhost:5000")
     print("💊 Medical chatbot ready to assist")
     print("🤖 AI-powered responses enabled")
     print("📸 Image analysis ready")

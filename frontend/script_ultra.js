@@ -12,7 +12,7 @@ const getConfig = () => {
   // Try to get from window.ENV (loaded by env-loader.js)
   if (window.ENV) {
     return {
-      API_BASE_URL: window.ENV.API_BASE_URL || "http://localhost:3000/api",
+      API_BASE_URL: window.ENV.API_BASE_URL || "http://localhost:5000/api",
       USER_ID: "user_" + Math.random().toString(36).substr(2, 9),
       AI_ENABLED: window.ENV.APP?.AI_ENABLED !== undefined ? window.ENV.APP.AI_ENABLED : true,
       MAX_FILE_SIZE: window.ENV.APP?.MAX_FILE_SIZE || 10 * 1024 * 1024, // 10MB
@@ -22,7 +22,7 @@ const getConfig = () => {
 
   // Fallback to default values
   return {
-    API_BASE_URL: "http://localhost:3000/api",
+    API_BASE_URL: "http://localhost:5000/api",
     USER_ID: "user_" + Math.random().toString(36).substr(2, 9),
     AI_ENABLED: true,
     MAX_FILE_SIZE: 10 * 1024 * 1024, // 10MB

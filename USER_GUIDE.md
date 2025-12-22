@@ -12,7 +12,7 @@
 
 ### First Time Setup
 1. **Open the Application**
-   - Navigate to `http://localhost:3000`
+   - Navigate to `http://localhost:5000`
    - The homepage will load with the chat interface
 
 2. **Optional: Create an Account**
@@ -41,7 +41,7 @@
 ```
 You: "I have a headache and feel tired"
 
-AI: "I understand you're experiencing a headache and fatigue.
+AI: "I understand you're experiencing a headache and fatigue. 
 Let me analyze this...
 
 Symptoms Detected:
@@ -72,7 +72,7 @@ AI: "⚠️ URGENT MEDICAL ATTENTION REQUIRED
 
 I've detected symptoms that require immediate medical evaluation:
 • Chest pain
-• Shortness of breath
+• Shortness of breath  
 • Dizziness
 
 Severity: Level 4 (CRITICAL)
@@ -97,7 +97,7 @@ Emergency services should be called immediately."
 #### Severity Levels
 - **Level 1 (Mild)**: 🟢 Self-care recommended
 - **Level 2 (Moderate)**: 🟡 Consult family doctor
-- **Level 3 (Serious)**: 🟠 See specialist soon
+- **Level 3 (Serious)**: 🟠 See specialist soon  
 - **Level 4 (Critical)**: 🔴 Emergency - Call 911
 
 #### Response Components

@@ -7,7 +7,7 @@ function loadEnv() {
 
     // Default Structure
     const processed = {
-        API_BASE_URL: "http://localhost:3000/api",
+        API_BASE_URL: "http://localhost:5000/api",
         FIREBASE: {},
         WHATSAPP: {
              DOCTOR_Aakash: {}
