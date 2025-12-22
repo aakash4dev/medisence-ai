@@ -379,25 +379,15 @@
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
 
             try {
-                // Try Firebase email/password login first
-                const { signInWithEmailAndPassword } = await import('./firebase_config.js');
-                const { auth } = await import('./firebase_config.js');
+                // Store user info
+                currentPhone = fullPhone;
+                currentPhoneCode = phoneCode;
+                localStorage.setItem('login_email', email);
 
-                try {
-                    await signInWithEmailAndPassword(auth, email, password);
-                    showSuccess('Login successful! Redirecting...');
-                    setTimeout(() => {
-                        window.location.href = 'index.html';
-                    }, 1000);
-                } catch (firebaseError) {
-                    // If Firebase login fails, try phone OTP
-                    currentPhone = fullPhone;
-                    currentPhoneCode = phoneCode;
-                    await sendOTP(fullPhone);
-                }
+                // Send OTP for phone verification
+                await sendOTP(fullPhone);
             } catch (error) {
                 showError('Login failed: ' + error.message);
-            } finally {
                 btn.disabled = false;
                 btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
             }
@@ -425,29 +415,17 @@
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing up...';
 
             try {
-                // Try Firebase email/password signup
-                const { createUserWithEmailAndPassword, updateProfile } = await import('./firebase_config.js');
-                const { auth } = await import('./firebase_config.js');
+                // Store user info
+                currentPhone = fullPhone;
+                currentPhoneCode = phoneCode;
+                localStorage.setItem('signup_name', name);
+                localStorage.setItem('signup_email', email);
 
-                try {
-                    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                    await updateProfile(userCredential.user, { displayName: name });
-
-                    // Save phone number to user profile (you might want to use Firestore for this)
-                    showSuccess('Account created! Verifying phone number...');
-                    currentPhone = fullPhone;
-                    currentPhoneCode = phoneCode;
-                    await sendOTP(fullPhone);
-                } catch (firebaseError) {
-                    if (firebaseError.code === 'auth/email-already-in-use') {
-                        showError('Email already registered. Please login instead.');
-                    } else {
-                        throw firebaseError;
-                    }
-                }
+                // Send OTP for phone verification
+                showSuccess('Verifying phone number...');
+                await sendOTP(fullPhone);
             } catch (error) {
                 showError('Signup failed: ' + error.message);
-            } finally {
                 btn.disabled = false;
                 btn.innerHTML = '<i class="fas fa-user-plus"></i> Sign Up';
             }
