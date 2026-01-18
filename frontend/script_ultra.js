@@ -78,6 +78,12 @@ async function fetchWithTimeout(url, options = {}, timeoutMs = 10000) {
 let AUTHENTICATED_USER = null;
 let AUTH_MODAL_CLOSED_BY_LOGIN = false; // Flag to prevent reopening after successful login
 
+/**
+ * ASYNC PROCESS LOCKS
+ * Prevents race conditions and inconsistent UI states
+ */
+let isAnalyzing = false;
+
 const state = {
   currentUser: null, // Will be set by Firebase auth
   chatHistory: [],
@@ -555,6 +561,7 @@ function showNotifications() {
 }
 
 // Load notification count with timeout and error handling
+// Load notification count with timeout and error handling
 async function loadNotificationCountSafe() {
   try {
     const userId = getUserId();
@@ -585,9 +592,11 @@ async function loadNotificationCountSafe() {
     if (badge) {
       if (unreadCount > 0) {
         badge.textContent = unreadCount > 99 ? "99+" : unreadCount;
+        badge.classList.remove("hidden");
         badge.style.display = "flex";
       } else {
         badge.textContent = "";
+        badge.classList.add("hidden");
         badge.style.display = "none";
       }
     }
@@ -603,6 +612,16 @@ async function loadNotificationCountSafe() {
       badge.style.display = "none";
     }
   }
+}
+
+// Alias for user-preferred naming
+async function updateBellBadge() {
+  await loadNotificationCountSafe();
+}
+
+async function fetchNotifications() {
+  console.log("🔔 Re-fetching notifications after action...");
+  await updateBellBadge();
 }
 
 // Legacy function for backward compatibility - now calls safe version
@@ -643,37 +662,45 @@ function updateSeverityDisplay() {
 }
 
 // Input validation for symptom textarea
+// Input validation for symptom checker form (Judge-Ready)
 function setupSymptomInputValidation() {
   const symptomInput = document.getElementById('symptomInput');
-  const analyzeBtn = document.querySelector('.symptom-form-card .btn-primary.btn-large');
+  const durationSelect = document.getElementById('symptomDuration');
+  const severitySlider = document.getElementById('severityRange');
+  const severityValue = document.getElementById('severityValue');
+  const analyzeBtn = document.getElementById('analyzeBtn');
 
   if (!symptomInput || !analyzeBtn) return;
 
-  // Create validation helper element
-  let validationHelper = symptomInput.parentElement.querySelector('.input-validation-helper');
-  if (!validationHelper) {
-    validationHelper = document.createElement('div');
-    validationHelper.className = 'input-validation-helper';
-    validationHelper.style.display = 'none';
-    symptomInput.parentElement.appendChild(validationHelper);
+  const checkValidity = () => {
+    const hasSymptoms = symptomInput.value.trim().length >= 3;
+    const hasDuration = durationSelect.value !== "";
+    const hasSeverity = parseInt(severitySlider.value) > 0;
+
+    analyzeBtn.disabled = !(hasSymptoms && hasDuration && hasSeverity);
+  };
+
+  // Severity Slider Feedback
+  if (severitySlider && severityValue) {
+    severitySlider.addEventListener('input', (e) => {
+      severityValue.textContent = e.target.value;
+      checkValidity();
+    });
   }
 
-  symptomInput.addEventListener('input', function() {
-    const text = this.value.trim();
+  // Symptom Input Validation
+  symptomInput.addEventListener('input', checkValidity);
 
-    if (text.length > 0 && text.length < 5) {
-      validationHelper.textContent = 'Please describe your symptoms in a bit more detail.';
-      validationHelper.style.display = 'flex';
-      analyzeBtn.disabled = true;
-      analyzeBtn.style.opacity = '0.5';
-      analyzeBtn.style.cursor = 'not-allowed';
-    } else {
-      validationHelper.style.display = 'none';
-      analyzeBtn.disabled = false;
-      analyzeBtn.style.opacity = '1';
-      analyzeBtn.style.cursor = 'pointer';
-    }
-  });
+  // Duration Selection Validation
+  if (durationSelect) {
+    durationSelect.addEventListener('change', checkValidity);
+  }
+
+  // Final Hardening: JS-only binding (STEP 2)
+  analyzeBtn.addEventListener('click', analyzeSymptoms);
+
+  // Initialize state
+  checkValidity();
 }
 
 
@@ -687,81 +714,70 @@ function addSymptom(symptom) {
       textarea.value = symptom;
     }
     textarea.focus();
+
+    // Trigger validation re-check
+    const analyzeBtn = document.getElementById('analyzeBtn');
+    if (analyzeBtn) {
+      const durationSelect = document.getElementById('symptomDuration');
+      const severitySlider = document.getElementById('severityRange');
+
+      const hasSymptoms = textarea.value.trim().length >= 3;
+      const hasDuration = durationSelect ? durationSelect.value !== "" : false;
+      const hasSeverity = severitySlider ? parseInt(severitySlider.value) > 0 : false;
+
+      analyzeBtn.disabled = !(hasSymptoms && hasDuration && hasSeverity);
+    }
   }
 }
 
 async function analyzeSymptoms() {
+  // ✅ Rule 1: Immediate lock at the absolute top
+  if (isAnalyzing) return;
+  isAnalyzing = true;
+
+  // Step 2: HARD GUARD + LOADER (AT TOP)
   const symptomInput = document.getElementById("symptomInput");
-  const duration = document.getElementById("symptomDuration");
-  const severity = document.getElementById("severityRange");
-
-  if (!symptomInput || !symptomInput.value.trim()) {
-    showToast("Please describe your symptoms", "warning");
-    symptomInput.classList.add("is-invalid");
-    symptomInput.addEventListener('input', () => symptomInput.classList.remove("is-invalid"), { once: true });
-    symptomInput.focus();
-    return;
-  }
-
-  // Validate Duration
-  if (!duration || !duration.value) {
-    showToast("Please select symptom duration", "warning");
-    if (duration) {
-      duration.classList.add("is-invalid");
-      duration.addEventListener('input', () => duration.classList.remove("is-invalid"), { once: true });
-      duration.focus();
-    }
-    return;
-  }
-
-  // Validate Severity
-  if (severity && (severity.value === "0" || !severity.value)) {
-    showToast("Please select severity level (1-10)", "warning");
-    if (severity) {
-      severity.classList.add("is-invalid");
-      severity.addEventListener('input', () => severity.classList.remove("is-invalid"), { once: true });
-      severity.focus();
-    }
-    return;
-  }
-
-  const symptoms = symptomInput.value.trim();
-  const durationValue = duration ? duration.value : "";
-  const severityValue = severity ? severity.value : "5";
-
-  // Disable inputs during analysis
-  const formCard = document.querySelector('.symptom-form-card');
-  if (formCard) {
-    formCard.classList.add('form-disabled');
-    formCard.querySelectorAll('input, textarea, select, button').forEach(el => {
-      el.disabled = true;
-    });
-  }
-
-  // Show loading
-  showToast("Analyzing your symptoms with AI...", "info");
-
-  // Hide info card, show results card with loading state
-  // Hide info card, trigger layout expansion, show results card
+  const durationSelect = document.getElementById("symptomDuration");
+  const severitySlider = document.getElementById("severityRange");
+  const analyzeBtn = document.getElementById("analyzeBtn");
+  const resultsBody = document.getElementById("symptomResultsBody");
   const infoCard = document.getElementById("symptomInfoCard");
   const resultsCard = document.getElementById("symptomResults");
-  const resultsBody = document.getElementById("symptomResultsBody");
   const layoutContainer = document.querySelector('.symptom-checker-container');
 
-  if (layoutContainer) layoutContainer.classList.add('has-analysis');
-
-  if (infoCard) infoCard.style.display = "none";
-  if (resultsCard) resultsCard.style.display = "block";
-  if (resultsBody) {
-    resultsBody.innerHTML = `
-      <div class="loading-state">
-        <div class="loading-spinner"></div>
-        <p class="loading-text">Analyzing your symptoms...</p>
-        <p class="loading-subtext">This may take a few moments</p>
-      </div>
-    `;
+  if (!symptomInput || !durationSelect || !severitySlider || !analyzeBtn || !resultsBody) {
+    isAnalyzing = false;
+    return;
   }
 
+  const symptomText = symptomInput.value.trim();
+  const durationVal = durationSelect.value;
+  const severityVal = Number(severitySlider.value);
+
+  // 🛡️ Rule 2: Mandatory Validation Guard
+  if (!symptomText || !durationVal || severityVal <= 0) {
+    showToast("Please complete all required fields.", "warning");
+    isAnalyzing = false;
+    return;
+  }
+
+  // 🚀 Rule 3: Loading state must appear IMMEDIATELY after validation
+  analyzeBtn.disabled = true;
+  analyzeBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing...';
+
+  if (resultsCard) resultsCard.style.display = "block";
+  if (infoCard) infoCard.style.display = "none";
+  if (layoutContainer) layoutContainer.classList.add('has-analysis');
+
+  resultsBody.innerHTML = `
+    <div class="loading-state">
+      <div class="loading-spinner"></div>
+      <h3>Analyzing your symptoms...</h3>
+      <p>This may take a few moments</p>
+    </div>
+  `;
+
+  // 🧱 Rule 4: ONE async lifecycle (FETCH + RENDER ONLY HERE)
   try {
     const response = await fetchWithTimeout(
       `${CONFIG.API_BASE_URL}/chat`,
@@ -769,21 +785,22 @@ async function analyzeSymptoms() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          message: `Analyze these symptoms: ${symptoms}. Duration: ${durationValue}. Severity: ${severityValue}/10.`,
+          message: `Analyze these symptoms: ${symptomText}. Duration: ${durationVal}. Severity: ${severityVal}/10.`,
           user_id: state.currentUser,
         }),
       },
       15000
-    ); // 15 second timeout for AI analysis
+    );
 
     const data = await response.json();
 
     if (data.response) {
-      displaySymptomResults(data.response, severityValue);
+      displaySymptomResults(data.response, severityVal);
+      // Backend track
       state.symptoms.push({
-        symptoms,
-        duration: durationValue,
-        severity: severityValue,
+        symptoms: symptomText,
+        duration: durationVal,
+        severity: severityVal,
         analysis: data.response,
         timestamp: new Date().toISOString(),
       });
@@ -793,25 +810,23 @@ async function analyzeSymptoms() {
     }
   } catch (error) {
     console.error("Error analyzing symptoms:", error);
-    if (resultsBody) {
-      resultsBody.innerHTML = `
-        <div class="error-message">
-          <i class="fas fa-exclamation-circle"></i>
-          <p>Unable to analyze symptoms. Please try again.</p>
-        </div>
-      `;
-    }
-    showToast("Error analyzing symptoms. Please try again.", "error");
+    resultsBody.innerHTML = `
+      <div class="error-message">
+        <i class="fas fa-exclamation-circle"></i>
+        <p>Unable to analyze symptoms. Please try again.</p>
+      </div>
+    `;
+    showToast("Unable to analyze symptoms. Please try again.", "error");
   } finally {
-    // Re-enable inputs
-    if (formCard) {
-      formCard.classList.remove('form-disabled');
-      formCard.querySelectorAll('input, textarea, select, button').forEach(el => {
-        el.disabled = false;
-      });
+    // 🔒 Rule 5: Lock release ONLY in finally
+    isAnalyzing = false;
+    if (analyzeBtn) {
+      analyzeBtn.disabled = false;
+      analyzeBtn.innerHTML = '<i class="fas fa-brain"></i> Analyze with AI';
     }
   }
 }
+
 
 function displaySymptomResults(analysis, severity) {
   const resultsBody = document.getElementById("symptomResultsBody");
@@ -1302,6 +1317,9 @@ async function bookAppointment() {
         "Appointment booked successfully! Confirmation sent to your email.",
         "success"
       );
+
+      // 🔥 REQUIRED: Re-fetch notifications so the bell dot appears immediately
+      fetchNotifications();
 
       // Reset form
       document.getElementById("patientName").value = "";

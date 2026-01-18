@@ -37,7 +37,7 @@
   <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
 
   <!-- Styles -->
-  <link rel="stylesheet" href="style_ultra.css" />
+  <link rel="stylesheet" href="style_ultra.css?v=motion8" />
   <style>
     /* Auth Modal Styles */
     .modal-overlay {
@@ -148,6 +148,19 @@
         opacity: 1;
       }
     }
+
+    @keyframes gentlePulse {
+      0% { transform: scale(1); opacity: 0.8; }
+      50% { transform: scale(1.1); opacity: 1; filter: drop-shadow(0 0 2px rgba(99, 102, 241, 0.5)); }
+      100% { transform: scale(1); opacity: 0.8; }
+    }
+
+    .motion-icon-bolt {
+      animation: gentlePulse 2s infinite ease-in-out !important;
+      display: inline-block !important;
+      /* Color removed to inherit original theme (blue/purple) */
+    }
+
   </style>
 
   <!-- Favicon -->
@@ -354,26 +367,22 @@
           </div>
 
           <h1 class="hero-title">
-            Advanced Healthcare<br />
-            <span class="gradient-text">Intelligence</span>
+            AI-Assisted Healthcare <span class="gradient-text">Intelligence</span>
           </h1>
 
           <p class="hero-description">
-            Transforming healthcare delivery with enterprise-grade automation and clinical decision support.
-            Leveraging <strong>natural-language symptom analysis</strong>,
-            <strong>intelligent scheduling</strong>, and
-            <strong>continuous patient engagement</strong> to improve operational efficiency and patient outcomes.
+            Supporting health awareness through AI-assisted symptom analysis, intelligent scheduling, and patient engagement tools designed to help users decide appropriate next steps.
           </p>
 
           <!-- Problem Statement Highlights -->
           <div class="hero-highlights">
             <div class="highlight-item">
               <i class="fas fa-check-circle"></i>
-              <span>Accelerated Diagnostic Workflows</span>
+              <span>Streamlined Symptom Assessment</span>
             </div>
             <div class="highlight-item">
               <i class="fas fa-check-circle"></i>
-              <span>Automated Appointment Management</span>
+              <span>Care Navigation Support</span>
             </div>
             <div class="highlight-item">
               <i class="fas fa-check-circle"></i>
@@ -400,7 +409,7 @@
             <div class="card-body">
               <div class="chat-preview">
                 <div class="chat-bubble ai-bubble">
-                  Welcome to MedicSense. I'm your healthcare assistant, powered by Google Gemini.
+                  Welcome to MedicSense. I'm your AI-assisted health support companion.
                   How may I assist you today?
                 </div>
               </div>
@@ -426,7 +435,7 @@
               </div>
               <div class="feature-card">
                 <i class="fas fa-shield-alt"></i>
-                <span>HIPAA<br>Compliant</span>
+                <span>Privacy-Focused<br>Design</span>
               </div>
             </div>
 
@@ -437,8 +446,8 @@
                 <div class="stat-value">24×7</div>
               </div>
               <div class="stat-card">
-                <div class="stat-label">Registered Users</div>
-                <div class="stat-value">1K+</div>
+                <div class="stat-label">Emergency Escalation</div>
+                <div class="stat-value">Ready</div>
               </div>
               <div class="stat-card">
                 <div class="stat-label">Typical AI Response</div>
@@ -459,7 +468,7 @@
         <span class="section-badge">AI-Powered Assessment</span>
         <h2 class="section-title">AI Symptom Checker</h2>
         <p class="section-description">
-          Describe your symptoms in your own words. Our advanced AI analyzes them to provide instant insights and medical guidance.
+          Describe your symptoms in your own words. The AI reviews them to provide supportive insights and help you decide appropriate next steps.
         </p>
       </div>
 
@@ -480,11 +489,12 @@
                 <label>Duration <span style="color: var(--danger-500)">*</span></label>
                 <select id="symptomDuration" class="form-control form-select-sm">
                   <option value="" disabled selected hidden>Select duration</option>
-                  <option value="hours">Less than 24 hours</option>
-                  <option value="1_day">1 day</option>
-                  <option value="2_3_days">2–3 days</option>
-                  <option value="4_7_days">4–7 days</option>
-                  <option value="1_week_plus">More than 1 week</option>
+                  <option value="hours">A few hours</option>
+                  <option value="1-2 days">1–2 days</option>
+                  <option value="3-7 days">3–7 days</option>
+                  <option value="1-2 weeks">1–2 weeks</option>
+                  <option value="more">More than 2 weeks</option>
+                </select>
                 </select>
                 <small class="input-helper-text">Helps assess symptom progression</small>
               </div>
@@ -493,7 +503,7 @@
                 <label>Severity (1-10) <span style="color: var(--danger-500)">*</span></label>
                 <input type="range" id="severityRange" class="severity-slider" min="0" max="10" value="0" />
                 <div class="severity-value">
-                  <span id="severityValue">-</span>/10
+                  <span id="severityValue">0</span>/10
                 </div>
               </div>
             </div>
@@ -525,7 +535,7 @@
 
             <!-- Action Buttons -->
             <div class="form-actions">
-              <button class="btn btn-primary" onclick="analyzeSymptoms()">
+              <button class="btn btn-primary" id="analyzeBtn" disabled>
                 <i class="fas fa-brain"></i>
                 Analyze with AI
               </button>
@@ -534,6 +544,9 @@
                 Voice Input
               </button>
             </div>
+            <p class="hint-text">
+              <i class="fas fa-info-circle"></i> This tool supports health awareness and does not provide medical diagnosis.
+            </p>
           </div>
         </div>
 
@@ -774,53 +787,12 @@
           </div>
 
           <!-- Health Score Widget -->
-          <div class="health-score-widget">
-            <h4><i class="fas fa-heartbeat"></i> Your Health Score</h4>
-            <div class="health-score-circle">
-              <svg width="120" height="120">
-                <circle cx="60" cy="60" r="50" fill="none" stroke="#e5e7eb" stroke-width="8" />
-                <circle cx="60" cy="60" r="50" fill="none" stroke="#10b981" stroke-width="8" stroke-dasharray="314"
-                  stroke-dashoffset="78" transform="rotate(-90 60 60)" />
-              </svg>
-              <div class="score-value">85</div>
-            </div>
-            <p class="score-label">Good Health Status</p>
-            <button class="view-details-btn" onclick="viewHealthDetails()">
-              View Details <i class="fas fa-arrow-right"></i>
-            </button>
-          </div>
+          <!-- Health Score Removed -->
+
 
           <!-- Recent Activity -->
-          <div class="recent-activity-card">
-            <h4><i class="fas fa-history"></i> Recent Activity</h4>
-            <div class="activity-timeline">
-              <div class="activity-item">
-                <div class="activity-icon">
-                  <i class="fas fa-comments"></i>
-                </div>
-                <div class="activity-content">
-                  <p class="activity-title">Chat Consultation</p>
-                  <p class="activity-time">2 hours ago</p>
-                </div>
-              </div>
-              <div class="activity-item">
-                <div class="activity-icon"><i class="fas fa-image"></i></div>
-                <div class="activity-content">
-                  <p class="activity-title">Image Scan</p>
-                  <p class="activity-time">1 day ago</p>
-                </div>
-              </div>
-              <div class="activity-item">
-                <div class="activity-icon">
-                  <i class="fas fa-heartbeat"></i>
-                </div>
-                <div class="activity-content">
-                  <p class="activity-title">Vitals Recorded</p>
-                  <p class="activity-time">2 days ago</p>
-                </div>
-              </div>
-            </div>
-          </div>
+          <!-- Recent Activity Removed -->
+
         </div>
 
         <!-- Main Chat Area -->
@@ -952,8 +924,7 @@
             <span>MedicSense AI</span>
           </div>
           <p class="footer-description">
-            A healthcare intelligence platform built to reduce diagnostic delays, streamline scheduling,
-            and improve patient communication through smart automation and secure cloud services.
+            An AI-assisted health support platform designed to help users understand symptoms, navigate care options, and improve health communication through secure, intelligent tools.
           </p>
         </div>
 
@@ -993,7 +964,7 @@
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
           <p style="margin: 0;">&copy; 2026 MedicSense AI. All rights reserved.</p>
           <p class="powered-by" style="margin: 0;">
-            <i class="fas fa-bolt"></i> Powered by Google Gemini AI
+            <i class="fas fa-bolt motion-icon-bolt"></i> Powered by Google Gemini AI
           </p>
           <p style="margin: 0; font-size: 0.85rem; color: #94a3b8;">
             <i class="fas fa-info-circle"></i> <strong>Disclaimer:</strong> This application is for demonstration and educational purposes only. Not intended as a substitute for professional medical advice, diagnosis, or treatment.

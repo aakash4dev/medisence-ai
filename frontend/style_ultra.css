@@ -107,14 +107,30 @@ html {
   scroll-padding-top: 84px;
 }
 
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+}
+
 body {
   font-family: var(--font-primary);
   color: var(--gray-800);
-  background: var(--gray-50);
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.06) 0%, rgba(118, 75, 162, 0.06) 50%, rgba(99, 102, 241, 0.04) 100%);
+  background-attachment: fixed;
+  min-height: 100vh;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+}
+
+/* Defensive transparency for potential wrappers */
+.main-container,
+.page-wrapper,
+.app,
+#root {
+  background: transparent !important;
 }
 
 /* ========================================
@@ -302,11 +318,24 @@ body {
   background: rgba(255, 255, 255, 0.98);
   backdrop-filter: blur(20px);
   padding: 0.65rem 0;
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
+  width: 100%;
   z-index: 1000;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
   border-bottom: 1px solid rgba(226, 232, 240, 0.6);
+}
+
+/* Offset for fixed navbar */
+body {
+  padding-top: 72px;
+}
+
+@media (max-width: 768px) {
+  body {
+    padding-top: 68px;
+  }
 }
 
 .nav-content {
@@ -603,12 +632,20 @@ body {
   border-radius: 8px;
   min-width: 18px;
   height: 18px;
-  display: none; /* Hidden by default, shown via JS when count > 0 */
+  display: none; /* Default state */
   align-items: center;
   justify-content: center;
   z-index: 10;
   box-shadow: 0 2px 6px rgba(239, 68, 68, 0.35);
   animation: badgePulse 2s ease-in-out infinite;
+}
+
+.badge.hidden {
+  display: none !important;
+}
+
+.hidden {
+  display: none !important;
 }
 
 @keyframes badgePulse {
@@ -835,10 +872,7 @@ section.hero {
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg,
-    rgba(99, 102, 241, 0.06) 0%,
-    rgba(118, 75, 162, 0.06) 50%,
-    rgba(99, 102, 241, 0.04) 100%);
+  background: transparent;
 }
 
 .hero-pattern {
@@ -914,7 +948,7 @@ section.hero {
 }
 
 .hero-title {
-  font-size: 3.75rem; /* Restored size */
+  font-size: 3rem; /* Reduced from 3.75rem to fit text on line */
   font-weight: 800;
   line-height: 1.1; /* Tighter line-height (1.1) */
   margin-bottom: 1.5rem;
@@ -3389,4 +3423,36 @@ select.form-control option:focus {
   20%, 80% { transform: translate3d(2px, 0, 0); }
   30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
   40%, 60% { transform: translate3d(4px, 0, 0); }
+}
+
+
+/* Motion Animation for Quick Actions Bolt */
+.motion-icon-bolt {
+  animation: bolt-pulse 2s infinite ease-in-out;
+  color: var(--warning-500);
+  display: inline-block;
+}
+
+@keyframes bolt-pulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 0.8; text-shadow: 0 0 10px rgba(245, 158, 11, 0.5); }
+  100% { transform: scale(1); opacity: 1; }
+}
+}
+
+/* SYMPTOM CHECKER UX POLISH */
+.hint-text {
+  font-size: 0.85rem;
+  color: #6b7280;
+  margin-top: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+button:disabled,
+.btn:disabled {
+  opacity: 0.5 !important;
+  cursor: not-allowed !important;
+  pointer-events: none;
 }

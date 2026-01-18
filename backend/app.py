@@ -1267,6 +1267,30 @@ def mark_notification_read(notification_id):
         return jsonify({"success": False, "error": str(e)}), 500
 
 
+@app.route("/api/notifications/read", methods=["POST"])
+def mark_notification_read_json():
+    """✅ THE ONLY CORRECT BACKEND FIX (JSON Store version)."""
+    try:
+        data = request.get_json() or {}
+        notification_id = data.get("notification_id") or data.get("id")
+        user_id = data.get("user_id") or data.get("userId") or "anonymous"
+
+        if not notification_id:
+            return jsonify({"success": False, "error": "Missing notification_id"}), 400
+
+        # 🔥 Persistence is handled inside mark_one_read which calls _save_all (atomic write)
+        ok = notifications_service.mark_one_read(
+            user_id=str(user_id), notification_id=str(notification_id)
+        )
+
+        if not ok:
+            return jsonify({"success": False, "error": "Notification not found or access denied"}), 404
+
+        return jsonify({"success": True})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
 @app.route("/api/notifications/read-all", methods=["PATCH", "PUT"])
 def mark_all_notifications_read():
     """Mark all notifications as read for current user."""
@@ -1776,6 +1800,55 @@ def serve_frontend(path):
 # Only Google OAuth is supported
 # All email/password endpoints return 410 Gone
 
+
+
+
+# Activity Endpoints
+@app.route("/api/activity/<user_id>", methods=["GET"])
+def get_activity(user_id):
+    """Get user activity log (read-only)."""
+    try:
+        limit = int(request.args.get("limit", "10"))
+        items = activity_service.fetch(user_id=user_id, limit=limit)
+        return jsonify({"success": True, "data": items})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e), "data": []}), 500
+
+
+@app.route("/api/activity/log", methods=["POST"])
+def log_activity():
+    """Log a new activity event."""
+    try:
+        data = request.get_json()
+        user_id = data.get("user_id")
+        activity_type = data.get("type")
+        meta = data.get("meta", {})
+
+        if not user_id or not activity_type:
+            return (
+                jsonify({"success": False, "error": "Missing required fields"}),
+                400,
+            )
+
+        # Validate activity type
+        valid_types = ["chat_started", "image_scan_requested", "vitals_input"]
+        if activity_type not in valid_types:
+            return (
+                jsonify(
+                    {
+                        "success": False,
+                        "error": f"Invalid activity type. Must be one of: {', '.join(valid_types)}",
+                    }
+                ),
+                400,
+            )
+
+        activity_id = activity_service.log_activity(
+            user_id=user_id, type=activity_type, meta=meta
+        )
+        return jsonify({"success": True, "activity_id": activity_id})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
 
 if __name__ == "__main__":
     print("🚀 MedicSense AI Backend Starting...")
