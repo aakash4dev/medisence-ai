@@ -8,6 +8,7 @@ import json
 import os
 
 from auth_manager import auth_manager
+from auth_routes import register_auth_routes
 from camera_analyzer import camera_analyzer
 from database import db
 from emergency_detector import EmergencyDetector
@@ -15,13 +16,36 @@ from emergency_service import emergency_service
 from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 from gemini_service import gemini_service
+
+# Notifications
+from notifications_service import NotificationsService
 from otp_service import otp_service
 from severity_classifier import SeverityClassifier
 from symptom_analyzer import SymptomAnalyzer
-from unified_auth import register_unified_auth_route
 
 app = Flask(__name__)
-CORS(app)  # Allow frontend to communicate
+
+# Enable CORS with proper configuration for authentication
+CORS(
+    app,
+    resources={r"/api/*": {"origins": "*"}},
+    supports_credentials=True,
+    allow_headers=["Content-Type", "Authorization"],
+    methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+)
+
+
+# Request logging for debugging
+@app.before_request
+def log_all_requests():
+    print(f"➡️ {request.method} {request.path}")
+
+
+# Register authentication routes
+register_auth_routes(app, db, auth_manager, otp_service)
+
+# Notifications service (JSON-backed)
+notifications_service = NotificationsService(data_dir="data")
 
 # Initialize medical modules
 analyzer = SymptomAnalyzer()
@@ -44,99 +68,157 @@ def home():
     return send_from_directory("../frontend", "index.html")
 
 
-@app.route("/<path:path>")
-def serve_frontend(path):
-    """Serve other frontend files"""
-    # Skip api routes - they are handled by other endpoints
-    if path.startswith("api/"):
-        from flask import abort
-
-        abort(404)
-    try:
-        return send_from_directory("../frontend", path)
-    except:
-        return send_from_directory("../frontend", "index.html")
-
-
 @app.route("/api/chat", methods=["POST"])
 def chat():
     """Main chat endpoint with LLM-style responses"""
     try:
         data = request.json
-        user_message = data.get("message", "").lower().strip()
+        raw_message = data.get("message", "").strip()
         user_id = data.get("user_id", "anonymous")
 
-        # Simulate thinking time (like LLM processing)
+        # 1. Input Validation & Sanitization
+        if not raw_message or len(raw_message) < 5:
+             # Safe fallback for empty/short input
+             return jsonify({
+                 "response": "Please describe your symptoms in more detail so I can help you.",
+                 "severity": 1,
+                 "type": "general",
+                 "follow_up": ["Can you describe what you're feeling?"]
+             })
+
+        # Extract explicitly set severity from message if present (e.g., "Severity: 5/10")
+        import re
+        severity_match = re.search(r"Severity:\s*(\d+)/10", raw_message)
+        user_severity_input = int(severity_match.group(1)) if severity_match else None
+
+        # Clamp severity 1-10
+        if user_severity_input:
+            user_severity_input = max(1, min(10, user_severity_input))
+
+        # 3. Medical Safety Guardrails (High-Risk Detection - MASTER LIST)
+        high_risk_keywords = [
+            # 1. Cardiac / Heart
+            "chest pain", "chest tightness", "pressure in chest", "crushing chest",
+            "burning chest", "pain in left arm", "pain in jaw", "pain in neck",
+            "heart pain", "heart attack", "cardiac arrest", "palpitations with dizziness",
+            "irregular heartbeat with pain", "sudden chest discomfort",
+            "shortness of breath with chest pain",
+
+            # 2. Stroke / Neuro
+            "sudden weakness", "weakness on one side", "face drooping", "slurred speech",
+            "trouble speaking", "trouble understanding", "sudden confusion",
+            "sudden vision loss", "blurred vision suddenly", "loss of balance",
+            "sudden dizziness", "severe headache sudden", "worst headache",
+            "numbness on one side", "loss of coordination",
+
+            # 3. Respiratory
+            "difficulty breathing", "cannot breathe", "shortness of breath",
+            "breathlessness", "gasping", "wheezing severe", "choking",
+            "airway blocked", "tight throat", "bluish lips", "bluish face",
+            "rapid breathing", "chest retractions",
+
+            # 4. Trauma / Pain
+            "unbearable pain", "extreme pain", "severe pain sudden",
+            "intense abdominal pain", "sharp abdominal pain", "severe back pain sudden",
+            "head injury", "loss of consciousness", "fainted", "collapsed",
+            "severe injury", "major accident", "fracture", "bone sticking out",
+
+            # 5. Bleeding
+            "heavy bleeding", "bleeding won't stop", "vomiting blood",
+            "coughing blood", "blood in stool black", "blood in urine",
+            "internal bleeding", "pale skin", "cold clammy", "shock symptoms",
+
+            # 6. Allergy
+            "swelling of face", "swelling of lips", "swelling of tongue",
+            "throat swelling", "difficulty swallowing", "severe allergic",
+            "anaphylaxis", "hives with breathing",
+
+            # 7. Fever / Infection
+            "very high fever", "fever above 104", "fever with rash",
+            "fever with confusion", "stiff neck", "fever and seizure", "febrile seizure",
+
+            # 8. Poisoning / Overdose
+            "poisoning", "overdose", "took too much", "swallowed poison",
+            "chemical ingestion", "alcohol poisoning", "substance ingestion",
+
+            # 9. Mental Health
+            "suicidal", "want to die", "harm myself", "kill myself",
+            "self harm", "cutting myself", "overdose intentionally", "hearing voices",
+
+            # 10. Pregnancy / Child
+            "pregnant bleeding", "abdominal pain pregnancy", "baby not moving",
+            "child unconscious", "child not breathing", "newborn fever", "seizure in child"
+        ]
+        is_high_risk = any(k in raw_message.lower() for k in high_risk_keywords)
+
+        # 7. Logging (Privacy-Safe)
+        import datetime
+        print(f"[{datetime.datetime.now().isoformat()}] REQ | SeverityInput: {user_severity_input} | RiskDetect: {is_high_risk}")
+
+        # Emergency Override
+        if is_high_risk:
+            # Force severity to 4 (Emergency)
+            mapped_severity = 4
+            ai_response = gemini_service.chat_medical(raw_message, ["Critical Symptoms"], mapped_severity, system_override="🚨 EMERGENCY PROTOCOL ACTIVE.")
+            return jsonify({
+                "response": ai_response,
+                "severity": 4,
+                "type": "emergency",
+                "thinking_process": "Critical keywords detected. Activating safety protocol.",
+                "reasoning": "High-risk symptoms detected requiring immediate medical attention."
+            })
+
+        # 2. Severity Interpretation Logic (Mapping 1-10 -> 1-4 for Internal Context)
+        # 1-3 -> Mild (1)
+        # 4-6 -> Moderate (2)
+        # 7-10 -> Severe (3)
+        if user_severity_input:
+            if user_severity_input <= 3:
+                mapped_severity = 1
+            elif user_severity_input <= 6:
+                mapped_severity = 2
+            else:
+                mapped_severity = 3
+        else:
+            # Fallback to classifier if no explicit input
+            symptoms = analyzer.extract_symptoms(raw_message)
+            mapped_severity = classifier.classify(raw_message, symptoms)
+
+        # Simulate thinking time
         import random
         import time
+        time.sleep(random.uniform(0.5, 1.0))
 
-        thinking_time = random.uniform(0.5, 1.5)  # 0.5-1.5 seconds
-        time.sleep(thinking_time)
+        # Check non-medical
+        if is_non_medical(raw_message):
+             return jsonify({
+                 "response": "I am a medical AI assistant. Please describe your health symptoms.",
+                 "severity": 0,
+                 "type": "general"
+             })
 
-        # Check if non-medical query
-        if is_non_medical(user_message):
-            return jsonify(
-                {
-                    "response": generate_llm_style_response(
-                        "I appreciate you reaching out, but I'm specifically designed to assist with medical and health-related concerns. I'm trained to analyze symptoms, provide health guidance, and help in medical emergencies.\n\nIs there a health concern I can help you with today?",
-                        thinking_process="Analyzing query intent → Detected non-medical topic → Providing polite redirection",
-                    ),
-                    "severity": 0,
-                    "type": "general",
-                    "thinking_process": "I analyzed your message and determined it's not health-related. Redirecting to medical topics.",
-                    "follow_up": [
-                        "Do you have any health symptoms?",
-                        "Is there a medical concern I can help with?",
-                    ],
-                }
-            )
+        # Analyze symptoms
+        symptoms = analyzer.extract_symptoms(raw_message)
 
-        # Check for emergency first
-        emergency_result = emergency.check_emergency(user_message)
-        if emergency_result["is_emergency"]:
-            return jsonify(
-                {
-                    "response": generate_llm_style_response(
-                        emergency_result["response"],
-                        thinking_process=f"Analyzing symptoms → CRITICAL: Emergency detected → Activating emergency protocol",
-                    ),
-                    "severity": 4,
-                    "type": "emergency",
-                    "first_aid": emergency_result.get("first_aid", []),
-                    "hospitals": get_nearby_hospitals(data.get("city", "unknown")),
-                    "thinking_process": "Emergency situation identified. Prioritizing immediate safety instructions.",
-                    "reasoning": "Based on the keywords in your message, this appears to be a medical emergency requiring immediate attention.",
-                }
-            )
+        # Generate AI response
+        ai_response = gemini_service.chat_medical(raw_message, symptoms, mapped_severity)
 
-        # Analyze symptoms with detailed reasoning
-        symptoms = analyzer.extract_symptoms(user_message)
-        severity = classifier.classify(user_message, symptoms)
-
-        # Generate AI-powered response using Gemini
-        ai_response = gemini_service.chat_medical(user_message, symptoms, severity)
-
-        # Generate enhanced LLM-style response with reasoning
-        response = generate_medical_response_llm(
-            user_message, symptoms, severity, user_id
-        )
-
-        # Use AI response if available, otherwise use fallback
-        final_response = (
-            ai_response if ai_response != response["text"] else response["text"]
+        # Generate metadata (doctors, type, etc.) using existing logic
+        response_metadata = generate_medical_response_llm(
+            raw_message, symptoms, mapped_severity, user_id
         )
 
         return jsonify(
             {
-                "response": final_response,
-                "severity": severity,
-                "type": response["type"],
-                "suggested_doctors": response.get("doctors", []),
-                "actions": response.get("actions", []),
-                "redirect_to": response.get("redirect_to"),
-                "thinking_process": response.get("thinking_process", ""),
-                "reasoning": response.get("reasoning", ""),
-                "follow_up": response.get("follow_up", []),
+                "response": ai_response,
+                "severity": mapped_severity,
+                "type": response_metadata["type"],
+                "suggested_doctors": response_metadata.get("doctors", []),
+                "actions": response_metadata.get("actions", []),
+                "redirect_to": response_metadata.get("redirect_to"),
+                "thinking_process": response_metadata.get("thinking_process", ""),
+                "reasoning": response_metadata.get("reasoning", ""),
+                "follow_up": response_metadata.get("follow_up", []),
             }
         )
 
@@ -532,68 +614,10 @@ def generate_medical_response_llm(message, symptoms, severity, user_id):
     return responses.get(severity, responses[1])
 
 
-# ==================== NEW ENDPOINTS FOR NEXT.JS FRONTEND ====================
-
-
-# Authentication Endpoints
-@app.route("/api/auth/send-otp", methods=["POST"])
-def send_otp_simple():
-    """Send OTP to phone number"""
-    data = request.json
-    phone = data.get("phone")
-
-    # Generate OTP (6 digits)
-    import random
-
-    otp = str(random.randint(100000, 999999))
-
-    # In production, send via SMS provider (Twilio, MSG91)
-    # For now, just return success and log OTP
-    print(f"📱 OTP for {phone}: {otp}")
-
-    return jsonify(
-        {
-            "success": True,
-            "message": f"OTP sent to {phone}",
-            "otp": otp,  # Remove in production!
-        }
-    )
-
-
-@app.route("/api/auth/verify-otp", methods=["POST"])
-def verify_otp_simple():
-    """Verify OTP and login"""
-    data = request.json
-    phone = data.get("phone")
-    otp = data.get("otp")
-
-    # In production, verify against stored OTP
-    # For now, accept any 6-digit OTP
-    if len(otp) == 6:
-        import uuid
-
-        user_id = str(uuid.uuid4())
-
-        return jsonify(
-            {
-                "success": True,
-                "token": f"jwt_token_{user_id}",
-                "user": {
-                    "id": user_id,
-                    "phone": phone,
-                    "name": "User",
-                    "email": f"{phone}@medicsense.ai",
-                },
-            }
-        )
-
-    return jsonify({"success": False, "message": "Invalid OTP"}), 401
-
-
-@app.route("/api/auth/logout", methods=["POST"])
-def logout():
-    """Logout user"""
-    return jsonify({"success": True, "message": "Logged out successfully"})
+# ==================== DEPRECATED AUTH ENDPOINTS ====================
+# Email/password authentication has been REMOVED
+# Only Google OAuth is supported now
+# All auth routes are now handled by auth_routes.py via register_auth_routes()
 
 
 # Chat Endpoints
@@ -816,6 +840,9 @@ def book_appointment():
         data = request.json
         user_id = data.get("userId", "anonymous")
 
+        print(f"📋 Booking appointment for user: {user_id}")
+        print(f"📋 Appointment data: {data}")
+
         # Generate appointment ID
         import uuid
 
@@ -852,6 +879,33 @@ def book_appointment():
         # Save to file
         with open(APPOINTMENTS_FILE, "w") as f:
             json.dump(appointments, f, indent=2)
+
+        # Create appointment confirmation notification
+        try:
+            doctor_name = "your doctor"
+            if appointment.get("doctorId"):
+                for doc in DOCTORS_DB.get("doctors", []):
+                    if doc.get("id") == appointment["doctorId"]:
+                        doctor_name = doc.get("name", "your doctor")
+                        break
+
+            notifications_service.create_appointment_notification(
+                user_id=user_id,
+                appointment_id=appointment_id,
+                title="Appointment Confirmed",
+                message=f"Your appointment with {doctor_name} on {appointment['date']} at {appointment['time']} has been confirmed.",
+                metadata={
+                    "appointment_id": appointment_id,
+                    "doctor_id": appointment.get("doctorId"),
+                    "date": appointment.get("date"),
+                    "time": appointment.get("time"),
+                    "deep_link": "#appointments",
+                },
+            )
+            print(f"✅ Notification created for appointment {appointment_id}")
+        except Exception as e:
+            print(f"⚠️  Notification creation failed: {e}")
+            # Don't fail appointment booking if notification fails
 
         # Send WhatsApp notification if appointment is for Dr. Aakash
         if appointment.get("doctorId") == "dr_aakash":
@@ -919,20 +973,132 @@ def get_appointments(user_id):
 @app.route("/api/appointments/<appointment_id>/cancel", methods=["PUT"])
 def cancel_appointment(appointment_id):
     """Cancel an appointment"""
-    return jsonify({"success": True, "message": "Appointment cancelled successfully"})
+    try:
+        data = request.json or {}
+        user_id = data.get("userId", "anonymous")
+
+        # Load appointments
+        appointments = []
+        if os.path.exists(APPOINTMENTS_FILE):
+            try:
+                with open(APPOINTMENTS_FILE, "r") as f:
+                    appointments = json.load(f)
+            except:
+                appointments = []
+
+        # Find and update appointment
+        appointment_found = False
+        for apt in appointments:
+            if apt.get("id") == appointment_id and apt.get("userId") == user_id:
+                apt["status"] = "cancelled"
+                appointment_found = True
+
+                # Create cancellation notification
+                try:
+                    notifications_service.create_notification(
+                        user_id=user_id,
+                        notification_type="appointment",
+                        title="Appointment Cancelled",
+                        message=f"Your appointment on {apt.get('date')} at {apt.get('time')} has been cancelled.",
+                        metadata={
+                            "appointment_id": appointment_id,
+                            "deep_link": "#appointments",
+                        },
+                        dedupe_key=f"apt:{appointment_id}:cancelled",
+                    )
+                    print(f"✅ Cancellation notification created for {appointment_id}")
+                except Exception as e:
+                    print(f"⚠️  Cancellation notification failed: {e}")
+
+                break
+
+        if appointment_found:
+            # Save updated appointments
+            with open(APPOINTMENTS_FILE, "w") as f:
+                json.dump(appointments, f, indent=2)
+
+        return jsonify(
+            {"success": True, "message": "Appointment cancelled successfully"}
+        )
+    except Exception as e:
+        print(f"❌ Error cancelling appointment: {e}")
+        return jsonify({"success": False, "message": str(e)}), 500
 
 
 @app.route("/api/appointments/<appointment_id>/reschedule", methods=["PUT"])
 def reschedule_appointment(appointment_id):
     """Reschedule an appointment"""
-    data = request.json
-    return jsonify(
-        {
-            "success": True,
-            "message": "Appointment rescheduled successfully",
-            "data": data,
-        }
-    )
+    try:
+        data = request.json or {}
+        user_id = data.get("userId", "anonymous")
+        new_date = data.get("date")
+        new_time = data.get("time")
+
+        # Load appointments
+        appointments = []
+        if os.path.exists(APPOINTMENTS_FILE):
+            try:
+                with open(APPOINTMENTS_FILE, "r") as f:
+                    appointments = json.load(f)
+            except:
+                appointments = []
+
+        # Find and update appointment
+        appointment_found = False
+        for apt in appointments:
+            if apt.get("id") == appointment_id and apt.get("userId") == user_id:
+                old_date = apt.get("date")
+                old_time = apt.get("time")
+
+                if new_date:
+                    apt["date"] = new_date
+                if new_time:
+                    apt["time"] = new_time
+
+                apt["status"] = "rescheduled"
+                appointment_found = True
+
+                # Create reschedule notification
+                try:
+                    notifications_service.create_notification(
+                        user_id=user_id,
+                        notification_type="appointment",
+                        title="Appointment Rescheduled",
+                        message=f"Your appointment has been rescheduled from {old_date} at {old_time} to {apt['date']} at {apt['time']}.",
+                        metadata={
+                            "appointment_id": appointment_id,
+                            "old_date": old_date,
+                            "old_time": old_time,
+                            "new_date": apt.get("date"),
+                            "new_time": apt.get("time"),
+                            "deep_link": "#appointments",
+                        },
+                        dedupe_key=f"apt:{appointment_id}:rescheduled:{apt['date']}",
+                    )
+                    print(f"✅ Reschedule notification created for {appointment_id}")
+                except Exception as e:
+                    print(f"⚠️  Reschedule notification failed: {e}")
+
+                break
+
+        if appointment_found:
+            # Save updated appointments
+            with open(APPOINTMENTS_FILE, "w") as f:
+                json.dump(appointments, f, indent=2)
+
+            return jsonify(
+                {
+                    "success": True,
+                    "message": "Appointment rescheduled successfully",
+                    "data": data,
+                }
+            )
+        else:
+            return jsonify({"success": False, "message": "Appointment not found"}), 404
+
+    except Exception as e:
+        print(f"❌ Error rescheduling appointment: {e}")
+        return jsonify({"success": False, "message": str(e)}), 500
 
 
 # Doctors Endpoints
@@ -973,162 +1139,253 @@ def get_doctor_availability(doctor_id):
 # Notifications Endpoint
 @app.route("/api/notifications/<user_id>", methods=["GET"])
 def get_notifications(user_id):
-    """Get user notifications"""
-    import datetime
+    """Get user notifications (production JSON-backed)."""
+    try:
+        # Basic user scoping. Frontend can pass 'anonymous' if not logged in.
+        filter_key = request.args.get("filter", "all")
+        limit = int(request.args.get("limit", "50"))
+        cursor = request.args.get("cursor")
+        cursor_int = int(cursor) if cursor is not None else None
 
-    return jsonify(
-        {
-            "success": True,
-            "data": [
-                {
-                    "id": "1",
-                    "userId": user_id,
-                    "title": "Appointment Reminder",
-                    "message": "Your appointment with Dr. Smith is tomorrow at 10:00 AM",
-                    "type": "appointment",
-                    "read": False,
-                    "timestamp": datetime.datetime.now().isoformat(),
-                },
-                {
-                    "id": "2",
-                    "userId": user_id,
-                    "title": "Medication Reminder",
-                    "message": "Time to take your morning medication",
-                    "type": "medication",
-                    "read": False,
-                    "timestamp": (
-                        datetime.datetime.now() - datetime.timedelta(hours=2)
-                    ).isoformat(),
-                },
-                {
-                    "id": "3",
-                    "userId": user_id,
-                    "title": "Health Tip",
-                    "message": "Stay hydrated! Drink at least 8 glasses of water today.",
-                    "type": "health_tip",
-                    "read": True,
-                    "timestamp": (
-                        datetime.datetime.now() - datetime.timedelta(days=1)
-                    ).isoformat(),
-                },
-            ],
-        }
-    )
+        # Refresh opportunistically to keep page accurate without frontend changes
+        notifications_service.refresh(user_id=user_id)
+
+        items, next_cursor = notifications_service.fetch(
+            user_id=user_id,
+            filter_key=filter_key,
+            limit=limit,
+            cursor=cursor_int,
+        )
+
+        return jsonify(
+            {
+                "success": True,
+                "data": items,
+                "pagination": {"next_cursor": next_cursor, "limit": limit},
+            }
+        )
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e), "data": []}), 500
 
 
-@app.route("/api/notifications/<notification_id>/read", methods=["PUT"])
+@app.route("/api/notifications", methods=["GET"])
+def get_notifications_v2():
+    """Fetch Notifications (contract-compliant).
+
+    Query params:
+      - user_id: required (until real auth middleware exists)
+      - filter: all | unread | appointments | medications | health_tips
+      - limit: int
+      - cursor: int offset
+
+    Sorted by created_at DESC.
+    """
+    try:
+        user_id = request.args.get("user_id") or request.headers.get("X-User-Id")
+        if not user_id:
+            return (
+                jsonify(
+                    {
+                        "success": True,
+                        "data": [],
+                        "summary": {
+                            "total": 0,
+                            "unread": 0,
+                            "appointments": 0,
+                            "medications": 0,
+                        },
+                        "pagination": {"next_cursor": None, "limit": 0},
+                    }
+                ),
+                200,
+            )
+
+        filter_key = request.args.get("filter", "all")
+        limit = int(request.args.get("limit", "50"))
+        cursor = request.args.get("cursor")
+        cursor_int = int(cursor) if cursor is not None else None
+
+        # Idempotent generation
+        notifications_service.refresh(user_id=str(user_id))
+
+        items, next_cursor = notifications_service.fetch(
+            user_id=str(user_id),
+            filter_key=filter_key,
+            limit=limit,
+            cursor=cursor_int,
+        )
+        summary = notifications_service.summary(user_id=str(user_id))
+
+        return jsonify(
+            {
+                "success": True,
+                "data": items,
+                "summary": summary,
+                "pagination": {"next_cursor": next_cursor, "limit": limit},
+            }
+        )
+    except Exception as e:
+        return (
+            jsonify(
+                {
+                    "success": False,
+                    "error": str(e),
+                    "data": [],
+                    "summary": {
+                        "total": 0,
+                        "unread": 0,
+                        "appointments": 0,
+                        "medications": 0,
+                    },
+                }
+            ),
+            500,
+        )
+
+
+@app.route("/api/notifications/<notification_id>/read", methods=["PUT", "PATCH"])
 def mark_notification_read(notification_id):
-    """Mark notification as read"""
-    return jsonify({"success": True, "message": "Notification marked as read"})
+    """Mark a single notification as read (user-scoped)."""
+    try:
+        # Frontend currently calls PUT without auth; infer user_id from stored user if possible.
+        user_id = request.args.get("user_id") or request.headers.get("X-User-Id")
+        if not user_id:
+            body = request.get_json(silent=True) or {}
+            user_id = body.get("user_id") or body.get("userId")
+
+        # Last resort: allow anonymous to mark only its own notifications
+        if not user_id:
+            user_id = "anonymous"
+
+        ok = notifications_service.mark_one_read(
+            user_id=user_id, notification_id=notification_id
+        )
+        if not ok:
+            return jsonify({"success": False, "error": "Not found"}), 404
+        return jsonify({"success": True})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
 
 
-# Reports Endpoint
-@app.route("/api/reports/<user_id>", methods=["GET"])
-def get_reports(user_id):
-    """Get user medical reports"""
-    import datetime
+@app.route("/api/notifications/read", methods=["POST"])
+def mark_notification_read_json():
+    """✅ THE ONLY CORRECT BACKEND FIX (JSON Store version)."""
+    try:
+        data = request.get_json() or {}
+        notification_id = data.get("notification_id") or data.get("id")
+        user_id = data.get("user_id") or data.get("userId") or "anonymous"
 
-    return jsonify(
-        {
-            "success": True,
-            "data": [
+        if not notification_id:
+            return jsonify({"success": False, "error": "Missing notification_id"}), 400
+
+        # 🔥 Persistence is handled inside mark_one_read which calls _save_all (atomic write)
+        ok = notifications_service.mark_one_read(
+            user_id=str(user_id), notification_id=str(notification_id)
+        )
+
+        if not ok:
+            return jsonify({"success": False, "error": "Notification not found or access denied"}), 404
+
+        return jsonify({"success": True})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+@app.route("/api/notifications/read-all", methods=["PATCH", "PUT"])
+def mark_all_notifications_read():
+    """Mark all notifications as read for current user."""
+    try:
+        user_id = request.args.get("user_id") or request.headers.get("X-User-Id")
+        if not user_id:
+            body = request.get_json(silent=True) or {}
+            user_id = body.get("user_id")
+        if not user_id:
+            return jsonify({"success": False, "error": "Missing user_id"}), 401
+
+        changed = notifications_service.mark_all_read(user_id=user_id)
+        return jsonify({"success": True, "updated": changed})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+@app.route("/api/notifications/mark-all-read", methods=["POST", "PUT", "PATCH"])
+def mark_all_notifications_read_compat():
+    """Compatibility endpoint for existing frontend (no user_id passed)."""
+    try:
+        user_id = request.args.get("user_id") or request.headers.get("X-User-Id")
+        if not user_id:
+            body = request.get_json(silent=True) or {}
+            user_id = body.get("user_id") or body.get("userId") or "anonymous"
+
+        changed = notifications_service.mark_all_read(user_id=str(user_id))
+        return jsonify({"success": True, "updated": changed})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+@app.route("/api/notifications/refresh", methods=["POST"])
+def notifications_refresh():
+    """Idempotent refresh: pulls notifications from appointments/medications/tips."""
+    try:
+        user_id = request.args.get("user_id") or request.headers.get("X-User-Id")
+        if not user_id:
+            body = request.get_json(silent=True) or {}
+            user_id = body.get("user_id") or body.get("userId") or "anonymous"
+
+        result = notifications_service.refresh(user_id=str(user_id))
+        summary = notifications_service.summary(user_id=str(user_id))
+        return jsonify(
+            {"success": True, "created": result.get("created", 0), "summary": summary}
+        )
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+@app.route("/api/notifications/summary", methods=["GET"])
+def notifications_summary():
+    """Notification Summary (computed counters).
+
+    Query params:
+      - user_id: required for non-empty summary
+
+    Returns empty state summary when user_id is missing.
+    """
+    try:
+        user_id = request.args.get("user_id") or request.headers.get("X-User-Id")
+
+        if not user_id:
+            return jsonify(
                 {
-                    "id": "1",
-                    "userId": user_id,
-                    "title": "Blood Test Report",
-                    "date": (
-                        datetime.datetime.now() - datetime.timedelta(days=7)
-                    ).isoformat(),
-                    "type": "Lab Test",
-                    "doctor": "Dr. Smith",
-                    "fileUrl": "/reports/blood_test_123.pdf",
-                    "summary": "All parameters within normal range",
-                },
+                    "success": True,
+                    "summary": {
+                        "total": 0,
+                        "unread": 0,
+                        "appointments": 0,
+                        "medications": 0,
+                    },
+                }
+            )
+
+        # Refresh to include any newly generated events
+        notifications_service.refresh(user_id=str(user_id))
+        summary = notifications_service.summary(user_id=str(user_id))
+        return jsonify({"success": True, "summary": summary})
+    except Exception as e:
+        return (
+            jsonify(
                 {
-                    "id": "2",
-                    "userId": user_id,
-                    "title": "X-Ray Report - Chest",
-                    "date": (
-                        datetime.datetime.now() - datetime.timedelta(days=15)
-                    ).isoformat(),
-                    "type": "Imaging",
-                    "doctor": "Dr. Johnson",
-                    "fileUrl": "/reports/xray_456.pdf",
-                    "summary": "No abnormalities detected",
-                },
-                {
-                    "id": "3",
-                    "userId": user_id,
-                    "title": "Annual Health Checkup",
-                    "date": (
-                        datetime.datetime.now() - datetime.timedelta(days=30)
-                    ).isoformat(),
-                    "type": "General",
-                    "doctor": "Dr. Williams",
-                    "fileUrl": "/reports/checkup_789.pdf",
-                    "summary": "Overall health status: Good",
-                },
-            ],
-        }
-    )
-
-
-@app.route("/api/reports/upload", methods=["POST"])
-def upload_report():
-    """Upload a medical report"""
-    if "file" not in request.files:
-        return jsonify({"success": False, "message": "No file provided"}), 400
-
-    file = request.files["file"]
-    data = request.form
-
-    return jsonify(
-        {
-            "success": True,
-            "message": "Report uploaded successfully",
-            "reportId": "RPT123456",
-        }
-    )
-
-
-# Search Endpoint
-@app.route("/api/search", methods=["GET"])
-def search():
-    """Search for doctors, symptoms, medicines"""
-    query = request.args.get("q", "").lower()
-    search_type = request.args.get("type", "all")
-
-    results = {"doctors": [], "symptoms": [], "medicines": [], "articles": []}
-
-    # Search doctors
-    if search_type in ["all", "doctors"]:
-        doctors = DOCTORS_DB.get("doctors", [])
-        results["doctors"] = [
-            doc
-            for doc in doctors
-            if query in doc.get("name", "").lower()
-            or query in doc.get("specialty", "").lower()
-        ][:5]
-
-    # Search symptoms
-    if search_type in ["all", "symptoms"]:
-        symptoms = MEDICAL_KB.get("symptoms", {})
-        results["symptoms"] = [
-            {"name": symptom, "info": info}
-            for symptom, info in symptoms.items()
-            if query in symptom.lower()
-        ][:5]
-
-    # Search medicines
-    if search_type in ["all", "medicines"]:
-        medicines = MEDICAL_KB.get("medicines", {})
-        results["medicines"] = [
-            {"name": med, "info": info}
-            for med, info in medicines.items()
-            if query in med.lower()
-        ][:5]
-
-    return jsonify({"success": True, "query": query, "results": results})
+                    "success": False,
+                    "error": str(e),
+                    "summary": {
+                        "total": 0,
+                        "unread": 0,
+                        "appointments": 0,
+                        "medications": 0,
+                    },
+                }
+            ),
+            500,
+        )
 
 
 # ================================
@@ -1149,25 +1406,17 @@ def send_otp():
                 400,
             )
 
-        # Validate phone format
-        if not phone.startswith("+") or len(phone) < 10:
-            return (
-                jsonify(
-                    {
-                        "success": False,
-                        "message": "Invalid phone number format. Use +91XXXXXXXXXX",
-                    }
-                ),
-                400,
-            )
-
-        # Generate and send OTP
-        result = otp_service.generate_otp(phone)
-
-        if result["success"]:
-            return jsonify(result), 200
-        else:
-            return jsonify(result), 429  # Too Many Requests
+        # DEPRECATED - Email/password auth removed
+        return (
+            jsonify(
+                {
+                    "success": False,
+                    "error": "Authentication method no longer supported",
+                    "message": "Please use Google Sign-In to continue",
+                }
+            ),
+            410,
+        )
 
     except Exception as e:
         return jsonify({"success": False, "message": str(e)}), 500
@@ -1175,53 +1424,32 @@ def send_otp():
 
 @app.route("/api/auth/otp/verify", methods=["POST"])
 def verify_otp():
-    """Verify OTP"""
-    try:
-        data = request.json
-        phone = data.get("phone", "").strip()
-        otp = data.get("otp", "").strip()
-
-        if not phone or not otp:
-            return (
-                jsonify({"success": False, "message": "Phone and OTP are required"}),
-                400,
-            )
-
-        # Verify OTP
-        result = otp_service.verify_otp(phone, otp)
-
-        if result["success"]:
-            return jsonify(result), 200
-        else:
-            return jsonify(result), 400
-
-    except Exception as e:
-        return jsonify({"success": False, "message": str(e)}), 500
+    """DEPRECATED: Email/password auth removed - use Google Sign-In only"""
+    return (
+        jsonify(
+            {
+                "success": False,
+                "error": "Authentication method no longer supported",
+                "message": "Please use Google Sign-In to continue",
+            }
+        ),
+        410,
+    )
 
 
 @app.route("/api/auth/otp/resend", methods=["POST"])
 def resend_otp():
-    """Resend OTP"""
-    try:
-        data = request.json
-        phone = data.get("phone", "").strip()
-
-        if not phone:
-            return (
-                jsonify({"success": False, "message": "Phone number is required"}),
-                400,
-            )
-
-        # Resend OTP
-        result = otp_service.resend_otp(phone)
-
-        if result["success"]:
-            return jsonify(result), 200
-        else:
-            return jsonify(result), 429
-
-    except Exception as e:
-        return jsonify({"success": False, "message": str(e)}), 500
+    """DEPRECATED: Email/password auth removed - use Google Sign-In only"""
+    return (
+        jsonify(
+            {
+                "success": False,
+                "error": "Authentication method no longer supported",
+                "message": "Please use Google Sign-In to continue",
+            }
+        ),
+        410,
+    )
 
 
 # ================================
@@ -1545,10 +1773,82 @@ def emergency_hospitals():
 
 
 # ============================================
-# REGISTER UNIFIED AUTHENTICATION ROUTE
+# CATCH-ALL ROUTE - MUST BE LAST!
 # ============================================
-register_unified_auth_route(app, db, otp_service)
+# This route serves frontend static files
+# It MUST be at the bottom to avoid intercepting API routes
+@app.route("/<path:path>", methods=["GET"])
+def serve_frontend(path):
+    """Serve frontend static files - GET ONLY"""
+    # API routes are handled above - this should never be reached for /api/*
+    if path.startswith("api/"):
+        from flask import abort
 
+        abort(404)
+
+    try:
+        return send_from_directory("../frontend", path)
+    except:
+        # Fallback to index.html for SPA routing
+        return send_from_directory("../frontend", "index.html")
+
+
+# ============================================
+# GOOGLE-ONLY AUTHENTICATION
+# ============================================
+# Email/password authentication has been removed
+# Only Google OAuth is supported
+# All email/password endpoints return 410 Gone
+
+
+
+
+# Activity Endpoints
+@app.route("/api/activity/<user_id>", methods=["GET"])
+def get_activity(user_id):
+    """Get user activity log (read-only)."""
+    try:
+        limit = int(request.args.get("limit", "10"))
+        items = activity_service.fetch(user_id=user_id, limit=limit)
+        return jsonify({"success": True, "data": items})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e), "data": []}), 500
+
+
+@app.route("/api/activity/log", methods=["POST"])
+def log_activity():
+    """Log a new activity event."""
+    try:
+        data = request.get_json()
+        user_id = data.get("user_id")
+        activity_type = data.get("type")
+        meta = data.get("meta", {})
+
+        if not user_id or not activity_type:
+            return (
+                jsonify({"success": False, "error": "Missing required fields"}),
+                400,
+            )
+
+        # Validate activity type
+        valid_types = ["chat_started", "image_scan_requested", "vitals_input"]
+        if activity_type not in valid_types:
+            return (
+                jsonify(
+                    {
+                        "success": False,
+                        "error": f"Invalid activity type. Must be one of: {', '.join(valid_types)}",
+                    }
+                ),
+                400,
+            )
+
+        activity_id = activity_service.log_activity(
+            user_id=user_id, type=activity_type, meta=meta
+        )
+        return jsonify({"success": True, "activity_id": activity_id})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
 
 if __name__ == "__main__":
     print("🚀 MedicSense AI Backend Starting...")
@@ -1559,8 +1859,8 @@ if __name__ == "__main__":
     print("🔔 Notifications endpoint enabled")
     print("📄 Reports endpoint enabled")
     print("🔍 Search endpoint enabled")
-    print("📱 OTP authentication enabled")
-    print("🔐 Unified email auth enabled (automatic sign-in/sign-up)")
+    print("� Google OAuth authentication ONLY")
+    print("⚠️  Email/password auth has been removed")
     print(
         "\n💡 Tip: Get a free Gemini API key from https://makersuite.google.com/app/apikey"
     )

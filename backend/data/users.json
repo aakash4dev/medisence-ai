@@ -1,1 +1,26 @@
-{}
+{
+  "86ce4926-0be5-486c-a484-1e537a913f3c": {
+    "user_id": "86ce4926-0be5-486c-a484-1e537a913f3c",
+    "email": "jaiswalshivansh122@gmail.com",
+    "phone": "",
+    "name": "Shivansh",
+    "auth_method": "google",
+    "created_at": "2026-01-16T22:06:30.947319",
+    "last_active": "2026-01-18T22:30:48.740873",
+    "account_status": "active",
+    "google_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "google_email": "jaiswalshivansh122@gmail.com"
+  },
+  "a6af7a36-63e1-4fff-86cd-376f1d28b77b": {
+    "user_id": "a6af7a36-63e1-4fff-86cd-376f1d28b77b",
+    "email": "krishna308114@gmail.com",
+    "phone": "",
+    "name": "Marvelous",
+    "auth_method": "google",
+    "created_at": "2026-01-17T00:15:57.554046",
+    "last_active": "2026-01-18T21:29:27.468440",
+    "account_status": "active",
+    "google_id": "ytMWBzhyUFgNq2d2yYD3dI79ynM2",
+    "google_email": "krishna308114@gmail.com"
+  }
+}
