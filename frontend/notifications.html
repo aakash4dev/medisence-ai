@@ -17,6 +17,7 @@
         min-height: 100vh;
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         padding: 2rem;
+        padding-top: 5rem; /* Add space for back button */
       }
       .notifications-header {
         background: white;
@@ -71,31 +72,6 @@
       }
       .btn-secondary:hover {
         background: #cbd5e1;
-      }
-      .notifications-stats {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1.5rem;
-        margin-bottom: 2rem;
-      }
-      .stat-card {
-        background: white;
-        border-radius: 15px;
-        padding: 1.5rem;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-      }
-      .stat-card h3 {
-        color: #64748b;
-        font-size: 0.875rem;
-        margin: 0 0 0.5rem 0;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-      }
-      .stat-card .stat-value {
-        font-size: 2rem;
-        font-weight: 700;
-        color: #667eea;
-        margin: 0;
       }
       .notifications-section {
         background: white;
@@ -237,25 +213,27 @@
       }
       .back-btn {
         position: fixed;
-        top: 2rem;
+        top: 1.5rem;
         left: 2rem;
         background: white;
         border: none;
-        padding: 0.75rem 1rem;
-        border-radius: 10px;
+        padding: 0.75rem 1.25rem;
+        border-radius: 12px;
         cursor: pointer;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         transition: all 0.3s;
-        z-index: 100;
+        z-index: 1000;
         display: flex;
         align-items: center;
         gap: 0.5rem;
         color: #1e293b;
-        font-weight: 500;
+        font-weight: 600;
+        font-size: 0.95rem;
       }
       .back-btn:hover {
         transform: translateY(-2px);
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        background: #f8fafc;
       }
       .filter-tabs {
         display: flex;
@@ -272,6 +250,19 @@
         transition: all 0.2s;
         font-weight: 500;
         color: #64748b;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .filter-tab .count {
+        background: #e2e8f0;
+        color: #64748b;
+        padding: 0.15rem 0.5rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        min-width: 20px;
+        text-align: center;
       }
       .filter-tab:hover {
         border-color: #667eea;
@@ -282,9 +273,14 @@
         color: white;
         border-color: transparent;
       }
+      .filter-tab.active .count {
+        background: rgba(255, 255, 255, 0.3);
+        color: white;
+      }
       @media (max-width: 768px) {
         .notifications-container {
           padding: 1rem;
+          padding-top: 4rem; /* Add space for back button on mobile */
         }
         .notifications-header {
           flex-direction: column;
@@ -301,6 +297,8 @@
         .back-btn {
           top: 1rem;
           left: 1rem;
+          padding: 0.6rem 1rem;
+          font-size: 0.875rem;
         }
       }
       .mark-all-btn:disabled {
@@ -332,8 +330,8 @@
   </head>
   <body>
     <div class="notifications-container">
-      <a href="index.html" class="back-btn" style="text-decoration: none;">
-        <i class="fas fa-arrow-left"></i> Back
+      <a href="index.html" class="back-btn" style="text-decoration: none">
+        <i class="fas fa-arrow-left"></i> Back to Dashboard
       </a>
 
       <div class="notifications-header">
@@ -342,7 +340,11 @@
           Notifications
         </h1>
         <div class="notifications-header-actions">
-          <button id="markAllBtn" class="btn-secondary mark-all-btn" onclick="markAllAsRead()">
+          <button
+            id="markAllBtn"
+            class="btn-secondary mark-all-btn"
+            onclick="markAllAsRead()"
+          >
             <i class="fas fa-check-double"></i> Mark All Read
           </button>
           <button class="btn-primary" onclick="fetchNotifications()">
@@ -351,34 +353,25 @@
         </div>
       </div>
 
-      <div class="notifications-stats">
-        <div class="stat-card">
-          <h3>Total Notifications</h3>
-          <p class="stat-value" id="totalCount">0</p>
-        </div>
-        <div class="stat-card">
-          <h3>Unread</h3>
-          <p class="stat-value" id="unreadCount">0</p>
-        </div>
-        <div class="stat-card">
-          <h3>Appointments</h3>
-          <p class="stat-value" id="appointmentCount">0</p>
-        </div>
-        <div class="stat-card">
-          <h3>Medications</h3>
-          <p class="stat-value" id="medicationCount">0</p>
-        </div>
-      </div>
-
       <div class="notifications-section">
         <h2><i class="fas fa-list"></i> Filtered View</h2>
 
         <div class="filter-tabs">
-          <button class="filter-tab active" data-filter="all">All</button>
-          <button class="filter-tab" data-filter="unread">Unread</button>
-          <button class="filter-tab" data-filter="appointment">Appointments</button>
-          <button class="filter-tab" data-filter="medication">Medications</button>
-          <button class="filter-tab" data-filter="health_tip">Health Tips</button>
+          <button class="filter-tab active" data-filter="all">
+            All <span class="count" id="countAll">0</span>
+          </button>
+          <button class="filter-tab" data-filter="unread">
+            Unread <span class="count" id="countUnread">0</span>
+          </button>
+          <button class="filter-tab" data-filter="appointment">
+            Appointments <span class="count" id="countAppointment">0</span>
+          </button>
+          <button class="filter-tab" data-filter="medication">
+            Medications <span class="count" id="countMedication">0</span>
+          </button>
+          <button class="filter-tab" data-filter="health_tip">
+            Health Tips <span class="count" id="countHealthTip">0</span>
+          </button>
         </div>
 
         <div class="notifications-list" id="notificationsList">
@@ -397,7 +390,9 @@
     <script>
       // CONFIG Setup
       const CONFIG = {
-        API_BASE_URL: (window.ENV && window.ENV.API_BASE_URL) || "http://localhost:5000/api"
+        API_BASE_URL:
+          (window.ENV && window.ENV.API_BASE_URL) ||
+          "http://localhost:5000/api",
       };
 
       // 1. GLOBALS (AS REQUESTED)
@@ -417,24 +412,38 @@
       // 3. CORE FUNCTIONS (LOCKED ARCHITECTURE)
 
       async function fetchNotifications() {
+        console.log("📋 Fetching notifications...");
         try {
           const uid = resolveUserId();
-          const res = await fetch(`${CONFIG.API_BASE_URL}/notifications?user_id=${encodeURIComponent(uid)}&limit=100`);
+          console.log("👤 User ID:", uid);
+
+          const res = await fetch(
+            `${CONFIG.API_BASE_URL}/notifications?user_id=${encodeURIComponent(
+              uid
+            )}&limit=100`
+          );
           const data = await res.json();
+
+          console.log("📥 Fetched notifications data:", data);
 
           if (data.success) {
             // Mapping backend "read" field to frontend "is_read" for architectural clarity
-            notifications = (data.data || []).map(n => ({
+            notifications = (data.data || []).map((n) => ({
               ...n,
-              is_read: n.read === true // Ensure it's a boolean
+              is_read: n.read === true, // Ensure it's a boolean
             }));
 
-            updateStats();
+            console.log("✅ Loaded " + notifications.length + " notifications");
+            console.log(
+              "📊 Unread count:",
+              notifications.filter((n) => !n.is_read).length
+            );
+
             renderNotifications();
             updateBellBadge();
           }
         } catch (err) {
-          console.error("Fetch failed:", err);
+          console.error("❌ Fetch failed:", err);
         }
       }
 
@@ -447,9 +456,9 @@
         // Filtering logic
         let filtered = [...notifications];
         if (activeFilter === "unread") {
-          filtered = filtered.filter(n => !n.is_read);
+          filtered = filtered.filter((n) => !n.is_read);
         } else if (activeFilter !== "all") {
-          filtered = filtered.filter(n => n.type === activeFilter);
+          filtered = filtered.filter((n) => n.type === activeFilter);
         }
 
         // Sorting (Newest first)
@@ -462,70 +471,131 @@
               <h3>All caught up</h3>
               <p class="empty-hint">${
                 activeFilter === "all"
-                ? "You’re all caught up! Book an appointment to receive reminders and updates."
-                : `No ${activeFilter} notifications found.`
+                  ? "You’re all caught up! Book an appointment to receive reminders and updates."
+                  : `No ${activeFilter} notifications found.`
               }</p>
             </div>
           `;
           return;
         }
 
-        filtered.forEach(n => {
+        filtered.forEach((n) => {
           const timeAgo = getTimeAgo(n.timestamp);
           const icon = getIcon(n.type);
-          const iconClass = n.type || 'system';
+          const iconClass = n.type || "system";
 
-          container.innerHTML += `
-            <div class="notification-item ${!n.is_read ? "unread" : "read"}"
-                 onclick="markNotificationRead('${n.id}')">
-              <div class="notification-header">
-                <div class="notification-title">
-                  <div class="notification-icon ${iconClass}">
-                    <i class="${icon}"></i>
-                  </div>
-                  <div class="notification-content">
-                    <h3>${n.title}</h3>
-                    <p>${n.message}</p>
-                  </div>
+          // Create a div element instead of using innerHTML
+          const notifDiv = document.createElement("div");
+          notifDiv.className = `notification-item ${
+            !n.is_read ? "unread" : "read"
+          }`;
+          notifDiv.setAttribute("data-notification-id", n.id);
+          notifDiv.onclick = () => markNotificationRead(n.id);
+
+          notifDiv.innerHTML = `
+            <div class="notification-header">
+              <div class="notification-title">
+                <div class="notification-icon ${iconClass}">
+                  <i class="${icon}"></i>
+                </div>
+                <div class="notification-content">
+                  <h3>${n.title}</h3>
+                  <p>${n.message}</p>
                 </div>
               </div>
-              <div class="notification-time">
-                <i class="fas fa-clock"></i>
-                <span>${timeAgo}</span>
-              </div>
+            </div>
+            <div class="notification-time">
+              <i class="fas fa-clock"></i>
+              <span>${timeAgo}</span>
             </div>
           `;
+
+          container.appendChild(notifDiv);
         });
+
+        // Update "Mark All Read" button state
+        const markAllBtn = document.getElementById("markAllBtn");
+        const unreadCount = notifications.filter((n) => !n.is_read).length;
+        if (markAllBtn) markAllBtn.disabled = unreadCount === 0;
+
+        // Update filter tab counts
+        updateFilterCounts();
+      }
+
+      function updateFilterCounts() {
+        // Update all counts
+        const countAll = document.getElementById("countAll");
+        const countUnread = document.getElementById("countUnread");
+        const countAppointment = document.getElementById("countAppointment");
+        const countMedication = document.getElementById("countMedication");
+        const countHealthTip = document.getElementById("countHealthTip");
+
+        if (countAll) countAll.textContent = notifications.length;
+        if (countUnread)
+          countUnread.textContent = notifications.filter(
+            (n) => !n.is_read
+          ).length;
+        if (countAppointment)
+          countAppointment.textContent = notifications.filter(
+            (n) => n.type === "appointment"
+          ).length;
+        if (countMedication)
+          countMedication.textContent = notifications.filter(
+            (n) => n.type === "medication"
+          ).length;
+        if (countHealthTip)
+          countHealthTip.textContent = notifications.filter(
+            (n) => n.type === "health_tip"
+          ).length;
       }
 
       async function markNotificationRead(id) {
-        const notification = notifications.find(n => n.id === id);
-        if (!notification || notification.is_read) return;
+        console.log("🔔 Marking notification as read:", id);
+
+        const notification = notifications.find((n) => n.id === id);
+        if (!notification) {
+          console.error("❌ Notification not found:", id);
+          return;
+        }
+
+        if (notification.is_read) {
+          console.log("ℹ️ Notification already read:", id);
+          return;
+        }
 
         try {
           const uid = resolveUserId();
-          await fetch(`${CONFIG.API_BASE_URL}/notifications/read`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ user_id: uid, notification_id: id })
-          });
+          console.log("📤 Sending mark read request for user:", uid);
+
+          const response = await fetch(
+            `${CONFIG.API_BASE_URL}/notifications/read`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ user_id: uid, notification_id: id }),
+            }
+          );
+
+          const result = await response.json();
+          console.log("📥 Mark read response:", result);
 
           // ✅ update the ONLY source of truth
-          notifications = notifications.map(n =>
+          notifications = notifications.map((n) =>
             n.id === id ? { ...n, is_read: true } : n
           );
 
+          console.log("✅ Updated notifications array, now re-rendering...");
+
           // 🔥 ORDER MATTERS (Derived every time)
-          updateStats();        // recalc unread count
-          updateBellBadge();   // recalc bell dot
+          updateBellBadge(); // recalc bell dot
           renderNotifications(); // re-filter + re-render
         } catch (err) {
-          console.error("Mark read failed:", err);
+          console.error("❌ Mark read failed:", err);
         }
       }
 
       async function markAllAsRead() {
-        const unreadCount = notifications.filter(n => !n.is_read).length;
+        const unreadCount = notifications.filter((n) => !n.is_read).length;
         if (unreadCount === 0) return;
 
         try {
@@ -533,14 +603,13 @@
           await fetch(`${CONFIG.API_BASE_URL}/notifications/read-all`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ user_id: uid })
+            body: JSON.stringify({ user_id: uid }),
           });
 
           // ✅ update the ONLY source of truth
-          notifications = notifications.map(n => ({ ...n, is_read: true }));
+          notifications = notifications.map((n) => ({ ...n, is_read: true }));
 
           // 🔥 ORDER MATTERS
-          updateStats();
           updateBellBadge();
           renderNotifications();
         } catch (err) {
@@ -548,38 +617,64 @@
         }
       }
 
-      function updateStats() {
-        // ✅ derive from source every time
-        document.getElementById("totalCount").textContent =
-          notifications.length;
+      async function updateBellBadge() {
+        // Update the badge in the navigation bar if it exists on this page
+        try {
+          const uid = resolveUserId();
+          const res = await fetch(
+            `${
+              CONFIG.API_BASE_URL
+            }/notifications/summary?user_id=${encodeURIComponent(uid)}`
+          );
+          const data = await res.json();
 
-        const unreadCount = notifications.filter(n => !n.is_read).length;
-        document.getElementById("unreadCount").textContent = unreadCount;
+          console.log("🔔 Fetched notification summary:", data);
 
-        document.getElementById("appointmentCount").textContent =
-          notifications.filter(n => n.type === "appointment").length;
+          if (data.success && data.summary) {
+            const unreadCount = data.summary.unread || 0;
 
-        document.getElementById("medicationCount").textContent =
-          notifications.filter(n => n.type === "medication").length;
+            // Store the count in localStorage to sync across pages
+            localStorage.setItem(
+              "medicsense_unread_count",
+              unreadCount.toString()
+            );
 
-        const markAllBtn = document.getElementById("markAllBtn");
-        if (markAllBtn) markAllBtn.disabled = (unreadCount === 0);
-      }
+            // Dispatch a custom event for same-page updates
+            window.dispatchEvent(
+              new CustomEvent("notificationCountChanged", {
+                detail: { unreadCount },
+              })
+            );
 
-      function updateBellBadge() {
-        // This syncs with the parent window or common storage if needed,
-        // but since we are on the notifications page, we just ensure stats are current.
-        // We also trigger a custom event that script_ultra.js can listen to if it's in the same window.
-        window.dispatchEvent(new CustomEvent('notifications-updated'));
-        console.log("🔔 Bell badge update triggered");
+            const badge = document.getElementById("notificationBadge");
+
+            if (badge) {
+              if (unreadCount > 0) {
+                badge.textContent = unreadCount > 99 ? "99+" : unreadCount;
+                badge.classList.remove("hidden");
+                badge.style.display = "flex";
+              } else {
+                badge.textContent = "";
+                badge.classList.add("hidden");
+                badge.style.display = "none";
+              }
+            }
+
+            console.log("🔔 Bell badge updated: " + unreadCount + " unread");
+          }
+        } catch (err) {
+          console.error("Failed to update bell badge:", err);
+        }
       }
 
       // 4. TAB WIRING (MANDATORY)
-      document.querySelectorAll(".filter-tab").forEach(btn => {
+      document.querySelectorAll(".filter-tab").forEach((btn) => {
         btn.addEventListener("click", () => {
           activeFilter = btn.dataset.filter;
 
-          document.querySelectorAll(".filter-tab").forEach(b => b.classList.remove("active"));
+          document
+            .querySelectorAll(".filter-tab")
+            .forEach((b) => b.classList.remove("active"));
           btn.classList.add("active");
 
           renderNotifications();
@@ -611,7 +706,7 @@
       }
 
       // 6. INIT
-      window.addEventListener('DOMContentLoaded', fetchNotifications);
+      window.addEventListener("DOMContentLoaded", fetchNotifications);
     </script>
   </body>
 </html>

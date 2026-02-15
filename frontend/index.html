@@ -38,6 +38,14 @@
 
   <!-- Styles -->
   <link rel="stylesheet" href="style_ultra.css?v=motion8" />
+  <link rel="stylesheet" href="premium_enhancements.css?v=1" />
+  <link rel="stylesheet" href="layout_rebalance.css?v=1" />
+  <link rel="stylesheet" href="micro_interactions.css?v=1" />
+  <link rel="stylesheet" href="inline_slots.css?v=1" />
+  <link rel="stylesheet" href="flow_optimization.css?v=1" />
+  <link rel="stylesheet" href="visual_confidence.css?v=1" />
+  <link rel="stylesheet" href="vertical_compaction.css?v=1" />
+  <link rel="stylesheet" href="ultra_compact.css?v=1" />
   <style>
     /* Auth Modal Styles */
     .modal-overlay {
@@ -269,7 +277,7 @@
           <div class="user-controls">
             <button class="icon-btn notification-btn" onclick="window.location.href='notifications.html'" title="Notifications">
               <i class="fas fa-bell"></i>
-              <span class="badge" id="notificationBadge">0</span>
+              <span class="badge hidden" id="notificationBadge" style="display: none;"></span>
             </button>
 
             <div class="profile-menu-container">
@@ -467,9 +475,6 @@
       <div class="section-header" data-aos="fade-up">
         <span class="section-badge">AI-Powered Assessment</span>
         <h2 class="section-title">AI Symptom Checker</h2>
-        <p class="section-description">
-          Describe your symptoms in your own words. The AI reviews them to provide supportive insights and help you decide appropriate next steps.
-        </p>
       </div>
 
       <div class="symptom-checker-container">
@@ -512,22 +517,22 @@
             <div class="quick-symptoms symptom-chips-section">
               <label>Quick Select (Optional):</label>
               <div class="symptom-tags">
-                <button class="symptom-tag" onclick="addSymptom('fever')">
+                <button class="symptom-tag" onclick="addSymptom('fever', this)">
                   <i class="fas fa-temperature-high"></i> Fever
                 </button>
-                <button class="symptom-tag" onclick="addSymptom('headache')">
+                <button class="symptom-tag" onclick="addSymptom('headache', this)">
                   <i class="fas fa-head-side-virus"></i> Headache
                 </button>
-                <button class="symptom-tag" onclick="addSymptom('cough')">
+                <button class="symptom-tag" onclick="addSymptom('cough', this)">
                   <i class="fas fa-lungs"></i> Cough
                 </button>
-                <button class="symptom-tag" onclick="addSymptom('body pain')">
+                <button class="symptom-tag" onclick="addSymptom('body pain', this)">
                   <i class="fas fa-bone"></i> Body Pain
                 </button>
-                <button class="symptom-tag" onclick="addSymptom('nausea')">
+                <button class="symptom-tag" onclick="addSymptom('nausea', this)">
                   <i class="fas fa-dizzy"></i> Nausea
                 </button>
-                <button class="symptom-tag" onclick="addSymptom('fatigue')">
+                <button class="symptom-tag" onclick="addSymptom('fatigue', this)">
                   <i class="fas fa-tired"></i> Fatigue
                 </button>
               </div>
@@ -599,130 +604,147 @@
             <i class="fas fa-calendar-check"></i> Schedule Your Appointment
           </h3>
 
-          <div class="form-group">
-            <label><i class="fas fa-user"></i> Full Name</label>
-            <input type="text" id="patientName" class="form-control" placeholder="Enter your full name" />
+          <!-- SECTION 1: Personal Information -->
+          <div class="form-section">
+            <div class="form-section-header">
+              <div class="form-section-icon">
+                <i class="fas fa-user"></i>
+              </div>
+              <div>
+                <h4 class="form-section-title">Personal Information</h4>
+                <p class="form-section-subtitle">Tell us about yourself</p>
+              </div>
+            </div>
+
+            <div class="form-group has-validation">
+              <label><i class="fas fa-user"></i> Full Name</label>
+              <input type="text" id="patientName" class="form-control" placeholder="Enter your full name" />
+            </div>
+
+            <div class="form-row">
+              <div class="form-group has-validation">
+                <label><i class="fas fa-phone"></i> Phone Number</label>
+                <input type="tel" id="patientPhone" class="form-control" placeholder="+91 XXXXX-XXXXX" />
+              </div>
+
+              <div class="form-group has-validation">
+                <label><i class="fas fa-envelope"></i> Email</label>
+                <input type="email" id="patientEmail" class="form-control" placeholder="your@email.com" />
+              </div>
+            </div>
           </div>
 
-          <div class="form-row">
-            <div class="form-group">
-              <label><i class="fas fa-phone"></i> Phone Number</label>
-              <input type="tel" id="patientPhone" class="form-control" placeholder="+91 XXXXX-XXXXX" />
+          <!-- SECTION 2: Appointment Details -->
+          <div class="form-section">
+            <div class="form-section-header">
+              <div class="form-section-icon">
+                <i class="fas fa-calendar-alt"></i>
+              </div>
+              <div>
+                <h4 class="form-section-title">Appointment Details</h4>
+                <p class="form-section-subtitle">Choose your preferred time</p>
+              </div>
+            </div>
+
+
+            <div class="doctor-date-row">
+              <div class="form-group">
+                <label><i class="fas fa-user-md"></i> Doctor / Department</label>
+                <select id="doctorSelect" class="form-control" onchange="loadAvailableSlots()">
+                  <option value="">Select doctor or department</option>
+                  <option value="dr_tushar">Dr. Tushar ZX (Devfest Noida)</option>
+                  <option value="dr_aakash">Dr. Aakash Singh Rajput</option>
+                  <option value="dr_sharma">
+                    Dr. Sharma - General Physician
+                  </option>
+                  <option value="dr_patel">Dr. Patel - Cardiologist</option>
+                  <option value="dr_verma">Dr. Verma - Dermatologist</option>
+                  <option value="dr_singh">Dr. Singh - Pediatrician</option>
+                  <option value="dr_kumar">Dr. Kumar - Orthopedic</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label><i class="fas fa-calendar"></i> Preferred Date</label>
+                <input type="date" id="appointmentDate" class="form-control" onchange="loadAvailableSlots()" />
+              </div>
             </div>
 
             <div class="form-group">
-              <label><i class="fas fa-envelope"></i> Email</label>
-              <input type="email" id="patientEmail" class="form-control" placeholder="your@email.com" />
+                <label><i class="fas fa-clock"></i> Preferred Time</label>
+                <!-- Hidden select for backend compatibility -->
+                <select id="appointmentTime" class="form-control" style="display: none;">
+                  <option value="">Select time slot</option>
+                </select>
+                <!-- Inline time slot grid (moved from right panel) -->
+                <div class="inline-slots-container">
+                  <p class="slots-hint" id="slotsHint">
+                    Select doctor and date to view available slots
+                  </p>
+                  <div class="slots-grid" id="slotsGrid">
+                    <!-- Slots will be dynamically loaded -->
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
-          <div class="form-group">
-            <label><i class="fas fa-user-md"></i> Doctor / Department</label>
-            <select id="doctorSelect" class="form-control" onchange="loadAvailableSlots()">
-              <option value="">Select doctor or department</option>
-              <option value="dr_tushar">Dr. Tushar ZX (Devfest Noida)</option>
-              <option value="dr_aakash">Dr. Aakash Singh Rajput</option>
-              <option value="dr_sharma">
-                Dr. Sharma - General Physician
-              </option>
-              <option value="dr_patel">Dr. Patel - Cardiologist</option>
-              <option value="dr_verma">Dr. Verma - Dermatologist</option>
-              <option value="dr_singh">Dr. Singh - Pediatrician</option>
-              <option value="dr_kumar">Dr. Kumar - Orthopedic</option>
-            </select>
-          </div>
+          <!-- SECTION 3: Visit Information -->
+          <div class="form-section">
+            <div class="form-section-header">
+              <div class="form-section-icon">
+                <i class="fas fa-notes-medical"></i>
+              </div>
+              <div>
+                <h4 class="form-section-title">Visit Information</h4>
+                <p class="form-section-subtitle">Help us prepare for your visit</p>
+              </div>
+            </div>
 
-          <div class="form-row">
             <div class="form-group">
-              <label><i class="fas fa-calendar"></i> Preferred Date</label>
-              <input type="date" id="appointmentDate" class="form-control" onchange="loadAvailableSlots()" />
+              <label><i class="fas fa-notes-medical"></i> Reason for Visit</label>
+              <textarea id="appointmentReason" class="form-control" rows="3"
+                placeholder="Brief description of your concern"></textarea>
             </div>
 
-            <div class="form-group">
-              <label><i class="fas fa-clock"></i> Preferred Time</label>
-              <select id="appointmentTime" class="form-control">
-                <option value="">Select time slot</option>
-              </select>
+            <div class="appointment-cta-row">
+              <div class="appointment-type">
+                <label>Appointment Type:</label>
+                <div class="type-options">
+                  <label class="type-option">
+                    <input type="radio" name="appointmentType" value="in-person" checked />
+                    <span><i class="fas fa-hospital"></i> In-Person</span>
+                  </label>
+                  <label class="type-option">
+                    <input type="radio" name="appointmentType" value="video" />
+                    <span><i class="fas fa-video"></i> Video Call</span>
+                  </label>
+                </div>
+              </div>
+
+              <button class="btn btn-primary btn-large btn-book-appointment" onclick="bookAppointment()">
+                <i class="fas fa-calendar-check"></i>
+                <span class="btn-text">Book Appointment</span>
+              </button>
             </div>
-          </div>
-
-          <div class="form-group">
-            <label><i class="fas fa-notes-medical"></i> Reason for Visit</label>
-            <textarea id="appointmentReason" class="form-control" rows="3"
-              placeholder="Brief description of your concern"></textarea>
-          </div>
-
-          <div class="appointment-type">
-            <label>Appointment Type:</label>
-            <div class="type-options">
-              <label class="type-option">
-                <input type="radio" name="appointmentType" value="in-person" checked />
-                <span><i class="fas fa-hospital"></i> In-Person</span>
-              </label>
-              <label class="type-option">
-                <input type="radio" name="appointmentType" value="video" />
-                <span><i class="fas fa-video"></i> Video Call</span>
-              </label>
-            </div>
-          </div>
-
-          <button class="btn btn-primary btn-large" onclick="bookAppointment()">
-            <i class="fas fa-calendar-check"></i>
-            Book Appointment
-          </button>
         </div>
 
         <!-- Appointment Info & Calendar -->
         <div class="appointment-info-section" data-aos="fade-left">
-          <!-- Available Slots Card -->
-          <div class="available-slots-card" id="availableSlotsCard">
-            <h3><i class="fas fa-clock"></i> Available Time Slots</h3>
-            <p class="slots-hint">
-              Select doctor and date to view available slots
-            </p>
-            <div class="slots-grid" id="slotsGrid">
-              <!-- Slots will be dynamically loaded -->
-            </div>
-          </div>
 
-          <!-- Benefits Card -->
-          <div class="benefits-card">
-            <h3><i class="fas fa-star"></i> Why Book With Us?</h3>
-            <ul class="benefits-list">
-              <li>
-                <i class="fas fa-bolt"></i>
-                <div>
-                  <strong>Instant Confirmation</strong>
-                  <p>Get confirmed in seconds, not hours</p>
-                </div>
-              </li>
-              <li>
-                <i class="fas fa-bell"></i>
-                <div>
-                  <strong>Automated Reminders</strong>
-                  <p>SMS & Email reminders before appointment</p>
-                </div>
-              </li>
-              <li>
-                <i class="fas fa-sync"></i>
-                <div>
-                  <strong>Easy Rescheduling</strong>
-                  <p>Change appointments with one click</p>
-                </div>
-              </li>
-              <li>
-                <i class="fas fa-mobile-alt"></i>
-                <div>
-                  <strong>Mobile Friendly</strong>
-                  <p>Book from anywhere, anytime</p>
-                </div>
-              </li>
-            </ul>
-          </div>
+          <!-- REMOVED: Available Time Slots panel - now integrated into Appointment Details section -->
+
+
+
+          <!-- REMOVED: "Why Book With Us" marketing section for cleaner focus on booking form -->
+
 
           <!-- My Appointments Card -->
           <div class="my-appointments-card">
-            <h3><i class="fas fa-list"></i> Your Appointments</h3>
+            <div class="my-appointments-header">
+              <h3><i class="fas fa-list"></i> Recent Appointments</h3>
+              <a href="appointments.html" class="view-all-link">View All <i class="fas fa-arrow-right"></i></a>
+            </div>
             <div class="appointments-list" id="myAppointmentsList">
               <p class="no-appointments">No appointments scheduled yet</p>
             </div>
@@ -1014,6 +1036,7 @@
   <script type="module" src="firebase.js"></script>
   <script src="profile_menu.js" defer></script>
   <script src="script_ultra.js" defer></script>
+  <script src="premium_ui_enhancements.js" defer></script>
 
   <script>
     // Initialize AOS (Animate on Scroll) - Non-blocking

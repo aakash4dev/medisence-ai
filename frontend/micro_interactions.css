@@ -1,0 +1,378 @@
+/**
+ * TIER 2: MICRO-INTERACTION SYSTEM
+ * Adds premium polish and tactility to foundational design system
+ * No structural changes, no heavy animations, production-ready
+ */
+
+/* ========================================
+   1. GLOBAL INTERACTION SYSTEM
+   ======================================== */
+
+/* Universal 200ms transition for interactive elements */
+.form-control,
+.symptom-textarea,
+select.form-control,
+.btn,
+.btn-book-appointment,
+.slot-btn,
+.type-option span,
+.form-section,
+.available-slots-card,
+.my-appointments-card {
+  transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ========================================
+   2. INPUT FIELD POLISH
+   ======================================== */
+
+/* Focus lift and glow */
+.form-control:focus,
+.symptom-textarea:focus,
+select.form-control:focus {
+  transform: translateY(-1px);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15), /* Soft focus glow */
+              var(--shadow-medium); /* Elevated shadow */
+}
+
+/* Smooth transition back to rest state */
+.form-control:not(:focus),
+.symptom-textarea:not(:focus),
+select.form-control:not(:focus) {
+  transform: translateY(0);
+}
+
+/* Label color transition on focus */
+.form-group:focus-within label {
+  color: var(--color-primary);
+  transition: color 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ========================================
+   3. BUTTON & CTA TACTILITY
+   ======================================== */
+
+/* Hover: shadow lift */
+.btn-book-appointment:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-strong);
+}
+
+/* Active: tactile press */
+.btn-book-appointment:active:not(:disabled) {
+  transform: scale(0.98);
+  box-shadow: var(--shadow-medium);
+}
+
+/* Loading state - CSS spinner */
+.btn-loading {
+  position: relative;
+  color: transparent !important;
+  pointer-events: none;
+  cursor: wait;
+}
+
+.btn-loading .btn-text {
+  opacity: 0;
+}
+
+/* CSS-based spinner */
+.btn-loading::after {
+  content: '';
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  top: 50%;
+  left: 50%;
+  margin-left: -9px;
+  margin-top: -9px;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: btn-spinner 0.7s linear infinite;
+}
+
+@keyframes btn-spinner {
+  to { transform: rotate(360deg); }
+}
+
+/* ========================================
+   4. APPOINTMENT TYPE TOGGLE
+   ======================================== */
+
+/* Smooth background and border transition */
+.type-option span {
+  transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0.8; /* Reduced, not greyed out */
+}
+
+.type-option:hover span {
+  opacity: 1;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-medium);
+}
+
+/* Selected state: slightly elevated */
+.type-option input[type="radio"]:checked + span {
+  opacity: 1;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-medium);
+}
+
+/* Active press */
+.type-option:active span {
+  transform: scale(0.98);
+}
+
+/* ========================================
+   5. TIME SLOT UX
+   ======================================== */
+
+/* Staggered fade-in animation */
+.slot-btn {
+  animation: slotFadeIn 300ms cubic-bezier(0.4, 0, 0.2, 1) backwards;
+}
+
+/* Stagger delays (applied via JS) */
+.slot-btn:nth-child(1) { animation-delay: 0ms; }
+.slot-btn:nth-child(2) { animation-delay: 30ms; }
+.slot-btn:nth-child(3) { animation-delay: 60ms; }
+.slot-btn:nth-child(4) { animation-delay: 90ms; }
+.slot-btn:nth-child(5) { animation-delay: 120ms; }
+.slot-btn:nth-child(6) { animation-delay: 150ms; }
+.slot-btn:nth-child(7) { animation-delay: 180ms; }
+.slot-btn:nth-child(8) { animation-delay: 210ms; }
+.slot-btn:nth-child(9) { animation-delay: 240ms; }
+.slot-btn:nth-child(10) { animation-delay: 270ms; }
+.slot-btn:nth-child(11) { animation-delay: 300ms; }
+.slot-btn:nth-child(12) { animation-delay: 330ms; }
+
+@keyframes slotFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Hover: subtle background tint + elevation */
+.slot-btn:hover:not(.booked):not(.selected) {
+  background: rgba(99, 102, 241, 0.04); /* Subtle tint */
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-medium);
+}
+
+/* Active: slight press */
+.slot-btn:active:not(.booked) {
+  transform: scale(0.98);
+}
+
+/* Selected: maintain elevation */
+.slot-btn.selected {
+  box-shadow: var(--shadow-medium);
+}
+
+/* Disabled: 40% opacity, no hover shadow */
+.slot-btn.booked {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.slot-btn.booked:hover {
+  transform: none;
+  box-shadow: var(--shadow-subtle);
+}
+
+/* ========================================
+   6. FORM VALIDATION FEEDBACK
+   ======================================== */
+
+/* Error state: soft red glow */
+.form-control.field-invalid,
+.symptom-textarea.field-invalid {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12); /* Soft, not harsh */
+  animation: shake 400ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Subtle shake animation */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+/* Error text fade-in */
+.field-validation-message {
+  animation: fadeIn 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Success state: minimal checkmark */
+.form-control.field-valid,
+.symptom-textarea.field-valid {
+  border-color: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+/* Success checkmark fade-in */
+.form-control.field-valid::after {
+  animation: checkmarkFadeIn 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes checkmarkFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ========================================
+   7. EMPTY STATE SOFTENING
+   ======================================== */
+
+/* Remove harsh dashed borders */
+.no-appointments,
+.slots-hint {
+  background: rgba(248, 250, 252, 0.6); /* Light tinted background (4%) */
+  border: var(--border-width) solid var(--color-border-light); /* Soft border, not dashed */
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.02); /* Subtle inner shadow */
+}
+
+/* ========================================
+   8. CARD HOVER INTERACTIONS
+   ======================================== */
+
+/* Form sections: subtle lift on hover */
+.form-section:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-medium);
+}
+
+/* Right column cards: subtle lift */
+.available-slots-card:hover,
+.my-appointments-card:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-medium);
+}
+
+/* ========================================
+   9. SUCCESS ANIMATION (MINIMAL)
+   ======================================== */
+
+/* Success checkmark overlay */
+.success-checkmark {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10000;
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(8px);
+  border-radius: var(--border-radius-xl);
+  padding: var(--space-12);
+  box-shadow: var(--shadow-strong);
+  animation: successSlideIn 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes successSlideIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+/* Success icon */
+.success-checkmark i {
+  font-size: 4rem;
+  color: #10b981;
+  display: block;
+  animation: successPop 400ms cubic-bezier(0.68, -0.55, 0.265, 1.55) 100ms both;
+}
+
+@keyframes successPop {
+  0% {
+    opacity: 0;
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Success message */
+.success-message {
+  text-align: center;
+  margin-top: var(--space-4);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-primary);
+}
+
+/* Fade out */
+.success-checkmark.fade-out {
+  animation: successFadeOut 300ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes successFadeOut {
+  to {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.95);
+  }
+}
+
+/* ========================================
+   10. ACCESSIBILITY - REDUCED MOTION
+   ======================================== */
+
+/* Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ========================================
+   11. MOBILE OPTIMIZATIONS
+   ======================================== */
+
+@media (max-width: 768px) {
+  /* Reduce transform distances on mobile */
+  .form-control:focus,
+  .symptom-textarea:focus,
+  select.form-control:focus {
+    transform: translateY(0); /* No lift on mobile */
+  }
+
+  .btn-book-appointment:hover:not(:disabled) {
+    transform: translateY(0); /* No lift on mobile */
+  }
+
+  /* Maintain tactile press */
+  .btn-book-appointment:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+}

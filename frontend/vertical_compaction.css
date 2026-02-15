@@ -1,0 +1,266 @@
+/**
+ * VERTICAL COMPACTION & LAYOUT EFFICIENCY
+ * Reduce vertical height by 25-30% while maintaining usability
+ * No backend changes, no structural rewrites
+ */
+
+/* ========================================
+   1. MERGE CARDS INTO UNIFIED LAYOUT
+   ======================================== */
+
+/* Remove individual card styling, create unified form container */
+.form-section {
+  margin-bottom: 0; /* Remove gaps between sections */
+  border-radius: 0; /* Remove individual rounded corners */
+  border-bottom: 2px solid #f1f5f9; /* Section dividers instead of separate cards */
+  box-shadow: none; /* Remove individual shadows */
+}
+
+/* First section - top rounded corners */
+.form-section:first-of-type {
+  border-top-left-radius: var(--border-radius-xl);
+  border-top-right-radius: var(--border-radius-xl);
+}
+
+/* Last section - bottom rounded corners, no border */
+.form-section:last-of-type {
+  border-bottom-left-radius: var(--border-radius-xl);
+  border-bottom-right-radius: var(--border-radius-xl);
+  border-bottom: none;
+}
+
+/* Unified container with single shadow */
+.appointments-container > div:first-child {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04),
+              0 1px 3px rgba(0, 0, 0, 0.02);
+  border-radius: var(--border-radius-xl);
+  background: #ffffff;
+}
+
+/* ========================================
+   2. REDUCE VERTICAL PADDING (8PX RHYTHM)
+   ======================================== */
+
+/* Compact form sections */
+.form-section {
+  padding: var(--space-6) var(--space-8); /* 24px 32px, reduced from 32px */
+}
+
+/* Compact section headers */
+.form-section-header {
+  margin-bottom: var(--space-5); /* 20px, reduced from 24px */
+  padding-bottom: var(--space-3); /* 12px, reduced from 20px */
+}
+
+/* Reduce form group spacing */
+.form-group {
+  margin-bottom: var(--space-4); /* 16px, reduced from 20px */
+}
+
+/* Tighter label spacing */
+.form-group label {
+  margin-bottom: var(--space-2); /* 8px, already optimal */
+}
+
+/* Compact inline slots container */
+.inline-slots-container {
+  padding: var(--space-5); /* 20px, reduced from 32px */
+  min-height: 120px; /* Reduced from 160px */
+  margin-top: var(--space-3); /* 12px, reduced from 16px */
+}
+
+/* ========================================
+   3. SIDE-BY-SIDE FIELD LAYOUTS
+   ======================================== */
+
+/* Doctor + Date in side-by-side layout */
+.doctor-date-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4); /* 16px */
+}
+
+/* Ensure form-row (Phone + Email) is already side-by-side */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4); /* 16px */
+}
+
+/* ========================================
+   4. COMPACT TIME SLOT GRID
+   ======================================== */
+
+/* Tighter slot grid */
+.inline-slots-container .slots-grid {
+  grid-template-columns: repeat(auto-fill, minmax(75px, 1fr)); /* Smaller min-width */
+  gap: var(--space-2); /* 8px, reduced from 12px */
+}
+
+/* Compact slot buttons */
+.slot-btn {
+  padding: var(--space-2) var(--space-1); /* 8px 4px, reduced */
+  min-height: 44px; /* Reduced from 52px */
+  font-size: 0.8125rem; /* 13px, slightly smaller */
+}
+
+/* Compact hint text */
+.inline-slots-container .slots-hint {
+  padding: var(--space-8) var(--space-4); /* 32px 16px, reduced from 48px */
+  font-size: var(--text-sm); /* 14px */
+}
+
+/* Smaller clock icon */
+.inline-slots-container .slots-hint::before {
+  font-size: 1.5rem; /* Reduced from 2rem */
+  margin-bottom: var(--space-2); /* 8px, reduced */
+}
+
+/* ========================================
+   5. REDUCE HERO VERTICAL SPACING
+   ======================================== */
+
+/* Minimal hero spacing */
+.hero-section {
+  padding: var(--space-8) 0 var(--space-6) 0; /* 32px 0 24px 0, significantly reduced */
+}
+
+/* Compact appointments section */
+.appointments-section {
+  padding: var(--space-8) 0 var(--space-12) 0; /* 32px 0 48px 0, reduced */
+}
+
+/* Tighter section header */
+.appointments-section .section-header {
+  margin-bottom: var(--space-6); /* 24px, reduced from 32px */
+}
+
+.appointments-section .section-header h2 {
+  margin-bottom: var(--space-1); /* 4px, minimal */
+  font-size: 1.75rem; /* 28px, slightly smaller */
+}
+
+/* ========================================
+   6. COMPACT CTA WHILE MAINTAINING AUTHORITY
+   ======================================== */
+
+/* Slightly smaller but still authoritative */
+.btn-book-appointment {
+  padding: var(--space-5) var(--space-8); /* 20px 32px, reduced from 24px 40px */
+  margin-top: var(--space-6); /* 24px, reduced from 40px */
+  min-height: 52px; /* Reduced from 56px */
+}
+
+/* ========================================
+   7. COMPACT APPOINTMENT TYPE TOGGLES
+   ======================================== */
+
+/* Tighter appointment type section */
+.appointment-type {
+  margin-top: var(--space-4); /* 16px, reduced from 24px */
+  padding: var(--space-4); /* 16px, reduced from 20px */
+}
+
+.appointment-type label {
+  margin-bottom: var(--space-2); /* 8px, reduced from 12px */
+}
+
+.type-option span {
+  padding: var(--space-3) var(--space-4); /* 12px 16px, reduced */
+}
+
+/* ========================================
+   8. COMPACT YOUR APPOINTMENTS CARD
+   ======================================== */
+
+/* Reduce separation */
+.my-appointments-card {
+  margin-top: var(--space-8); /* 32px, reduced from 48px */
+  padding: var(--space-6); /* 24px, reduced from 32px */
+}
+
+.my-appointments-card h3 {
+  margin-bottom: var(--space-4); /* 16px, reduced from 24px */
+  padding-bottom: var(--space-3); /* 12px, reduced from 16px */
+}
+
+/* ========================================
+   9. COMPACT SECTION ICONS
+   ======================================== */
+
+/* Smaller section icons */
+.form-section-icon {
+  width: 40px; /* Reduced from 48px */
+  height: 40px;
+  font-size: 1rem; /* Reduced from 1.25rem */
+}
+
+/* ========================================
+   10. COMPACT INPUT FIELDS
+   ======================================== */
+
+/* Tighter input padding */
+.form-control,
+.symptom-textarea,
+select.form-control {
+  padding: var(--space-2) var(--space-3); /* 8px 12px, reduced from 12px 16px */
+  min-height: 40px; /* Reduced from 44px */
+}
+
+/* Adjust focus compensation */
+.form-control:focus,
+.symptom-textarea:focus,
+select.form-control:focus {
+  padding: calc(var(--space-2) - 0.5px) calc(var(--space-3) - 0.5px);
+}
+
+/* ========================================
+   11. RESPONSIVE ADJUSTMENTS
+   ======================================== */
+
+@media (max-width: 768px) {
+  /* Stack side-by-side layouts on mobile */
+  .doctor-date-row,
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: var(--space-3); /* 12px */
+  }
+
+  /* Maintain compact spacing */
+  .form-section {
+    padding: var(--space-5) var(--space-4); /* 20px 16px */
+  }
+
+  .inline-slots-container {
+    padding: var(--space-4); /* 16px */
+  }
+
+  .btn-book-appointment {
+    padding: var(--space-4) var(--space-6); /* 16px 24px */
+  }
+}
+
+/* ========================================
+   12. MAINTAIN VISUAL HIERARCHY
+   ======================================== */
+
+/* Ensure section dividers are visible */
+.form-section {
+  border-bottom-color: #f1f5f9;
+  border-bottom-width: 2px;
+  border-bottom-style: solid;
+}
+
+/* Stronger divider for last section before CTA */
+.form-section:has(+ .form-section:last-of-type) {
+  border-bottom-color: #e5e7eb;
+}
+
+/* ========================================
+   13. COMPACT CONTAINER WIDTH
+   ======================================== */
+
+/* Slightly wider for better use of horizontal space */
+.appointments-container {
+  max-width: 700px; /* Reduced from 750px */
+}

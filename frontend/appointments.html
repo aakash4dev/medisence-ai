@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Appointments - MedicSense AI</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="style_ultra.css" />
+    <style>
+      body {
+        padding-top: 0 !important;
+      }
+
+      .apt-page-container {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 2rem;
+      }
+
+      .apt-back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: rgba(255, 255, 255, 0.9);
+        text-decoration: none;
+        font-weight: 500;
+        margin-bottom: 1.5rem;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        transition: all 0.2s;
+        font-size: 0.95rem;
+      }
+
+      .apt-back-btn:hover {
+        background: rgba(255, 255, 255, 0.15);
+        color: white;
+      }
+
+      /* Main Content Card */
+      .apt-content-section {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      }
+
+      .apt-section-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+      }
+
+      .apt-section-header h2 {
+        color: #1e293b;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 1.25rem;
+      }
+
+      /* Cancel All Button */
+      .cancel-all-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.55rem 1.25rem;
+        background: transparent;
+        border: 1.5px solid #ef4444;
+        color: #ef4444;
+        border-radius: 8px;
+        font-size: 0.8125rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-family: inherit;
+      }
+
+      .cancel-all-btn:hover {
+        background: #ef4444;
+        color: white;
+        box-shadow: 0 3px 10px rgba(239, 68, 68, 0.25);
+        transform: translateY(-1px);
+      }
+
+      .cancel-all-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        pointer-events: none;
+      }
+
+      /* Filter Tabs */
+      .apt-filter-tabs {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+      }
+
+      .apt-filter-tab {
+        padding: 0.5rem 1.25rem;
+        border: 1.5px solid #e2e8f0;
+        background: white;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-weight: 500;
+        color: #64748b;
+        font-size: 0.875rem;
+        font-family: inherit;
+      }
+
+      .apt-filter-tab:hover {
+        border-color: #667eea;
+        color: #667eea;
+      }
+
+      .apt-filter-tab.active {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-color: transparent;
+      }
+
+      .apt-filter-tab .tab-count {
+        background: rgba(0, 0, 0, 0.08);
+        padding: 1px 7px;
+        border-radius: 10px;
+        font-size: 0.75rem;
+        margin-left: 0.35rem;
+      }
+
+      .apt-filter-tab.active .tab-count {
+        background: rgba(255, 255, 255, 0.25);
+      }
+
+      /* List */
+      .apt-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+
+      /* Empty State */
+      .apt-empty-state {
+        text-align: center;
+        padding: 3rem 2rem;
+        color: #94a3b8;
+      }
+
+      .apt-empty-state i {
+        font-size: 3rem;
+        margin-bottom: 0.75rem;
+        color: #cbd5e1;
+        display: block;
+      }
+
+      .apt-empty-state h3 {
+        color: #64748b;
+        margin: 0 0 0.35rem 0;
+        font-size: 1.1rem;
+      }
+
+      .apt-empty-state p {
+        margin: 0;
+        font-size: 0.9rem;
+      }
+
+      /* Book CTA inside all-appointments */
+      .apt-book-cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 1rem;
+        padding: 0.75rem 1.5rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: all 0.2s;
+      }
+
+      .apt-book-cta:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .apt-page-container {
+          padding: 1rem;
+        }
+        .apt-stats-row {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .apt-content-section {
+          padding: 1.25rem;
+        }
+        .apt-header h1 {
+          font-size: 1.5rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .apt-filter-tabs {
+          gap: 0.35rem;
+        }
+        .apt-filter-tab {
+          padding: 0.4rem 0.75rem;
+          font-size: 0.8rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="apt-page-container">
+      <a href="index.html#appointments" class="apt-back-btn">
+        <i class="fas fa-arrow-left"></i> Back to Dashboard
+      </a>
+
+      <!-- Content -->
+      <div class="apt-content-section">
+        <div class="apt-section-header">
+          <h2><i class="fas fa-list-alt"></i> All Appointments</h2>
+          <button
+            class="cancel-all-btn"
+            id="cancelAllBtn"
+            onclick="cancelAllAppointments()"
+          >
+            <i class="fas fa-times-circle"></i> Cancel All
+          </button>
+        </div>
+
+        <div class="apt-filter-tabs" id="filterTabs">
+          <button class="apt-filter-tab active" data-filter="all">
+            All <span class="tab-count" id="countAll">0</span>
+          </button>
+          <button class="apt-filter-tab" data-filter="confirmed">
+            Confirmed <span class="tab-count" id="countConfirmed">0</span>
+          </button>
+          <button class="apt-filter-tab" data-filter="cancelled">
+            Cancelled <span class="tab-count" id="countCancelled">0</span>
+          </button>
+        </div>
+
+        <div class="apt-list" id="appointmentList">
+          <div class="apt-empty-state">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Loading appointments...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Config -->
+    <script src="env-loader.js"></script>
+    <script src="load-env.js"></script>
+    <script>
+      const CONFIG = {
+        API_BASE_URL:
+          (window.ENV && window.ENV.API_BASE_URL) ||
+          "http://localhost:5000/api",
+      };
+
+      let appointments = [];
+      let activeFilter = "all";
+
+      // ---- Load Data ----
+      function loadAppointments() {
+        console.log("Loading appointments...");
+        try {
+          const raw = localStorage.getItem("medicsense_appointments");
+          if (raw) {
+            appointments = JSON.parse(raw) || [];
+          }
+          console.log("Loaded appointments:", appointments);
+        } catch (e) {
+          console.error("Error loading appointments:", e);
+          appointments = [];
+        }
+        updateStats();
+        renderAppointments();
+        console.log("Render complete");
+      }
+
+      // ---- Stats ----
+      function updateStats() {
+        const today = new Date().toISOString().split("T")[0];
+        const total = appointments.length;
+        const confirmed = appointments.filter(
+          (a) => a.status === "confirmed"
+        ).length;
+        const cancelled = appointments.filter(
+          (a) => a.status === "cancelled"
+        ).length;
+
+        // Update tab counts only
+        document.getElementById("countAll").textContent = total;
+        document.getElementById("countConfirmed").textContent = confirmed;
+        document.getElementById("countCancelled").textContent = cancelled;
+      }
+
+      // ---- Filter Logic ----
+      function getFilteredAppointments() {
+        const today = new Date().toISOString().split("T")[0];
+        switch (activeFilter) {
+          case "confirmed":
+            return appointments.filter((a) => a.status === "confirmed");
+          case "cancelled":
+            return appointments.filter((a) => a.status === "cancelled");
+          default:
+            return [...appointments];
+        }
+      }
+
+      // ---- Render ----
+      function renderAppointments() {
+        console.log("renderAppointments called");
+        const listEl = document.getElementById("appointmentList");
+        console.log("listEl:", listEl);
+
+        if (!listEl) {
+          console.error("appointmentList element not found!");
+          return;
+        }
+
+        // Clear any loading state first
+        listEl.innerHTML = "";
+        console.log("Cleared loading state");
+
+        const filtered = getFilteredAppointments().sort(
+          (a, b) =>
+            new Date(b.timestamp || b.date) - new Date(a.timestamp || a.date)
+        );
+        console.log("Filtered appointments:", filtered);
+
+        if (filtered.length === 0) {
+          listEl.innerHTML = `
+            <div class="apt-empty-state">
+              <i class="fas fa-calendar-times"></i>
+              <h3>No appointments found</h3>
+              <p>No appointments match the selected filter.</p>
+              <a href="index.html#appointments" class="apt-book-cta">
+                <i class="fas fa-calendar-plus"></i> Book an Appointment
+              </a>
+            </div>`;
+          console.log("Rendered empty state");
+          return;
+        }
+
+        listEl.innerHTML = filtered
+          .map(
+            (apt) => `
+          <div class="appointment-card" data-id="${apt.id}">
+            <div class="appointment-info">
+              <h4>${apt.doctor || "Doctor"}</h4>
+              <p><i class="fas fa-calendar-alt"></i> ${apt.date} at ${
+              apt.time
+            }</p>
+              ${
+                apt.reason
+                  ? `<p><i class="fas fa-notes-medical"></i> ${apt.reason}</p>`
+                  : ""
+              }
+              <span class="status-badge ${apt.status}">${
+              apt.status.charAt(0).toUpperCase() + apt.status.slice(1)
+            }</span>
+            </div>
+            <div class="appointment-actions">
+              ${
+                apt.status !== "cancelled"
+                  ? `<button class="cancel-btn" data-apt-id="${apt.id}">Cancel</button>`
+                  : `<span class="cancelled-label"><i class="fas fa-ban"></i> Cancelled</span>`
+              }
+            </div>
+          </div>
+        `
+          )
+          .join("");
+
+        // Attach cancel listeners
+        listEl.querySelectorAll(".cancel-btn").forEach((btn) => {
+          btn.addEventListener("click", () =>
+            cancelAppointment(btn.dataset.aptId, btn)
+          );
+        });
+      }
+
+      // ---- Cancel ----
+      async function cancelAppointment(appointmentId, btnElement) {
+        if (!confirm("Are you sure you want to cancel this appointment?"))
+          return;
+
+        btnElement.innerText = "Cancelling...";
+        btnElement.disabled = true;
+        btnElement.classList.add("cancel-btn--loading");
+
+        // Resolve user ID
+        const userId =
+          localStorage.getItem("medicsense_user_id") || "guest_user";
+
+        try {
+          const response = await fetch(
+            `${CONFIG.API_BASE_URL}/appointments/${appointmentId}/cancel?user_id=${userId}`,
+            { method: "POST" }
+          );
+          const data = await response.json();
+
+          if (data.success) {
+            // Update local state
+            const apt = appointments.find((a) => a.id === appointmentId);
+            if (apt) apt.status = "cancelled";
+
+            // Persist to localStorage
+            localStorage.setItem(
+              "medicsense_appointments",
+              JSON.stringify(appointments)
+            );
+
+            // Animate out
+            const card = document.querySelector(
+              `.appointment-card[data-id="${appointmentId}"]`
+            );
+            if (card) {
+              card.style.transition = "opacity 0.3s ease, transform 0.3s ease";
+              card.style.opacity = "0";
+              card.style.transform = "translateY(-10px)";
+              setTimeout(() => {
+                updateStats();
+                renderAppointments();
+              }, 300);
+            } else {
+              updateStats();
+              renderAppointments();
+            }
+          } else {
+            alert(data.message || "Failed to cancel appointment");
+            btnElement.innerText = "Cancel";
+            btnElement.disabled = false;
+            btnElement.classList.remove("cancel-btn--loading");
+          }
+        } catch (error) {
+          console.error("Error cancelling:", error);
+          alert("Error connecting to server");
+          btnElement.innerText = "Cancel";
+          btnElement.disabled = false;
+          btnElement.classList.remove("cancel-btn--loading");
+        }
+      }
+
+      // ---- Cancel All ----
+      async function cancelAllAppointments() {
+        const active = appointments.filter((a) => a.status !== "cancelled");
+        if (active.length === 0) {
+          alert("No active appointments to cancel.");
+          return;
+        }
+
+        if (
+          !confirm(
+            `Are you sure you want to cancel all ${active.length} active appointment(s)?`
+          )
+        )
+          return;
+
+        const btn = document.getElementById("cancelAllBtn");
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Cancelling...';
+        btn.disabled = true;
+
+        const userId =
+          localStorage.getItem("medicsense_user_id") || "guest_user";
+        let successCount = 0;
+
+        for (const apt of active) {
+          try {
+            const response = await fetch(
+              `${CONFIG.API_BASE_URL}/appointments/${apt.id}/cancel?user_id=${userId}`,
+              { method: "POST" }
+            );
+            const data = await response.json();
+            if (data.success) {
+              apt.status = "cancelled";
+              successCount++;
+            }
+          } catch (e) {
+            console.error(`Failed to cancel ${apt.id}:`, e);
+          }
+        }
+
+        // Persist
+        localStorage.setItem(
+          "medicsense_appointments",
+          JSON.stringify(appointments)
+        );
+
+        // Refresh UI
+        updateStats();
+        renderAppointments();
+
+        btn.innerHTML = '<i class="fas fa-times-circle"></i> Cancel All';
+        btn.disabled = false;
+
+        alert(
+          `Successfully cancelled ${successCount} of ${active.length} appointment(s).`
+        );
+      }
+
+      // ---- Tab Switching ----
+      document.getElementById("filterTabs").addEventListener("click", (e) => {
+        const tab = e.target.closest(".apt-filter-tab");
+        if (!tab) return;
+        document
+          .querySelectorAll(".apt-filter-tab")
+          .forEach((t) => t.classList.remove("active"));
+        tab.classList.add("active");
+        activeFilter = tab.dataset.filter;
+        renderAppointments();
+      });
+
+      // ---- Init ----
+      // Call immediately since script is at bottom of body (DOM already loaded)
+      console.log("Script loaded, calling loadAppointments");
+      try {
+        loadAppointments();
+      } catch (error) {
+        console.error("Error in loadAppointments:", error);
+        // Force clear loading state even on error
+        const listEl = document.getElementById("appointmentList");
+        if (listEl) {
+          listEl.innerHTML = `
+            <div class="apt-empty-state">
+              <i class="fas fa-exclamation-triangle"></i>
+              <h3>Error loading appointments</h3>
+              <p>Please refresh the page or try again later.</p>
+            </div>`;
+        }
+      }
+    </script>
+  </body>
+</html>

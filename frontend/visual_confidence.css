@@ -1,0 +1,295 @@
+/**
+ * VISUAL CONFIDENCE & DEPTH REFINEMENT
+ * CSS-only improvements for dominance and intentionality
+ * No gradients, no flashy animations, no structural changes
+ */
+
+/* ========================================
+   1. DYNAMIC PREFERRED TIME CONTAINER
+   ======================================== */
+
+/* Make empty state feel interactive and purposeful */
+.inline-slots-container {
+  background: #fafbfc; /* Solid, not gradient */
+  border: 2px solid #e5e7eb; /* Thicker border for presence */
+  border-radius: var(--border-radius-lg);
+  padding: var(--space-8); /* 32px */
+  min-height: 160px; /* Increased from 140px */
+  position: relative;
+  transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Hover state even when empty - shows it's interactive */
+.inline-slots-container:hover {
+  border-color: #cbd5e1;
+  background: #f8fafb;
+  box-shadow: 0 0 0 4px rgba(203, 213, 225, 0.1);
+}
+
+/* Hint text with more authority */
+.inline-slots-container .slots-hint {
+  font-size: var(--text-base); /* 16px, larger */
+  font-weight: var(--weight-medium);
+  color: var(--color-text-secondary);
+  padding: var(--space-12) var(--space-6); /* 48px 24px */
+}
+
+/* Add subtle icon to hint */
+.inline-slots-container .slots-hint::before {
+  content: '\f017'; /* Clock icon */
+  font-family: 'Font Awesome 6 Free';
+  font-weight: 400;
+  display: block;
+  font-size: 2rem;
+  color: #cbd5e1;
+  margin-bottom: var(--space-4);
+  opacity: 0.6;
+}
+
+/* ========================================
+   2. STRENGTHEN CTA VISUAL AUTHORITY
+   ======================================== */
+
+/* Larger, more dominant CTA */
+.btn-book-appointment {
+  padding: var(--space-6) var(--space-10); /* 24px 40px - significantly larger */
+  font-size: 1.0625rem; /* 17px */
+  font-weight: var(--weight-bold); /* 700 for CTA only */
+  margin-top: var(--space-10); /* 40px, increased spacing */
+  min-height: 56px; /* Touch-friendly, substantial */
+  letter-spacing: 0.01em;
+}
+
+/* Remove gradient divider, use spacing instead */
+.btn-book-appointment::before {
+  display: none;
+}
+
+/* Stronger hover authority */
+.btn-book-appointment:hover:not(:disabled) {
+  transform: translateY(-3px); /* More pronounced lift */
+  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.25),
+              0 2px 8px rgba(99, 102, 241, 0.15);
+}
+
+/* More tactile press */
+.btn-book-appointment:active:not(:disabled) {
+  transform: scale(0.97); /* More noticeable */
+}
+
+/* ========================================
+   3. REDUCE CARD VISUAL SIMILARITY
+   ======================================== */
+
+/* Primary cards (form sections) - stronger presence */
+.form-section {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04),
+              0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+/* Secondary card (Your Appointments) - clearly different */
+.my-appointments-card {
+  background: #fafbfc; /* Tinted, not white */
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03); /* Lighter shadow */
+  opacity: 0.95; /* Slightly faded */
+}
+
+/* Stronger hover on primary cards */
+.form-section:hover {
+  border-color: #d1d5db;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06),
+              0 2px 6px rgba(0, 0, 0, 0.03);
+}
+
+/* Subtle hover on secondary card */
+.my-appointments-card:hover {
+  opacity: 1;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+/* ========================================
+   4. TIGHTEN HERO SPACING - INCREASE URGENCY
+   ======================================== */
+
+/* More compact hero */
+.hero-section {
+  padding: var(--space-10) 0 var(--space-8) 0; /* 40px 0 32px 0 */
+}
+
+/* Tighter appointments section */
+.appointments-section {
+  padding: var(--space-10) 0 var(--space-16) 0; /* 40px 0 64px 0 */
+}
+
+/* Reduce section header spacing */
+.appointments-section .section-header {
+  margin-bottom: var(--space-8); /* 32px, reduced from 40px */
+}
+
+/* Tighter section header internal spacing */
+.appointments-section .section-header h2 {
+  margin-bottom: var(--space-2); /* 8px, reduced */
+}
+
+/* ========================================
+   5. IMPROVE DEPTH CONTRAST
+   ======================================== */
+
+/* Add subtle page background tint */
+body {
+  background: #f8fafb; /* Very light tint */
+}
+
+/* Ensure cards stand out against background */
+.form-section,
+.my-appointments-card {
+  position: relative;
+}
+
+/* Stronger white for primary cards */
+.form-section {
+  background: #ffffff;
+}
+
+/* Add subtle inner glow to cards */
+.form-section::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+/* ========================================
+   6. REFINE TOGGLE STATES - PREMIUM FEEL
+   ======================================== */
+
+/* Unselected - clear but not template-like */
+.type-option span {
+  background: #ffffff;
+  border: 2px solid #e5e7eb; /* Thicker border */
+  padding: var(--space-4) var(--space-5); /* 16px 20px */
+  font-weight: var(--weight-medium);
+  opacity: 0.75; /* More faded when unselected */
+}
+
+/* Hover - clear feedback */
+.type-option:hover span {
+  opacity: 1;
+  border-color: #cbd5e1;
+  background: #fafbfc;
+  transform: translateY(-1px);
+}
+
+/* Selected - strong visual authority */
+.type-option input[type="radio"]:checked + span {
+  background: #f0f4ff; /* Solid tint, not gradient */
+  border-color: #6366f1;
+  border-width: 2px;
+  color: #4338ca;
+  opacity: 1;
+  font-weight: var(--weight-semibold);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.08);
+}
+
+/* Icon color in selected state */
+.type-option input[type="radio"]:checked + span i {
+  color: #6366f1;
+}
+
+/* ========================================
+   7. ADDITIONAL DEPTH REFINEMENTS
+   ======================================== */
+
+/* Form section headers - more definition */
+.form-section-header {
+  padding-bottom: var(--space-5); /* 20px */
+  margin-bottom: var(--space-8); /* 32px */
+  border-bottom: 2px solid #f1f5f9; /* Thicker, more visible */
+}
+
+/* Section icons - stronger presence */
+.form-section-icon {
+  width: 48px;
+  height: 48px;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.15);
+}
+
+/* Input fields - clearer depth */
+.form-control,
+.symptom-textarea,
+select.form-control {
+  background: #ffffff;
+  border: 1.5px solid #e5e7eb; /* Slightly thicker */
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+/* Input focus - stronger presence */
+.form-control:focus,
+.symptom-textarea:focus,
+select.form-control:focus {
+  border-color: #6366f1;
+  border-width: 2px;
+  padding: calc(var(--space-3) - 0.5px) calc(var(--space-4) - 0.5px); /* Compensate for border */
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1),
+              inset 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+/* ========================================
+   8. APPOINTMENTS CONTAINER REFINEMENT
+   ======================================== */
+
+/* Tighter max-width for more authority */
+.appointments-container {
+  max-width: 750px; /* Reduced from 800px */
+}
+
+/* ========================================
+   9. SLOT BUTTON REFINEMENTS
+   ======================================== */
+
+/* Slots - clearer states */
+.slot-btn {
+  border: 2px solid #e5e7eb; /* Thicker border */
+  background: #ffffff;
+  font-weight: var(--weight-semibold);
+}
+
+/* Slot hover - clear feedback */
+.slot-btn:hover:not(.booked):not(.selected) {
+  border-color: #6366f1;
+  background: #f0f4ff;
+  transform: translateY(-2px);
+}
+
+/* Selected slot - strong authority */
+.slot-btn.selected {
+  border-width: 2px;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1),
+              0 2px 8px rgba(99, 102, 241, 0.15);
+}
+
+/* ========================================
+   10. MOBILE REFINEMENTS
+   ======================================== */
+
+@media (max-width: 768px) {
+  .appointments-container {
+    max-width: 100%;
+  }
+
+  .btn-book-appointment {
+    padding: var(--space-5) var(--space-8); /* 20px 32px */
+    min-height: 52px;
+  }
+
+  .inline-slots-container {
+    padding: var(--space-6); /* 24px */
+    min-height: 140px;
+  }
+}

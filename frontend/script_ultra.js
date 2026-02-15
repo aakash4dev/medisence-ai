@@ -300,6 +300,17 @@ document.addEventListener("DOMContentLoaded", async function () {
     });
 
     console.log("✅ App initialized successfully");
+
+    // Handle URL hash for scroll position (e.g., #appointments)
+    if (window.location.hash) {
+      setTimeout(() => {
+        const hash = window.location.hash.substring(1);
+        const element = document.getElementById(hash);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }, 500); // Small delay to ensure content is loaded
+    }
   } catch (error) {
     console.error("🔥 FATAL: App initialization failed", error);
 
@@ -352,6 +363,31 @@ function initializeAppCore() {
         target.scrollIntoView({ behavior: "smooth", block: "start" });
       }
     });
+  });
+
+  // Listen for page visibility changes to reload appointments when user returns
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) {
+      console.log(
+        "📋 Page visible again - reloading appointments and notifications..."
+      );
+      loadUserData();
+      loadNotificationCountSafe(); // Refresh notification badge
+    }
+  });
+
+  // Listen for localStorage changes from other tabs/pages
+  window.addEventListener("storage", (e) => {
+    if (e.key === "medicsense_appointments") {
+      console.log("📋 Appointments updated in another tab - reloading...");
+      loadUserData();
+    }
+    if (e.key === "medicsense_unread_count") {
+      console.log(
+        "🔔 Notification count updated in another tab - refreshing badge..."
+      );
+      loadNotificationCountSafe();
+    }
   });
 
   console.log("✅ Core app initialized");
@@ -561,6 +597,17 @@ function showNotifications() {
 }
 
 // Load notification count with timeout and error handling
+function getUserId() {
+  if (state.currentUser) return state.currentUser;
+
+  // Try to get from localStorage
+  const savedId = localStorage.getItem("medicsense_user_id");
+  if (savedId) return savedId;
+
+  // Default to config user ID (guest)
+  return CONFIG.USER_ID;
+}
+
 // Load notification count with timeout and error handling
 async function loadNotificationCountSafe() {
   try {
@@ -588,16 +635,20 @@ async function loadNotificationCountSafe() {
     const unreadCount =
       summary && typeof summary.unread === "number" ? summary.unread : 0;
 
+    console.log("🔔 Notification badge update - Unread count:", unreadCount);
+
     const badge = document.getElementById("notificationBadge");
     if (badge) {
       if (unreadCount > 0) {
         badge.textContent = unreadCount > 99 ? "99+" : unreadCount;
         badge.classList.remove("hidden");
         badge.style.display = "flex";
+        console.log("✅ Badge shown with count:", badge.textContent);
       } else {
         badge.textContent = "";
         badge.classList.add("hidden");
         badge.style.display = "none";
+        console.log("✅ Badge hidden (0 unread)");
       }
     }
   } catch (error) {
@@ -664,11 +715,11 @@ function updateSeverityDisplay() {
 // Input validation for symptom textarea
 // Input validation for symptom checker form (Judge-Ready)
 function setupSymptomInputValidation() {
-  const symptomInput = document.getElementById('symptomInput');
-  const durationSelect = document.getElementById('symptomDuration');
-  const severitySlider = document.getElementById('severityRange');
-  const severityValue = document.getElementById('severityValue');
-  const analyzeBtn = document.getElementById('analyzeBtn');
+  const symptomInput = document.getElementById("symptomInput");
+  const durationSelect = document.getElementById("symptomDuration");
+  const severitySlider = document.getElementById("severityRange");
+  const severityValue = document.getElementById("severityValue");
+  const analyzeBtn = document.getElementById("analyzeBtn");
 
   if (!symptomInput || !analyzeBtn) return;
 
@@ -682,48 +733,77 @@ function setupSymptomInputValidation() {
 
   // Severity Slider Feedback
   if (severitySlider && severityValue) {
-    severitySlider.addEventListener('input', (e) => {
+    severitySlider.addEventListener("input", (e) => {
       severityValue.textContent = e.target.value;
       checkValidity();
     });
   }
 
   // Symptom Input Validation
-  symptomInput.addEventListener('input', checkValidity);
+  symptomInput.addEventListener("input", checkValidity);
 
   // Duration Selection Validation
   if (durationSelect) {
-    durationSelect.addEventListener('change', checkValidity);
+    durationSelect.addEventListener("change", checkValidity);
   }
 
   // Final Hardening: JS-only binding (STEP 2)
-  analyzeBtn.addEventListener('click', analyzeSymptoms);
+  analyzeBtn.addEventListener("click", analyzeSymptoms);
 
   // Initialize state
   checkValidity();
 }
 
-
-function addSymptom(symptom) {
+function addSymptom(symptom, element) {
   const textarea = document.getElementById("symptomInput");
+
+  // Toggle visual state if element is provided
+  if (element) {
+    element.classList.toggle("active");
+  }
+
   if (textarea) {
     const currentText = textarea.value.trim();
-    if (currentText) {
-      textarea.value = currentText + ", " + symptom;
+    const symptomTag = symptom.trim();
+
+    // Check if symptom is already in list (simple check)
+    if (currentText.toLowerCase().includes(symptomTag.toLowerCase())) {
+      // Remove it (Toggle OFF) behavior
+      // Note: This is a simple string replacement. Ideally, we'd parse comma-separated values.
+      // For now, we'll just remove the specific instance to support the "Toggle" feel.
+      // Logic: Split by comma, filter out the symptom, join back.
+      const parts = currentText
+        .split(",")
+        .map((s) => s.trim())
+        .filter((s) => s.toLowerCase() !== symptomTag.toLowerCase());
+      textarea.value = parts.join(", ");
+
+      // If we just removed it, ensure the tag is visually inactive
+      if (element) element.classList.remove("active");
     } else {
-      textarea.value = symptom;
+      // Add it (Toggle ON)
+      if (currentText) {
+        textarea.value = currentText + ", " + symptomTag;
+      } else {
+        textarea.value = symptomTag;
+      }
+      // Ensure tag is visually active
+      if (element) element.classList.add("active");
     }
+
     textarea.focus();
 
     // Trigger validation re-check
-    const analyzeBtn = document.getElementById('analyzeBtn');
+    const analyzeBtn = document.getElementById("analyzeBtn");
     if (analyzeBtn) {
-      const durationSelect = document.getElementById('symptomDuration');
-      const severitySlider = document.getElementById('severityRange');
+      const durationSelect = document.getElementById("symptomDuration");
+      const severitySlider = document.getElementById("severityRange");
 
       const hasSymptoms = textarea.value.trim().length >= 3;
       const hasDuration = durationSelect ? durationSelect.value !== "" : false;
-      const hasSeverity = severitySlider ? parseInt(severitySlider.value) > 0 : false;
+      const hasSeverity = severitySlider
+        ? parseInt(severitySlider.value) > 0
+        : false;
 
       analyzeBtn.disabled = !(hasSymptoms && hasDuration && hasSeverity);
     }
@@ -743,9 +823,15 @@ async function analyzeSymptoms() {
   const resultsBody = document.getElementById("symptomResultsBody");
   const infoCard = document.getElementById("symptomInfoCard");
   const resultsCard = document.getElementById("symptomResults");
-  const layoutContainer = document.querySelector('.symptom-checker-container');
+  const layoutContainer = document.querySelector(".symptom-checker-container");
 
-  if (!symptomInput || !durationSelect || !severitySlider || !analyzeBtn || !resultsBody) {
+  if (
+    !symptomInput ||
+    !durationSelect ||
+    !severitySlider ||
+    !analyzeBtn ||
+    !resultsBody
+  ) {
     isAnalyzing = false;
     return;
   }
@@ -767,7 +853,7 @@ async function analyzeSymptoms() {
 
   if (resultsCard) resultsCard.style.display = "block";
   if (infoCard) infoCard.style.display = "none";
-  if (layoutContainer) layoutContainer.classList.add('has-analysis');
+  if (layoutContainer) layoutContainer.classList.add("has-analysis");
 
   resultsBody.innerHTML = `
     <div class="loading-state">
@@ -827,27 +913,29 @@ async function analyzeSymptoms() {
   }
 }
 
-
 function displaySymptomResults(analysis, severity) {
   const resultsBody = document.getElementById("symptomResultsBody");
   if (!resultsBody) return;
 
-  const severityColor =
-    severity <= 6 ? "warning" : "danger";
+  const severityColor = severity <= 6 ? "warning" : "danger";
   const severityText =
     severity <= 3 ? "Mild" : severity <= 6 ? "Moderate" : "Severe";
 
   // Pre-process AI response for better formatting
   let formattedAnalysis = analysis
-    .replace(/•/g, '\n- ') // Convert bullets to markdown list items
-    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Convert ALL **text** to bold
-    .replace(/\*\*/g, '') // Remove any potential stray asterisks
-    .replace(/(My Recommendations:|Self-Care Tips:)/g, '\n\n<strong>$1</strong>\n'); // Ensure headers have spacing
+    .replace(/•/g, "\n- ") // Convert bullets to markdown list items
+    .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>") // Convert ALL **text** to bold
+    .replace(/\*\*/g, "") // Remove any potential stray asterisks
+    .replace(
+      /(My Recommendations:|Self-Care Tips:)/g,
+      "\n\n<strong>$1</strong>\n"
+    ); // Ensure headers have spacing
 
   // Parse AI response
-  const analysisHTML = typeof marked !== "undefined"
-    ? marked.parse(formattedAnalysis)
-    : formattedAnalysis.replace(/\n/g, "<br>");
+  const analysisHTML =
+    typeof marked !== "undefined"
+      ? marked.parse(formattedAnalysis)
+      : formattedAnalysis.replace(/\n/g, "<br>");
 
   resultsBody.innerHTML = `
     <!-- Severity Badge -->
@@ -887,7 +975,7 @@ function exportSymptomReport() {
   }
 
   // Inject Timestamp temporarily
-  const timestampDiv = document.createElement('div');
+  const timestampDiv = document.createElement("div");
   timestampDiv.innerHTML = `<p style="color: #6b7280; font-size: 0.875rem; margin-bottom: 1rem;"><strong>Report Generated:</strong> ${new Date().toLocaleString()}</p>`;
   element.prepend(timestampDiv);
 
@@ -895,28 +983,30 @@ function exportSymptomReport() {
     useCORS: true,
     scale: 2, // Higher quality
     backgroundColor: "#ffffff", // Ensure white background
-    ignoreElements: (el) => el.classList.contains('results-actions') // Hide buttons in image
-  }).then(canvas => {
-    try {
-      const link = document.createElement('a');
-      const timestamp = new Date().toISOString().slice(0, 10);
-      link.download = `MedicSense_Report_${timestamp}.png`;
-      link.href = canvas.toDataURL("image/png");
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      showToast("Report downloaded as image!", "success");
-    } catch (err) {
-      console.error("Download failed:", err);
-      showToast("Failed to save image.", "error");
-    } finally {
+    ignoreElements: (el) => el.classList.contains("results-actions"), // Hide buttons in image
+  })
+    .then((canvas) => {
+      try {
+        const link = document.createElement("a");
+        const timestamp = new Date().toISOString().slice(0, 10);
+        link.download = `MedicSense_Report_${timestamp}.png`;
+        link.href = canvas.toDataURL("image/png");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        showToast("Report downloaded as image!", "success");
+      } catch (err) {
+        console.error("Download failed:", err);
+        showToast("Failed to save image.", "error");
+      } finally {
+        timestampDiv.remove(); // Clean up
+      }
+    })
+    .catch((err) => {
+      console.error("Image generation failed:", err);
       timestampDiv.remove(); // Clean up
-    }
-  }).catch(err => {
-    console.error("Image generation failed:", err);
-    timestampDiv.remove(); // Clean up
-    showToast("Failed to generate image report.", "error");
-  });
+      showToast("Failed to generate image report.", "error");
+    });
 }
 
 // ========================================
@@ -948,7 +1038,8 @@ function startVoiceInput(type) {
   }
 
   // Get the button that was clicked
-  const buttonId = type === "symptom" ? "voiceInputBtnSymptom" : "voiceInputBtnChat";
+  const buttonId =
+    type === "symptom" ? "voiceInputBtnSymptom" : "voiceInputBtnChat";
   const button = document.getElementById(buttonId);
 
   if (!button) {
@@ -970,7 +1061,9 @@ function startVoiceInput(type) {
     button.disabled = false; // Allow user to click to stop!
 
     // Update button text if it has text content
-    const buttonText = button.querySelector("span") || button.childNodes[button.childNodes.length - 1];
+    const buttonText =
+      button.querySelector("span") ||
+      button.childNodes[button.childNodes.length - 1];
     if (buttonText && buttonText.nodeType === Node.TEXT_NODE) {
       buttonText.textContent = " Stop Listening";
     } else if (button.innerText && button.innerText.includes("Voice Input")) {
@@ -993,7 +1086,9 @@ function startVoiceInput(type) {
     currentRecognition = null; // Clear global state
 
     // Restore original button text if it has text content
-    const buttonText = button.querySelector("span") || button.childNodes[button.childNodes.length - 1];
+    const buttonText =
+      button.querySelector("span") ||
+      button.childNodes[button.childNodes.length - 1];
     if (buttonText && buttonText.nodeType === Node.TEXT_NODE) {
       buttonText.textContent = " Voice Input";
     } else {
@@ -1039,9 +1134,9 @@ function startVoiceInput(type) {
     console.error("❌ Voice error:", event.error);
 
     // Ignore "aborted" error if user manually stopped it
-    if (event.error === 'aborted') {
-         resetButtonState();
-         return;
+    if (event.error === "aborted") {
+      resetButtonState();
+      return;
     }
 
     // Reset button state on error
@@ -1052,16 +1147,20 @@ function startVoiceInput(type) {
     switch (event.error) {
       case "not-allowed":
       case "permission-denied":
-        errorMessage = "🚫 Microphone access denied. Please allow microphone access in your browser settings.";
+        errorMessage =
+          "🚫 Microphone access denied. Please allow microphone access in your browser settings.";
         break;
       case "no-speech":
-        errorMessage = "🔇 No speech detected. Please try again and speak clearly.";
+        errorMessage =
+          "🔇 No speech detected. Please try again and speak clearly.";
         break;
       case "audio-capture":
-        errorMessage = "🎤 No microphone found. Please connect a microphone and try again.";
+        errorMessage =
+          "🎤 No microphone found. Please connect a microphone and try again.";
         break;
       case "network":
-        errorMessage = "🌐 Network error. Please check your internet connection.";
+        errorMessage =
+          "🌐 Network error. Please check your internet connection.";
         break;
       default:
         errorMessage = `Voice input error: ${event.error}`;
@@ -1093,8 +1192,6 @@ function useVoiceInput(type) {
 function toggleVoiceInput() {
   startVoiceInput("chat");
 }
-
-
 
 // ========================================
 // APPOINTMENT FUNCTIONS
@@ -1213,48 +1310,266 @@ async function loadAvailableSlots() {
 function selectSlot(time) {
   const timeSelect = document.getElementById("appointmentTime");
   if (timeSelect) {
-    timeSelect.value = time;
-    showToast(`Selected ${time}`, "success");
+    timeSelect.value = time; // Existing logic - updates hidden select
+    timeSelect.dispatchEvent(new Event("change")); // Fix: Trigger change event to clear errors
+    showToast(`Selected ${time}`, "success"); // Existing logic
+
+    // NEW: Visual feedback for premium time-slot grid
+    document.querySelectorAll(".slot-btn").forEach((btn) => {
+      btn.classList.remove("selected");
+    });
+
+    // Add selected class to clicked button
+    const clickedBtn = event?.target;
+    if (clickedBtn && clickedBtn.classList.contains("slot-btn")) {
+      clickedBtn.classList.add("selected");
+    }
+
+    // Update the selected time display indicator
+    const selectedTimeDisplay = document.getElementById("selectedTimeDisplay");
+    if (selectedTimeDisplay) {
+      selectedTimeDisplay.textContent = `✓ Selected: ${time}`;
+      selectedTimeDisplay.style.background =
+        "linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)";
+      selectedTimeDisplay.style.borderColor = "#60a5fa";
+      selectedTimeDisplay.style.color = "#1e40af";
+      selectedTimeDisplay.style.fontWeight = "600";
+    }
   }
 }
 
 async function bookAppointment() {
-  const name = document.getElementById("patientName")?.value.trim();
-  const phone = document.getElementById("patientPhone")?.value.trim();
-  const email = document.getElementById("patientEmail")?.value.trim();
-  const doctor = document.getElementById("doctorSelect")?.value;
-  const date = document.getElementById("appointmentDate")?.value;
-  const time = document.getElementById("appointmentTime")?.value;
-  const reason = document.getElementById("appointmentReason")?.value.trim();
-  const type = document.querySelector(
+  console.log("🚀 Booking appointment initiated - Validation Active");
+
+  // Clear previous errors first
+  document.querySelectorAll(".is-invalid").forEach((el) => {
+    el.classList.remove("is-invalid");
+  });
+  document.querySelectorAll(".invalid-feedback").forEach((el) => el.remove());
+
+  const nameInput = document.getElementById("patientName");
+  const phoneInput = document.getElementById("patientPhone");
+  const emailInput = document.getElementById("patientEmail");
+  const doctorSelect = document.getElementById("doctorSelect");
+  const dateInput = document.getElementById("appointmentDate");
+  const timeInput = document.getElementById("appointmentTime");
+  const reasonInput = document.getElementById("appointmentReason");
+
+  // Helper to get value safely
+  const getValue = (el) => (el ? el.value.trim() : "");
+
+  const name = getValue(nameInput);
+  const phone = getValue(phoneInput);
+  const email = getValue(emailInput);
+  const doctor = getValue(doctorSelect);
+  const date = getValue(dateInput);
+  const time = getValue(timeInput);
+  const reason = getValue(reasonInput);
+
+  const typeInput = document.querySelector(
     'input[name="appointmentType"]:checked'
-  )?.value;
+  );
+  const type = typeInput ? typeInput.value : "";
 
-  // Validation
-  if (!name || !phone || !doctor || !date || !time) {
-    showToast("Please fill in all required fields", "warning");
-    return;
+  let isValid = true;
+  let firstErrorField = null;
+
+  // Validation Helper
+  const setError = (input, msg) => {
+    if (!input) return;
+    isValid = false;
+    input.classList.add("is-invalid");
+
+    // Create or update feedback
+    let feedback = input.parentNode.querySelector(".invalid-feedback");
+    if (!feedback) {
+      feedback = document.createElement("div");
+      feedback.className = "invalid-feedback";
+      input.parentNode.appendChild(feedback);
+    }
+    feedback.textContent = msg;
+    feedback.style.display = "block"; // Ensure visibility
+
+    // Track first error for scrolling
+    if (!firstErrorField) firstErrorField = input;
+
+    // Auto-clear on input
+    const clearError = () => {
+      input.classList.remove("is-invalid");
+      const fb = input.parentNode.querySelector(".invalid-feedback");
+      if (fb) fb.remove();
+      input.removeEventListener("input", clearError);
+      input.removeEventListener("change", clearError);
+    };
+
+    input.addEventListener("input", clearError);
+    input.addEventListener("change", clearError);
+  };
+
+  // 1. Validate Name
+  if (!name) {
+    setError(nameInput, "Full Name is required");
+  } else if (name.length < 2) {
+    setError(nameInput, "Name must be at least 2 characters");
   }
 
-  if (!validateEmail(email)) {
-    showToast("Please enter a valid email address", "warning");
-    return;
+  // 2. Validate Phone
+  // Allow format like: +91 9876543210, 9876543210, 09876543210, 987-654-3210
+  const phoneRegex = /^(\+?\d{1,4}[-.\s]?)?(\(?\d{3}\)?[-.\s]?)?[\d\s-]{5,15}$/;
+  if (!phone) {
+    setError(phoneInput, "Phone Number is required");
+  } else if (!phoneRegex.test(phone.replace(/\s+/g, ""))) {
+    setError(phoneInput, "Enter a valid phone number (10-15 digits)");
   }
 
-  if (!validatePhone(phone)) {
-    showToast("Please enter a valid phone number", "warning");
+  // 3. Validate Email
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!email) {
+    setError(emailInput, "Email is required");
+  } else if (!emailRegex.test(email)) {
+    setError(emailInput, "Enter a valid email address");
+  }
+
+  // 4. Validate Doctor
+  if (!doctor) {
+    setError(doctorSelect, "Please select a doctor or department");
+  }
+
+  // 5. Validate Date
+  if (!date) {
+    setError(dateInput, "Preferred Date is required");
+  } else {
+    // Optional: Check for past dates
+    const selectedDate = new Date(date);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    if (selectedDate < today) {
+      setError(dateInput, "Date cannot be in the past");
+    }
+  }
+
+  // 6. Validate Time
+  if (!time) {
+    setError(timeInput, "Preferred Time is required");
+
+    // Visual cue for custom slot grid (if hidden select is used)
+    const slotsGrid = document.getElementById("slotsGrid");
+    if (slotsGrid && timeInput.style.display === "none") {
+      slotsGrid.style.border = "1px solid #ef4444";
+      slotsGrid.style.borderRadius = "8px";
+      slotsGrid.style.padding = "8px";
+
+      // Error message removed as per user request
+
+      // Auto-clear logic for grid
+      const clearGridError = () => {
+        slotsGrid.style.border = "";
+        slotsGrid.style.padding = "";
+        const ge = slotsGrid.parentNode.querySelector(".grid-error-msg");
+        if (ge) ge.remove();
+      };
+      // Hook into the selectSlot function indirectly or add listener to hidden input
+      timeInput.addEventListener("change", clearGridError);
+      // Also modify selectSlot to trigger this if needed, but 'change' event on hidden input might not fire automatically
+      // So we add a click listener to grid to reset visual state tentatively
+      slotsGrid.addEventListener(
+        "click",
+        () => {
+          setTimeout(() => {
+            if (timeInput.value) clearGridError();
+          }, 100);
+        },
+        { once: true }
+      );
+    }
+  }
+
+  // 7. Validate Type
+  if (!type) {
+    const typeContainer = document.querySelector(".appointment-type");
+    if (typeContainer) {
+      let feedback = typeContainer.querySelector(".invalid-feedback");
+      if (!feedback) {
+        feedback = document.createElement("div");
+        feedback.className = "invalid-feedback";
+        feedback.style.display = "block";
+        feedback.textContent = "Please select an appointment type";
+        typeContainer.appendChild(feedback);
+      }
+      if (!firstErrorField) firstErrorField = typeContainer;
+
+      // Clear on change
+      const types = document.getElementsByName("appointmentType");
+      types.forEach((t) =>
+        t.addEventListener(
+          "change",
+          () => {
+            const existingFeedback =
+              typeContainer.querySelector(".invalid-feedback");
+            if (existingFeedback) existingFeedback.remove();
+          },
+          { once: true }
+        )
+      );
+    }
+    isValid = false;
+  }
+
+  if (!isValid) {
+    if (firstErrorField) {
+      // Smooth scroll to first error
+      firstErrorField.scrollIntoView({ behavior: "smooth", block: "center" });
+      // Focus if it's an input
+      if (firstErrorField.focus) {
+        firstErrorField.focus({ preventScroll: true });
+      }
+
+      // Shake animation effect for better feedback (optional, using CSS class)
+      firstErrorField.classList.add("animate__animated", "animate__headShake");
+      setTimeout(() => {
+        firstErrorField.classList.remove(
+          "animate__animated",
+          "animate__headShake"
+        );
+      }, 500);
+    }
+    showToast("Please correct the errors in the form.", "error");
     return;
   }
 
   // Show loading
   showToast("Booking your appointment...", "info");
 
+  // NEW: Add loading state to button
+  const bookBtn = document.querySelector(".btn-book-appointment");
+  if (bookBtn) {
+    bookBtn.classList.add("btn-loading");
+    bookBtn.disabled = true;
+    // Add spinner to button text
+    const originalBtnText = bookBtn.innerHTML;
+    bookBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Booking...';
+
+    // Restore function
+    var restoreBtn = () => {
+      bookBtn.classList.remove("btn-loading");
+      bookBtn.disabled = false;
+      bookBtn.innerHTML = originalBtnText;
+    };
+  }
+
   try {
-    // Get user ID - use Firebase UID if logged in, otherwise generate temporary ID
-    let userId = state.currentUser;
+    // Get user ID - use Firebase UID if logged in, or consistent guest ID
+    let userId = getUserId();
+
+    // If getUserId returned null or undefined (shouldn't happen with current logic but for safety)
     if (!userId) {
       userId = "guest_" + Math.random().toString(36).substr(2, 9);
-      console.warn("⚠️ Booking as guest user. Login recommended for tracking.");
+      console.warn("⚠️ Generated new guest ID.");
+    }
+
+    // Persist user ID to localStorage so notifications.html can see it
+    if (!state.currentUser) {
+      localStorage.setItem("medicsense_user_id", userId);
     }
 
     // Call backend API to book appointment
@@ -1281,6 +1596,7 @@ async function bookAppointment() {
     const data = await response.json();
 
     if (data.success) {
+      playSuccessSound(); // Play confirmation sound
       const appointment = {
         id: data.appointmentId || "apt_" + Date.now(),
         name,
@@ -1299,24 +1615,16 @@ async function bookAppointment() {
       state.appointments.push(appointment);
       saveUserData();
 
-      // Send WhatsApp notification if appointment is for Dr. Aakash
-      /* Redundant - Backend handles this
-      if (doctor === 'dr_aakash') {
-        try {
-          // Import and use WhatsApp service
-          const { sendWhatsAppNotification } = await import('./whatsapp_service.js');
-          await sendWhatsAppNotification(appointment);
-        } catch (error) {
-          console.log('WhatsApp notification not sent (service may not be configured):', error);
-        }
-      }
-      */
-
       // Show success
       showToast(
         "Appointment booked successfully! Confirmation sent to your email.",
         "success"
       );
+
+      // NEW: Show success animation
+      if (typeof showSuccessAnimation === "function") {
+        showSuccessAnimation();
+      }
 
       // 🔥 REQUIRED: Re-fetch notifications so the bell dot appears immediately
       fetchNotifications();
@@ -1330,6 +1638,71 @@ async function bookAppointment() {
       document.getElementById("appointmentTime").value = "";
       document.getElementById("appointmentReason").value = "";
 
+      // Remove all validation classes (success/error states)
+      document.querySelectorAll(".is-valid").forEach((el) => {
+        el.classList.remove("is-valid");
+      });
+      document.querySelectorAll(".is-invalid").forEach((el) => {
+        el.classList.remove("is-invalid");
+      });
+      document.querySelectorAll(".field-valid").forEach((el) => {
+        el.classList.remove("field-valid");
+      });
+      document.querySelectorAll(".field-invalid").forEach((el) => {
+        el.classList.remove("field-invalid");
+      });
+      document
+        .querySelectorAll(".invalid-feedback")
+        .forEach((el) => el.remove());
+      document.querySelectorAll(".valid-feedback").forEach((el) => el.remove());
+
+      // Reset all form-control styling
+      document.querySelectorAll(".form-control").forEach((el) => {
+        el.style.borderColor = "";
+        el.style.background = "";
+      });
+
+      // Reset selected time display
+      const selectedTimeDisplay = document.getElementById(
+        "selectedTimeDisplay"
+      );
+      if (selectedTimeDisplay) {
+        selectedTimeDisplay.textContent = "Select from available slots →";
+        selectedTimeDisplay.style.background = "#f8fafc";
+        selectedTimeDisplay.style.borderColor = "#cbd5e1";
+        selectedTimeDisplay.style.color = "#64748b";
+        selectedTimeDisplay.style.fontWeight = "400";
+      }
+
+      // Reset slots grid selection
+      document
+        .querySelectorAll(".slot-btn")
+        .forEach((btn) => btn.classList.remove("selected"));
+
+      // Clear the slots grid
+      const slotsGrid = document.getElementById("slotsGrid");
+      if (slotsGrid) {
+        slotsGrid.innerHTML = "";
+        slotsGrid.style.border = "";
+        slotsGrid.style.padding = "";
+      }
+
+      // Reset hints
+      const slotsHint = document.getElementById("slotsHint");
+      if (slotsHint) {
+        slotsHint.textContent =
+          "Select doctor and date to view available slots";
+        slotsHint.style.display = "block";
+      }
+
+      // Reset radio buttons to default (in-person)
+      const inPersonRadio = document.querySelector(
+        'input[name="appointmentType"][value="in-person"]'
+      );
+      if (inPersonRadio) {
+        inPersonRadio.checked = true;
+      }
+
       // Update appointments list
       updateAppointmentsList();
 
@@ -1340,7 +1713,15 @@ async function bookAppointment() {
     }
   } catch (error) {
     console.error("Error booking appointment:", error);
-    showToast("Error booking appointment. Please try again.", "error");
+    showToast(
+      error.message || "Error booking appointment. Please try again.",
+      "error"
+    );
+  } finally {
+    // NEW: Remove loading state from button
+    if (bookBtn && restoreBtn) {
+      restoreBtn();
+    }
   }
 }
 
@@ -1348,27 +1729,118 @@ function updateAppointmentsList() {
   const listElement = document.getElementById("myAppointmentsList");
   if (!listElement) return;
 
-  if (state.appointments.length === 0) {
+  // Dashboard widget: show only confirmed/upcoming (not cancelled, not past)
+  const today = new Date().toISOString().split("T")[0];
+  const recentAppointments = state.appointments
+    .filter((apt) => apt.status !== "cancelled" && apt.date >= today)
+    .sort(
+      (a, b) =>
+        new Date(b.timestamp || b.date) - new Date(a.timestamp || a.date)
+    )
+    .slice(0, 3);
+
+  if (recentAppointments.length === 0) {
     listElement.innerHTML =
-      '<p class="no-appointments">No appointments scheduled yet</p>';
+      '<p class="no-appointments">No upcoming appointments</p>';
     return;
   }
 
-  listElement.innerHTML = state.appointments
-    .slice(-3)
-    .reverse()
+  listElement.innerHTML = recentAppointments
     .map(
       (apt) => `
-        <div class="appointment-item">
+        <div class="appointment-card" data-id="${apt.id}" id="apt_${apt.id}">
             <div class="appointment-info">
-                <strong>${apt.doctor}</strong>
-                <p>${apt.date} at ${apt.time}</p>
+                <h4>${apt.doctor || "Doctor"}</h4>
+                <p><i class="fas fa-calendar-alt"></i> ${apt.date} at ${
+        apt.time
+      }</p>
+                <span class="status-badge ${apt.status}">${
+        apt.status.charAt(0).toUpperCase() + apt.status.slice(1)
+      }</span>
             </div>
-            <span class="appointment-status ${apt.status}">${apt.status}</span>
+            <div class="appointment-actions">
+              <button class="cancel-btn" data-apt-id="${apt.id}">Cancel</button>
+            </div>
         </div>
     `
     )
     .join("");
+
+  // Attach cancel button event listeners (no inline onclick)
+  listElement.querySelectorAll(".cancel-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      cancelAppointmentUI(btn.dataset.aptId, btn);
+    });
+  });
+}
+
+async function cancelAppointmentUI(appointmentId, btnElement) {
+  const confirmed = confirm(
+    "Are you sure you want to cancel this appointment?"
+  );
+  if (!confirmed) return;
+
+  // Loading state on button
+  if (btnElement) {
+    btnElement.innerText = "Cancelling...";
+    btnElement.disabled = true;
+    btnElement.classList.add("cancel-btn--loading");
+  }
+
+  const userId = getUserId();
+  try {
+    const response = await fetchWithTimeout(
+      `${CONFIG.API_BASE_URL}/appointments/${appointmentId}/cancel?user_id=${userId}`,
+      {
+        method: "POST",
+      }
+    );
+
+    const data = await response.json();
+    if (data.success) {
+      showToast("Appointment cancelled successfully", "success");
+
+      // Update local state
+      const apt = state.appointments.find((a) => a.id === appointmentId);
+      if (apt) apt.status = "cancelled";
+      saveUserData();
+
+      // Animated card removal
+      const card = document.querySelector(
+        `.appointment-card[data-id="${appointmentId}"]`
+      );
+      if (card) {
+        card.style.transition = "opacity 0.3s ease, transform 0.3s ease";
+        card.style.opacity = "0";
+        card.style.transform = "translateY(-10px)";
+        setTimeout(() => {
+          updateAppointmentsList();
+        }, 300);
+      } else {
+        updateAppointmentsList();
+      }
+
+      // Force notification fetch to show the "Cancelled" notification
+      fetchNotifications();
+    } else {
+      showToast(data.message || "Failed to cancel appointment", "error");
+      // Restore button
+      if (btnElement) {
+        btnElement.innerText = "Cancel";
+        btnElement.disabled = false;
+        btnElement.classList.remove("cancel-btn--loading");
+      }
+    }
+  } catch (error) {
+    console.error("Error cancelling appointment:", error);
+    showToast("Error connecting to server", "error");
+    // Restore button
+    if (btnElement) {
+      btnElement.innerText = "Cancel";
+      btnElement.disabled = false;
+      btnElement.classList.remove("cancel-btn--loading");
+    }
+  }
 }
 
 function showAppointmentConfirmation(appointment) {
@@ -1381,6 +1853,52 @@ function showAppointmentConfirmation(appointment) {
     `✅ Appointment Confirmed!\nDoctor: ${doctorName}\nDate: ${appointment.date} at ${appointment.time}`,
     "success"
   );
+}
+
+// ========================================
+// AUDIO FEEDBACK
+// ========================================
+
+// Louder, professional "Chime" (Major 3rd: C5 & E5)
+function playSuccessSound() {
+  try {
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContext) return;
+
+    const ctx = new AudioContext();
+
+    // Create two oscillators for a harmony (C5 and E5)
+    const osc1 = ctx.createOscillator();
+    const osc2 = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc1.type = "sine";
+    osc2.type = "sine";
+
+    // C5 (523.25 Hz) & E5 (659.25 Hz)
+    osc1.frequency.setValueAtTime(523.25, ctx.currentTime);
+    osc2.frequency.setValueAtTime(659.25, ctx.currentTime);
+
+    // Connect both to gain
+    osc1.connect(gain);
+    osc2.connect(gain);
+    gain.connect(ctx.destination);
+
+    // Volume Envelope: Distinct "Ding"
+    // Louder attack (0.5) -> smooth decay
+    const now = ctx.currentTime;
+    gain.gain.setValueAtTime(0, now);
+    gain.gain.linearRampToValueAtTime(0.5, now + 0.05); // Attack
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.8); // Long Decay
+
+    // Start/Stop
+    osc1.start(now);
+    osc2.start(now);
+    osc1.stop(now + 0.8);
+    osc2.stop(now + 0.8);
+  } catch (e) {
+    console.warn("Audio playback failed", e);
+  }
 }
 
 // ========================================
@@ -2101,12 +2619,26 @@ function loadUserData() {
 // USER ID RESOLUTION (PRODUCTION-GRADE)
 // ========================================
 function resolveUserId() {
-  // 1) Firebase auth (preferred)
+  // 1) Authenticated Global (Primary)
+  if (AUTHENTICATED_USER && AUTHENTICATED_USER.uid) {
+    return AUTHENTICATED_USER.uid;
+  }
+
+  // 2) Firebase auth state
   if (state && state.currentUser) {
     return String(state.currentUser);
   }
 
-  // 2) localStorage user object (if present)
+  // 3) localStorage (correct key)
+  try {
+    const saved = localStorage.getItem("medicsense_authenticated_user");
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (parsed.uid) return parsed.uid;
+    }
+  } catch (_) {}
+
+  // 4) Legacy fallback
   try {
     const savedUserObj = localStorage.getItem("medicsense_user");
     if (savedUserObj) {
@@ -2118,9 +2650,7 @@ function resolveUserId() {
         return String(id);
       }
     }
-  } catch (_) {
-    // ignore
-  }
+  } catch (_) {}
 
   // 3) persisted id
   const persisted = localStorage.getItem("medicsense_user_id");
@@ -2602,9 +3132,32 @@ console.log(
   "✅ MedicSense AI Ultra - Ready to solve healthcare automation challenges!"
 );
 
-// Initialize symptom input validation when page loads
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', setupSymptomInputValidation);
-} else {
+// Initialize symptom input validation and notification polling when page loads
+const initializeApp = () => {
   setupSymptomInputValidation();
+
+  // Re-enable notification polling (Every 30 seconds)
+  console.log("🔔 Starting notification poll...");
+  fetchNotifications(); // Initial fetch
+  setInterval(fetchNotifications, 30000);
+
+  // Reload appointments when window regains focus
+  window.addEventListener("focus", () => {
+    console.log(
+      "🔄 Window focused - refreshing appointments and notifications..."
+    );
+    const savedAppointments = localStorage.getItem("medicsense_appointments");
+    if (savedAppointments) {
+      state.appointments = JSON.parse(savedAppointments);
+      updateAppointmentsList();
+    }
+    // Also refresh notification badge
+    loadNotificationCountSafe();
+  });
+};
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initializeApp);
+} else {
+  initializeApp();
 }
