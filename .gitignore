@@ -45,3 +45,23 @@ instance/
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# Database files
+*.db
+appointments.db
+
+# Logs
+logs/
+*.log
+
+# Test artifacts
+*_test.py
+*_verify.py
+test_*.py
+verify_*.py
+*_output.txt
+*_log.txt
+reset_db.py
+schema.txt
+concurrency_log.txt
+server_output*.log

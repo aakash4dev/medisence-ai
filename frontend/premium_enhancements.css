@@ -1,0 +1,466 @@
+/**
+ * FOUNDATIONAL DESIGN SYSTEM
+ * Investor-ready visual system for MedicSense AI
+ * No animations, no gradients, no marketing - just solid foundations
+ */
+
+/* ========================================
+   DESIGN TOKENS - FOUNDATIONAL SYSTEM
+   ======================================== */
+
+:root {
+  /* ===== TYPOGRAPHY SCALE ===== */
+  /* Clear hierarchy: 12 / 14 / 16 / 20 / 24 */
+  --text-xs: 0.75rem;    /* 12px - captions, meta */
+  --text-sm: 0.875rem;   /* 14px - labels, helper text */
+  --text-base: 1rem;     /* 16px - body, inputs */
+  --text-lg: 1.25rem;    /* 20px - section titles */
+  --text-xl: 1.5rem;     /* 24px - page titles */
+
+  /* Font weights - reduce overuse of 700 */
+  --weight-normal: 400;
+  --weight-medium: 500;  /* Use instead of 600 */
+  --weight-semibold: 600;
+  --weight-bold: 700;    /* Use sparingly */
+
+  /* Line heights - optimized for readability */
+  --leading-tight: 1.25;  /* Headings */
+  --leading-snug: 1.375;  /* Subheadings */
+  --leading-normal: 1.5;  /* Body text */
+  --leading-relaxed: 1.625; /* Helper text */
+
+  /* Letter spacing - premium feel */
+  --tracking-tight: -0.02em;  /* Large headings */
+  --tracking-normal: 0;       /* Body */
+  --tracking-wide: 0.01em;    /* Small text */
+
+  /* ===== SPACING SCALE - 8PX RHYTHM ===== */
+  /* Strict 8px base unit - no exceptions */
+  --space-1: 0.25rem;  /* 4px */
+  --space-2: 0.5rem;   /* 8px */
+  --space-3: 0.75rem;  /* 12px */
+  --space-4: 1rem;     /* 16px */
+  --space-5: 1.25rem;  /* 20px */
+  --space-6: 1.5rem;   /* 24px */
+  --space-8: 2rem;     /* 32px */
+  --space-10: 2.5rem;  /* 40px */
+  --space-12: 3rem;    /* 48px */
+  --space-16: 4rem;    /* 64px */
+
+  /* ===== ELEVATION SYSTEM - 3 LEVELS ===== */
+  /* Subtle, Medium, Strong - layered shadows */
+  --shadow-subtle: 0 1px 2px rgba(0, 0, 0, 0.04),
+                   0 1px 3px rgba(0, 0, 0, 0.02);
+
+  --shadow-medium: 0 2px 4px rgba(0, 0, 0, 0.04),
+                   0 4px 8px rgba(0, 0, 0, 0.03);
+
+  --shadow-strong: 0 4px 8px rgba(0, 0, 0, 0.04),
+                   0 8px 16px rgba(0, 0, 0, 0.03);
+
+  /* ===== COLOR SYSTEM ===== */
+  /* Refined, not saturated */
+  --color-primary: #6366f1;
+  --color-primary-dark: #4f46e5;
+  --color-primary-light: #a5b4fc;
+
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #475569;
+  --color-text-tertiary: #64748b;
+  --color-text-muted: #94a3b8;
+
+  --color-border-light: #e5e7eb;
+  --color-border-medium: #cbd5e1;
+
+  --color-bg-subtle: #f8fafc;
+  --color-bg-white: #ffffff;
+
+  /* ===== BORDER SYSTEM ===== */
+  /* Refined 1px system */
+  --border-width: 1px;
+  --border-radius-sm: 8px;
+  --border-radius-md: 12px;
+  --border-radius-lg: 16px;
+  --border-radius-xl: 20px;
+}
+
+/* ========================================
+   1. TYPOGRAPHY SYSTEM
+   ======================================== */
+
+/* Section Titles - Strong hierarchy */
+.form-section-title,
+.available-slots-card h3,
+.my-appointments-card h3 {
+  font-size: var(--text-lg); /* 20px, not 18px */
+  font-weight: var(--weight-semibold); /* 600, not 700 */
+  color: var(--color-text-primary);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+  margin: 0;
+}
+
+/* Section Subtitles - Clear separation */
+.form-section-subtitle {
+  font-size: var(--text-sm); /* 14px */
+  font-weight: var(--weight-medium); /* 500, not 400 */
+  color: var(--color-text-tertiary);
+  line-height: var(--leading-relaxed);
+  margin: var(--space-1) 0 0 0; /* 4px top */
+}
+
+/* Form Labels - Reduced weight */
+.form-group label {
+  font-size: var(--text-sm); /* 14px */
+  font-weight: var(--weight-medium); /* 500, not 600 */
+  color: var(--color-text-secondary);
+  line-height: var(--leading-snug);
+  margin-bottom: var(--space-2); /* 8px */
+  display: block;
+}
+
+/* Helper Text - Optimized */
+.hint-text,
+.input-helper-text {
+  font-size: var(--text-xs); /* 12px */
+  font-weight: var(--weight-normal);
+  color: var(--color-text-muted);
+  line-height: var(--leading-relaxed);
+  margin-top: var(--space-1); /* 4px */
+}
+
+/* Body Text */
+.form-control,
+.symptom-textarea,
+select.form-control {
+  font-size: var(--text-base); /* 16px */
+  font-weight: var(--weight-normal);
+  line-height: var(--leading-normal);
+}
+
+/* ========================================
+   2. SPACING SYSTEM - 8PX RHYTHM
+   ======================================== */
+
+/* Form Sections - Standardized */
+.form-section {
+  padding: var(--space-8); /* 32px, not 2rem */
+  margin-bottom: var(--space-6); /* 24px */
+  border-radius: var(--border-radius-xl);
+}
+
+/* Section Headers - Consistent */
+.form-section-header {
+  margin-bottom: var(--space-8); /* 32px, not 28px */
+  padding-bottom: 0;
+  border-bottom: none;
+  gap: var(--space-3); /* 12px */
+}
+
+/* Form Groups - 8px rhythm */
+.form-group {
+  margin-bottom: var(--space-5); /* 20px */
+}
+
+.form-group:last-child {
+  margin-bottom: 0;
+}
+
+/* Section Separation */
+.appointments-section {
+  padding: var(--space-16) 0; /* 64px */
+}
+
+.appointments-section .section-header {
+  margin-bottom: var(--space-12); /* 48px */
+}
+
+/* Card Spacing */
+.available-slots-card,
+.my-appointments-card {
+  padding: var(--space-8); /* 32px */
+  border-radius: var(--border-radius-xl);
+}
+
+.appointment-info-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6); /* 24px */
+}
+
+/* ========================================
+   3. ELEVATION SYSTEM - 3 LEVELS
+   ======================================== */
+
+/* Subtle - Form sections, cards at rest */
+.form-section,
+.available-slots-card,
+.my-appointments-card {
+  background: var(--color-bg-white);
+  border: var(--border-width) solid var(--color-border-light);
+  box-shadow: var(--shadow-subtle);
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+/* Medium - Hover state */
+.form-section:hover,
+.available-slots-card:hover,
+.my-appointments-card:hover {
+  box-shadow: var(--shadow-medium);
+  transform: translateY(-1px);
+}
+
+/* Strong - CTA button */
+.btn-book-appointment {
+  box-shadow: var(--shadow-medium);
+}
+
+.btn-book-appointment:hover:not(:disabled) {
+  box-shadow: var(--shadow-strong);
+}
+
+/* Remove heavy borders - use refined 1px */
+.form-section,
+.available-slots-card,
+.my-appointments-card {
+  border: var(--border-width) solid var(--color-border-light);
+}
+
+/* ========================================
+   4. LAYOUT BALANCE - 60/40 RATIO
+   ======================================== */
+
+/* Fix column imbalance - avoid equal 1fr 1fr */
+.appointments-container {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr; /* 55/45 ratio */
+  gap: var(--space-10); /* 40px */
+  align-items: start;
+}
+
+@media (max-width: 1200px) {
+  .appointments-container {
+    grid-template-columns: 1fr;
+    gap: var(--space-8); /* 32px */
+  }
+}
+
+@media (max-width: 768px) {
+  .appointments-container {
+    gap: var(--space-6); /* 24px */
+  }
+}
+
+/* ========================================
+   5. INPUT REFINEMENT
+   ======================================== */
+
+/* Reduce border thickness - 1px system */
+.form-control,
+.symptom-textarea,
+select.form-control {
+  background: var(--color-bg-white);
+  border: var(--border-width) solid var(--color-border-light); /* 1px, not 1.5px */
+  border-radius: var(--border-radius-sm);
+  padding: var(--space-3) var(--space-4); /* 12px 16px */
+  color: var(--color-text-primary);
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+/* Soft focus glow - not harsh */
+.form-control:focus,
+.symptom-textarea:focus,
+select.form-control:focus {
+  border-color: var(--color-primary-light);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.08); /* Soft, not harsh */
+  outline: none;
+}
+
+/* Hover - subtle */
+.form-control:hover:not(:disabled):not(:focus),
+.symptom-textarea:hover:not(:disabled):not(:focus),
+select.form-control:hover:not(:disabled):not(:focus) {
+  border-color: var(--color-border-medium);
+}
+
+/* Refined placeholder */
+.form-control::placeholder,
+.symptom-textarea::placeholder {
+  color: var(--color-text-muted);
+  opacity: 1;
+}
+
+/* ========================================
+   6. CTA REFINEMENT - NO GRADIENTS
+   ======================================== */
+
+/* Solid color - no dated gradients */
+.btn-book-appointment {
+  width: 100%;
+  background: var(--color-primary); /* Solid, not gradient */
+  color: white;
+  border: none;
+  padding: var(--space-4) var(--space-6); /* 16px 24px */
+  border-radius: var(--border-radius-md);
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold); /* 600, not 700 */
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2); /* 8px */
+}
+
+/* Hover - darker solid */
+.btn-book-appointment:hover:not(:disabled) {
+  background: var(--color-primary-dark);
+  transform: translateY(-2px);
+}
+
+/* Active - press down */
+.btn-book-appointment:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* Disabled - clear state */
+.btn-book-appointment:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ========================================
+   7. COMPONENT REFINEMENTS
+   ======================================== */
+
+/* Section Icons - Consistent sizing */
+.form-section-icon {
+  width: 44px;
+  height: 44px;
+  background: var(--color-primary);
+  border-radius: var(--border-radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: var(--text-lg);
+  flex-shrink: 0;
+}
+
+/* Time Slot Buttons - Refined */
+.slot-btn {
+  background: var(--color-bg-white);
+  border: var(--border-width) solid var(--color-border-light);
+  border-radius: var(--border-radius-sm);
+  padding: var(--space-3) var(--space-2); /* 12px 8px */
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-shadow: var(--shadow-subtle);
+}
+
+.slot-btn:hover:not(.booked):not(.selected) {
+  border-color: var(--color-primary-light);
+  box-shadow: var(--shadow-medium);
+}
+
+.slot-btn.selected {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: white;
+  box-shadow: var(--shadow-medium);
+}
+
+/* Appointment Type Toggles - Refined */
+.type-option span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4); /* 12px 16px */
+  background: var(--color-bg-white);
+  border: var(--border-width) solid var(--color-border-light);
+  border-radius: var(--border-radius-sm);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--color-text-tertiary);
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-subtle);
+  opacity: 0.85;
+}
+
+.type-option input[type="radio"]:checked + span {
+  background: var(--color-bg-subtle);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  opacity: 1;
+  font-weight: var(--weight-semibold);
+}
+
+/* Empty States - Refined */
+.no-appointments,
+.slots-hint {
+  text-align: center;
+  padding: var(--space-12) var(--space-8); /* 48px 32px */
+  background: var(--color-bg-subtle);
+  border-radius: var(--border-radius-lg);
+  border: var(--border-width) solid var(--color-border-light);
+  color: var(--color-text-tertiary);
+  font-size: var(--text-sm);
+}
+
+/* ========================================
+   8. MOBILE RESPONSIVE
+   ======================================== */
+
+@media (max-width: 768px) {
+  /* Maintain spacing rhythm on mobile */
+  .form-section,
+  .available-slots-card,
+  .my-appointments-card {
+    padding: var(--space-6); /* 24px */
+  }
+
+  .form-section-header {
+    margin-bottom: var(--space-6); /* 24px */
+  }
+
+  .form-section-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .form-section-title {
+    font-size: var(--text-base); /* 16px on mobile */
+  }
+
+  .appointments-section {
+    padding: var(--space-12) 0; /* 48px */
+  }
+}
+
+/* ========================================
+   DESIGN SYSTEM SUMMARY
+   ======================================== */
+
+/*
+TYPOGRAPHY SCALE: 12 / 14 / 16 / 20 / 24
+SPACING SCALE: 4 / 8 / 12 / 16 / 20 / 24 / 32 / 40 / 48 / 64
+ELEVATION LEVELS: Subtle / Medium / Strong
+BORDER SYSTEM: 1px refined borders
+LAYOUT RATIO: 55/45 column split
+
+NO gradients
+NO animations (foundational pass only)
+NO heavy borders
+NO inconsistent spacing
+*/

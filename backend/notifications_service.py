@@ -305,12 +305,13 @@ class NotificationsService:
         return {"created": created}
 
     def _generate_appointment_notifications(self, *, user_id: str) -> int:
-        from database import db  # local import to avoid circulars
+        from repositories.appointment_repository import AppointmentRepository
 
         now = _utcnow()
         created = 0
 
-        appts = db.get_appointments(user_id)
+        repo = AppointmentRepository()
+        appts = repo.get_appointments_by_user(user_id)
         for a in appts:
             status = (a.get("status") or "").lower()
             if status in ["cancelled", "canceled"]:
