@@ -1,0 +1,25 @@
+# Environment Variables
+.env
+env-config.js
+
+# Generated files
+*.log
+*.tmp
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Node modules (if using npm)
+node_modules/
+
+# Build outputs
+dist/
+build/
+

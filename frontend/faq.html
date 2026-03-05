@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>F.A.Q - MedicSense AI</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="style_ultra.css" />
+    <style>
+      body {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          sans-serif;
+        line-height: 1.6;
+        color: var(--text-main);
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding-bottom: 50px;
+      }
+
+      .faq-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 40px 20px;
+      }
+
+      .faq-header {
+        text-align: center;
+        margin-bottom: 50px;
+        padding-top: 40px;
+      }
+
+      .faq-header h1 {
+        font-size: 3rem;
+        font-weight: 700;
+        color: #ffffff;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 15px;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      }
+
+      .faq-header p {
+        font-size: 1.2rem;
+        color: rgba(255, 255, 255, 0.9);
+        max-width: 700px;
+        margin: 0 auto;
+      }
+
+      .back-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 24px;
+        background: rgba(255, 255, 255, 0.15);
+        color: #ffffff;
+        text-decoration: none;
+        border-radius: 12px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        margin-bottom: 30px;
+      }
+
+      .back-button:hover {
+        background: rgba(255, 255, 255, 0.25);
+        transform: translateX(-5px);
+      }
+
+      .loading-skeleton {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 16px;
+        padding: 24px;
+        margin-bottom: 16px;
+        animation: pulse 1.5s ease-in-out infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.6;
+        }
+      }
+
+      .skeleton-line {
+        height: 20px;
+        background: linear-gradient(
+          90deg,
+          #e0e0e0 25%,
+          #f0f0f0 50%,
+          #e0e0e0 75%
+        );
+        background-size: 200% 100%;
+        animation: shimmer 1.5s ease-in-out infinite;
+        border-radius: 4px;
+        margin-bottom: 12px;
+      }
+
+      @keyframes shimmer {
+        0% {
+          background-position: -200% 0;
+        }
+        100% {
+          background-position: 200% 0;
+        }
+      }
+
+      .faq-content {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+      }
+
+      .faq-search {
+        margin-bottom: 30px;
+      }
+
+      .faq-search input {
+        width: 100%;
+        padding: 16px 20px 16px 50px;
+        border: 2px solid #e5e7eb;
+        border-radius: 12px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: #f9fafb;
+      }
+
+      .faq-search input:focus {
+        outline: none;
+        border-color: #667eea;
+        background: #ffffff;
+        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+      }
+
+      .faq-search-icon {
+        position: absolute;
+        left: 18px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #9ca3af;
+        font-size: 18px;
+      }
+
+      .faq-search-wrapper {
+        position: relative;
+      }
+
+      .faq-categories {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 30px;
+      }
+
+      .category-btn {
+        padding: 10px 20px;
+        background: #f3f4f6;
+        border: 2px solid transparent;
+        border-radius: 25px;
+        font-weight: 600;
+        color: #4b5563;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+      }
+
+      .category-btn:hover {
+        background: #e5e7eb;
+      }
+
+      .category-btn.active {
+        background: #667eea;
+        color: #ffffff;
+        border-color: #667eea;
+      }
+
+      #faq-container {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .faq-item {
+        background: #ffffff;
+        border-radius: 16px;
+        overflow: hidden;
+        border: 2px solid #f3f4f6;
+        transition: all 0.3s ease;
+      }
+
+      .faq-item:hover {
+        border-color: #667eea;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+      }
+
+      .faq-question {
+        width: 100%;
+        padding: 24px;
+        background: #ffffff;
+        border: none;
+        text-align: left;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #1f2937;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        transition: all 0.3s ease;
+      }
+
+      .faq-question:hover {
+        color: #667eea;
+        background: #f9fafb;
+      }
+
+      .faq-question-text {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex: 1;
+      }
+
+      .faq-icon {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #ffffff;
+        font-size: 18px;
+      }
+
+      .faq-toggle {
+        width: 30px;
+        height: 30px;
+        background: #f3f4f6;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        color: #667eea;
+        font-size: 18px;
+      }
+
+      .faq-item.open .faq-toggle {
+        background: #667eea;
+        color: #ffffff;
+        transform: rotate(180deg);
+      }
+
+      .faq-answer {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .faq-answer-content {
+        padding: 0 24px 24px 76px;
+        color: #6b7280;
+        font-size: 1rem;
+        line-height: 1.7;
+      }
+
+      .faq-item.open .faq-answer {
+        max-height: 500px;
+      }
+
+      .no-results {
+        text-align: center;
+        padding: 60px 20px;
+        color: #9ca3af;
+      }
+
+      .no-results i {
+        font-size: 64px;
+        margin-bottom: 20px;
+        opacity: 0.5;
+      }
+
+      .no-results h3 {
+        font-size: 1.5rem;
+        color: #4b5563;
+        margin-bottom: 10px;
+      }
+
+      .faq-count {
+        text-align: center;
+        color: #6b7280;
+        margin-bottom: 20px;
+        font-size: 0.95rem;
+      }
+
+      @media (max-width: 768px) {
+        .faq-header h1 {
+          font-size: 2rem;
+        }
+
+        .faq-content {
+          padding: 24px;
+        }
+
+        .faq-answer-content {
+          padding-left: 24px;
+        }
+
+        .category-btn {
+          font-size: 0.85rem;
+          padding: 8px 16px;
+        }
+      }
+
+      .error-message {
+        background: #fee2e2;
+        border: 2px solid #fecaca;
+        border-radius: 12px;
+        padding: 20px;
+        color: #dc2626;
+        text-align: center;
+      }
+
+      .error-message i {
+        font-size: 48px;
+        margin-bottom: 15px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="faq-container">
+      <a href="index.html" class="back-button">
+        <i class="fas fa-arrow-left"></i>
+        Back to Dashboard
+      </a>
+
+      <div class="faq-header">
+        <h1>
+          <i class="fas fa-question-circle"></i>
+          Common Questions
+        </h1>
+        <p>Find answers to frequently asked questions about MedicSense AI</p>
+      </div>
+
+      <div class="faq-content">
+        <!-- Search Bar -->
+        <div class="faq-search">
+          <div class="faq-search-wrapper">
+            <i class="fas fa-search faq-search-icon"></i>
+            <input
+              type="text"
+              id="faq-search-input"
+              placeholder="Search for questions..."
+              autocomplete="off"
+            />
+          </div>
+        </div>
+
+        <!-- Category Filters -->
+        <div class="faq-categories" id="faq-categories">
+          <button class="category-btn active" data-category="all">All</button>
+        </div>
+
+        <!-- FAQ Count -->
+        <div class="faq-count" id="faq-count"></div>
+
+        <!-- FAQ List Container -->
+        <div id="faq-container">
+          <!-- Loading skeletons -->
+          <div class="loading-skeleton">
+            <div class="skeleton-line" style="width: 80%"></div>
+            <div class="skeleton-line" style="width: 60%"></div>
+          </div>
+          <div class="loading-skeleton">
+            <div class="skeleton-line" style="width: 75%"></div>
+            <div class="skeleton-line" style="width: 55%"></div>
+          </div>
+          <div class="loading-skeleton">
+            <div class="skeleton-line" style="width: 85%"></div>
+            <div class="skeleton-line" style="width: 65%"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let allFAQs = [];
+      let currentCategory = "all";
+
+      // Load FAQs from backend
+      async function loadFAQs() {
+        try {
+          const response = await fetch("http://localhost:5000/api/faqs");
+          const data = await response.json();
+
+          if (data.success) {
+            allFAQs = data.data;
+            updateCategories();
+            displayFAQs(allFAQs);
+          } else {
+            showError("Failed to load FAQs. Please try again later.");
+          }
+        } catch (error) {
+          console.error("Error loading FAQs:", error);
+          showError(
+            "Unable to connect to server. Please check your connection."
+          );
+        }
+      }
+
+      // Update category buttons
+      function updateCategories() {
+        const categories = new Set(["all"]);
+        allFAQs.forEach((faq) => categories.add(faq.category));
+
+        const container = document.getElementById("faq-categories");
+        container.innerHTML = "";
+
+        categories.forEach((category) => {
+          const btn = document.createElement("button");
+          btn.className = `category-btn ${category === "all" ? "active" : ""}`;
+          btn.textContent =
+            category.charAt(0).toUpperCase() + category.slice(1);
+          btn.dataset.category = category;
+          btn.onclick = () => filterByCategory(category);
+          container.appendChild(btn);
+        });
+      }
+
+      // Display FAQs
+      function displayFAQs(faqs) {
+        const container = document.getElementById("faq-container");
+        const countElement = document.getElementById("faq-count");
+
+        if (faqs.length === 0) {
+          container.innerHTML = `
+                    <div class="no-results">
+                        <i class="fas fa-search"></i>
+                        <h3>No questions found</h3>
+                        <p>Try adjusting your search or category filter</p>
+                    </div>
+                `;
+          countElement.textContent = "";
+          return;
+        }
+
+        countElement.textContent = `Showing ${faqs.length} question${
+          faqs.length !== 1 ? "s" : ""
+        }`;
+
+        container.innerHTML = faqs
+          .map(
+            (faq) => `
+                <div class="faq-item" data-faq-id="${faq.id}">
+                    <button class="faq-question">
+                        <div class="faq-question-text">
+                            <div class="faq-icon">
+                                <i class="fas ${faq.icon}"></i>
+                            </div>
+                            <span>${faq.question}</span>
+                        </div>
+                        <div class="faq-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            ${faq.answer}
+                        </div>
+                    </div>
+                </div>
+            `
+          )
+          .join("");
+
+        // Attach toggle listeners
+        attachToggleListeners();
+      }
+
+      // Attach toggle listeners to FAQ items
+      function attachToggleListeners() {
+        document.querySelectorAll(".faq-question").forEach((button) => {
+          button.addEventListener("click", function () {
+            const item = this.closest(".faq-item");
+            const wasOpen = item.classList.contains("open");
+
+            // Close all other items
+            document.querySelectorAll(".faq-item").forEach((el) => {
+              el.classList.remove("open");
+            });
+
+            // Toggle current item
+            if (!wasOpen) {
+              item.classList.add("open");
+            }
+          });
+        });
+      }
+
+      // Filter by category
+      function filterByCategory(category) {
+        currentCategory = category;
+
+        // Update active button
+        document.querySelectorAll(".category-btn").forEach((btn) => {
+          btn.classList.toggle("active", btn.dataset.category === category);
+        });
+
+        // Filter FAQs
+        const filtered =
+          category === "all"
+            ? allFAQs
+            : allFAQs.filter((faq) => faq.category === category);
+
+        displayFAQs(filtered);
+      }
+
+      // Search FAQs
+      document
+        .getElementById("faq-search-input")
+        .addEventListener("input", function (e) {
+          const searchTerm = e.target.value.toLowerCase();
+
+          const filtered = allFAQs.filter((faq) => {
+            const matchesCategory =
+              currentCategory === "all" || faq.category === currentCategory;
+            const matchesSearch =
+              faq.question.toLowerCase().includes(searchTerm) ||
+              faq.answer.toLowerCase().includes(searchTerm);
+            return matchesCategory && matchesSearch;
+          });
+
+          displayFAQs(filtered);
+        });
+
+      // Show error message
+      function showError(message) {
+        document.getElementById("faq-container").innerHTML = `
+                <div class="error-message">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <h3>Error Loading FAQs</h3>
+                    <p>${message}</p>
+                </div>
+            `;
+      }
+
+      // Initialize on page load
+      document.addEventListener("DOMContentLoaded", loadFAQs);
+    </script>
+  </body>
+</html>

@@ -564,19 +564,19 @@ function getSafeEmail(user) {
 // Same 8 colors Google uses for accounts without a real profile photo.
 // Color is picked by hashing email/uid — consistent across sessions.
 const GOOGLE_AVATAR_COLORS = [
-  "4285F4", // Google Blue
-  "DB4437", // Google Red
-  "0F9D58", // Google Green
-  "F4B400", // Google Yellow
-  "AB47BC", // Purple
-  "00ACC1", // Teal
-  "FF7043", // Deep Orange
-  "E91E63", // Pink
+  '4285F4', // Google Blue
+  'DB4437', // Google Red
+  '0F9D58', // Google Green
+  'F4B400', // Google Yellow
+  'AB47BC', // Purple
+  '00ACC1', // Teal
+  'FF7043', // Deep Orange
+  'E91E63', // Pink
 ];
 
 function getAvatarColor(seedStr) {
   let hash = 0;
-  const s = (seedStr || "user").toLowerCase();
+  const s = (seedStr || 'user').toLowerCase();
   for (let i = 0; i < s.length; i++) {
     hash = (hash * 31 + s.charCodeAt(i)) >>> 0;
   }
@@ -591,16 +591,13 @@ function getAvatarColor(seedStr) {
 function isGoogleAutoAvatar(photoURL) {
   if (!photoURL) return true;
   // Google auto-generated avatars always include these size/crop params
-  return (
-    /=s\d+-c/.test(photoURL) ||
-    photoURL.includes("accounts.google.com/v3/signin")
-  );
+  return /=s\d+-c/.test(photoURL) || photoURL.includes('accounts.google.com/v3/signin');
 }
 
 // Build an SVG data URI avatar — one letter, Google color, clean flat circle.
 function buildAvatarSVG(name, seed) {
-  const letter = (name || "U").charAt(0).toUpperCase();
-  const color = "#" + getAvatarColor(seed || name || "user");
+  const letter = (name || 'U').charAt(0).toUpperCase();
+  const color  = '#' + getAvatarColor(seed || name || 'user');
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
     <circle cx="64" cy="64" r="64" fill="${color}"/>
     <text x="64" y="64" dy="0.36em" text-anchor="middle"
@@ -609,7 +606,7 @@ function buildAvatarSVG(name, seed) {
       font-size="60"
       font-weight="500">${letter}</text>
   </svg>`;
-  return "data:image/svg+xml;base64," + btoa(svg);
+  return 'data:image/svg+xml;base64,' + btoa(svg);
 }
 
 // Returns the best avatar for a user.
@@ -625,8 +622,9 @@ function getSafePhotoURL(user) {
 }
 
 function getAvatarFallbackURL(name, seed) {
-  return buildAvatarSVG(name || "User", seed || name || "user");
+  return buildAvatarSVG(name || 'User', seed || name || 'user');
 }
+
 
 // ========================================
 // NAVIGATION FUNCTIONS
@@ -932,11 +930,7 @@ async function analyzeSymptoms() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           message: `Analyze these symptoms: ${symptomText}. Duration: ${durationVal}. Severity: ${severityVal}/10.`,
-          user_id:
-            state.currentUser ||
-            `guest_${
-              sessionStorage.getItem("medicsense_session") || Date.now()
-            }`,
+          user_id: state.currentUser || `guest_${sessionStorage.getItem('medicsense_session') || Date.now()}`,
         }),
       },
       15000
@@ -1025,13 +1019,9 @@ function bookAppointmentFromSymptom() {
 // ── Improvement 5: Lazy-load html2canvas on first use ──────────────────
 function lazyLoadHtml2Canvas() {
   return new Promise((resolve, reject) => {
-    if (typeof html2canvas !== "undefined") {
-      resolve();
-      return;
-    }
+    if (typeof html2canvas !== "undefined") { resolve(); return; }
     const script = document.createElement("script");
-    script.src =
-      "https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js";
+    script.src = "https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js";
     script.onload = resolve;
     script.onerror = () => reject(new Error("Failed to load html2canvas"));
     document.head.appendChild(script);
@@ -1047,43 +1037,41 @@ function exportSymptomReport() {
 
   showToast("Generating image report...", "info");
 
-  lazyLoadHtml2Canvas()
-    .then(() => {
-      // Inject Timestamp temporarily
-      const timestampDiv = document.createElement("div");
-      timestampDiv.innerHTML = `<p style="color: #6b7280; font-size: 0.875rem; margin-bottom: 1rem;"><strong>Report Generated:</strong> ${new Date().toLocaleString()}</p>`;
-      element.prepend(timestampDiv);
+  lazyLoadHtml2Canvas().then(() => {
+  // Inject Timestamp temporarily
+  const timestampDiv = document.createElement("div");
+  timestampDiv.innerHTML = `<p style="color: #6b7280; font-size: 0.875rem; margin-bottom: 1rem;"><strong>Report Generated:</strong> ${new Date().toLocaleString()}</p>`;
+  element.prepend(timestampDiv);
 
-      html2canvas(element, {
-        useCORS: true,
-        scale: 2,
-        backgroundColor: "#ffffff",
-        ignoreElements: (el) => el.classList.contains("results-actions"),
-      })
-        .then((canvas) => {
-          try {
-            const link = document.createElement("a");
-            const timestamp = new Date().toISOString().slice(0, 10);
-            link.download = `MedicSense_Report_${timestamp}.png`;
-            link.href = canvas.toDataURL("image/png");
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            showToast("Report downloaded as image!", "success");
-          } catch (err) {
-            console.error("Download failed:", err);
-            showToast("Failed to save image.", "error");
-          } finally {
-            timestampDiv.remove();
-          }
-        })
-        .catch((err) => {
-          console.error("Image generation failed:", err);
-          timestampDiv.remove();
-          showToast("Failed to generate image report.", "error");
-        });
+  html2canvas(element, {
+    useCORS: true,
+    scale: 2,
+    backgroundColor: "#ffffff",
+    ignoreElements: (el) => el.classList.contains("results-actions"),
+  })
+    .then((canvas) => {
+      try {
+        const link = document.createElement("a");
+        const timestamp = new Date().toISOString().slice(0, 10);
+        link.download = `MedicSense_Report_${timestamp}.png`;
+        link.href = canvas.toDataURL("image/png");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        showToast("Report downloaded as image!", "success");
+      } catch (err) {
+        console.error("Download failed:", err);
+        showToast("Failed to save image.", "error");
+      } finally {
+        timestampDiv.remove();
+      }
     })
-    .catch(() => showToast("Could not load screenshot library.", "error"));
+    .catch((err) => {
+      console.error("Image generation failed:", err);
+      timestampDiv.remove();
+      showToast("Failed to generate image report.", "error");
+    });
+  }).catch(() => showToast("Could not load screenshot library.", "error"));
 }
 
 // ========================================
@@ -2044,27 +2032,14 @@ async function sendChatMessage(quickMessage = null) {
     hideTypingIndicator();
 
     // ── Support both new envelope {success, data:{reply,...}} and old {response,...}
-    const aiText =
-      data.data && data.data.reply ? data.data.reply : data.response;
-    const riskLevel =
-      data.data && data.data.risk_level ? data.data.risk_level : null;
-    const suggestedAction =
-      data.data && data.data.suggested_action
-        ? data.data.suggested_action
-        : null;
+    const aiText = (data.data && data.data.reply) ? data.data.reply : data.response;
+    const riskLevel = (data.data && data.data.risk_level) ? data.data.risk_level : null;
+    const suggestedAction = (data.data && data.data.suggested_action) ? data.data.suggested_action : null;
     const isEmergency = data.data && data.data.is_emergency;
 
     if (aiText) {
       // Map new risk_level → severity badge; old severity field as fallback
-      const severityValue =
-        riskLevel ||
-        (data.severity === 4
-          ? "critical"
-          : data.severity === 3
-          ? "high"
-          : data.severity === 2
-          ? "moderate"
-          : "low");
+      const severityValue = riskLevel || (data.severity === 4 ? "critical" : data.severity === 3 ? "high" : data.severity === 2 ? "moderate" : "low");
       // Map new suggested_action → context badge; old type field as fallback
       const contextValue = suggestedAction || data.type || "general";
 
@@ -2076,10 +2051,7 @@ async function sendChatMessage(quickMessage = null) {
 
       // If emergency, show persistent toast
       if (isEmergency) {
-        showToast(
-          "🚨 EMERGENCY DETECTED — Call 112 / 911 immediately!",
-          "error"
-        );
+        showToast("🚨 EMERGENCY DETECTED — Call 112 / 911 immediately!", "error");
       }
 
       // Update chat history
@@ -2098,26 +2070,19 @@ async function sendChatMessage(quickMessage = null) {
     } else {
       throw new Error(data.error || "No response from AI");
     }
+
   } catch (error) {
     console.error("Error sending message:", error);
     hideTypingIndicator();
 
     // ── Improvement 2: Friendly offline / backend-down message ─────────
-    const isOffline =
-      !navigator.onLine ||
-      error.message?.includes("timed out") ||
-      error.message?.includes("Failed to fetch");
+    const isOffline = !navigator.onLine || error.message?.includes("timed out") || error.message?.includes("Failed to fetch");
     const offlineMsg = isOffline
       ? "🔌 Can't reach the server right now. Please check your connection and try again."
       : "❌ Something went wrong. Please try again in a moment.";
 
     addMessageToChat("ai", offlineMsg, { context: "error" });
-    showToast(
-      isOffline
-        ? "Backend offline — check your connection"
-        : "Error sending message.",
-      "error"
-    );
+    showToast(isOffline ? "Backend offline — check your connection" : "Error sending message.", "error");
   }
 }
 
@@ -2135,10 +2100,9 @@ function addMessageToChat(role, content, metadata = {}) {
       ? '<i class="fas fa-robot"></i>'
       : (() => {
           // Use the signed-in user's Google profile photo if available
-          const photo =
-            typeof getSafePhotoURL === "function" && AUTHENTICATED_USER
-              ? getSafePhotoURL(AUTHENTICATED_USER)
-              : null;
+          const photo = typeof getSafePhotoURL === "function" && AUTHENTICATED_USER
+            ? getSafePhotoURL(AUTHENTICATED_USER)
+            : null;
           if (photo) {
             return `<img src="${photo}" alt="You"
               style="width:100%;height:100%;border-radius:10px;object-fit:cover;display:block;"
@@ -2246,91 +2210,65 @@ function exportChat() {
 
   showToast("Generating chat image...", "info");
 
-  lazyLoadHtml2Canvas()
-    .then(() => {
-      // Deep-clone the chat into a fully-unconstrained off-screen wrapper
-      const clone = chatMessages.cloneNode(true);
-      const chatWidth = chatMessages.offsetWidth || 600;
+  lazyLoadHtml2Canvas().then(() => {
+    // Deep-clone the chat into a fully-unconstrained off-screen wrapper
+    const clone = chatMessages.cloneNode(true);
+    const chatWidth = chatMessages.offsetWidth || 600;
 
-      const wrapper = document.createElement("div");
-      wrapper.style.cssText = [
-        "position:fixed",
-        "left:-9999px",
-        "top:0",
-        "width:" + chatWidth + "px",
-        "height:auto",
-        "overflow:visible",
-        "background:#f8fafc",
-        "padding:16px",
-        "box-sizing:border-box",
-        "font-family:inherit",
-        "z-index:-1",
-      ].join(";");
+    const wrapper = document.createElement("div");
+    wrapper.style.cssText = [
+      "position:fixed", "left:-9999px", "top:0",
+      "width:" + chatWidth + "px", "height:auto", "overflow:visible",
+      "background:#f8fafc", "padding:16px", "box-sizing:border-box",
+      "font-family:inherit", "z-index:-1",
+    ].join(";");
 
-      clone.style.cssText =
-        "height:auto;max-height:none;overflow:visible;padding:8px;";
+    clone.style.cssText = "height:auto;max-height:none;overflow:visible;padding:8px;";
 
-      const header = document.createElement("div");
-      header.style.cssText = [
-        "display:flex",
-        "align-items:center",
-        "gap:10px",
-        "background:linear-gradient(135deg,#6c63ff,#48cae4)",
-        "color:#fff",
-        "font-weight:700",
-        "font-size:15px",
-        "padding:12px 18px",
-        "border-radius:12px",
-        "margin-bottom:12px",
-      ].join(";");
-      header.innerHTML =
-        `<span style="font-size:20px;">🏥</span>` +
-        `<span>MedicSense AI &nbsp;|&nbsp; Chat Export</span>` +
-        `<span style="margin-left:auto;font-weight:400;font-size:12px;opacity:0.88;">${new Date().toLocaleString()}</span>`;
+    const header = document.createElement("div");
+    header.style.cssText = [
+      "display:flex", "align-items:center", "gap:10px",
+      "background:linear-gradient(135deg,#6c63ff,#48cae4)",
+      "color:#fff", "font-weight:700", "font-size:15px",
+      "padding:12px 18px", "border-radius:12px", "margin-bottom:12px",
+    ].join(";");
+    header.innerHTML =
+      `<span style="font-size:20px;">🏥</span>` +
+      `<span>MedicSense AI &nbsp;|&nbsp; Chat Export</span>` +
+      `<span style="margin-left:auto;font-weight:400;font-size:12px;opacity:0.88;">${new Date().toLocaleString()}</span>`;
 
-      const footer = document.createElement("div");
-      footer.style.cssText =
-        "margin-top:14px;padding:8px 14px;font-size:12px;color:#6b7280;border-top:1px solid #e5e7eb;text-align:center;";
-      footer.textContent =
-        "⚠️ For health awareness only. Always consult a qualified healthcare professional.";
+    const footer = document.createElement("div");
+    footer.style.cssText = "margin-top:14px;padding:8px 14px;font-size:12px;color:#6b7280;border-top:1px solid #e5e7eb;text-align:center;";
+    footer.textContent = "⚠️ For health awareness only. Always consult a qualified healthcare professional.";
 
-      wrapper.appendChild(header);
-      wrapper.appendChild(clone);
-      wrapper.appendChild(footer);
-      document.body.appendChild(wrapper);
+    wrapper.appendChild(header);
+    wrapper.appendChild(clone);
+    wrapper.appendChild(footer);
+    document.body.appendChild(wrapper);
 
-      requestAnimationFrame(() => {
-        html2canvas(wrapper, {
-          useCORS: true,
-          allowTaint: true,
-          scale: 2,
-          backgroundColor: "#f8fafc",
-          scrollX: 0,
-          scrollY: 0,
-          width: wrapper.offsetWidth,
-          height: wrapper.scrollHeight,
-          windowWidth: wrapper.offsetWidth,
-          windowHeight: wrapper.scrollHeight,
+    requestAnimationFrame(() => {
+      html2canvas(wrapper, {
+        useCORS: true, allowTaint: true, scale: 2,
+        backgroundColor: "#f8fafc", scrollX: 0, scrollY: 0,
+        width: wrapper.offsetWidth, height: wrapper.scrollHeight,
+        windowWidth: wrapper.offsetWidth, windowHeight: wrapper.scrollHeight,
+      })
+        .then((canvas) => {
+          const link = document.createElement("a");
+          link.download = `MedicSense_Chat_${new Date().toISOString().slice(0, 10)}.png`;
+          link.href = canvas.toDataURL("image/png");
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          showToast("Chat saved as image ✅", "success");
         })
-          .then((canvas) => {
-            const link = document.createElement("a");
-            link.download = `MedicSense_Chat_${new Date()
-              .toISOString()
-              .slice(0, 10)}.png`;
-            link.href = canvas.toDataURL("image/png");
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            showToast("Chat saved as image ✅", "success");
-          })
-          .catch((err) => {
-            console.error("html2canvas error:", err);
-            showToast("Failed to capture screenshot.", "error");
-          })
-          .finally(() => document.body.removeChild(wrapper));
-      });
-    })
-    .catch(() => showToast("Could not load screenshot library.", "error"));
+        .catch((err) => {
+          console.error("html2canvas error:", err);
+          showToast("Failed to capture screenshot.", "error");
+        })
+        .finally(() => document.body.removeChild(wrapper));
+    });
+  }).catch(() => showToast("Could not load screenshot library.", "error"));
 }
 
 function clearChat() {
@@ -2372,80 +2310,47 @@ function toggleChatSettings() {
 
 // ── Fix 2 & 3 & 4 Frontend: Rich image analysis card + healing tracker ────────
 
-function addImageAnalysisToChat(
-  data,
-  severity,
-  severityIcon,
-  certainty,
-  sanityNote,
-  visualDesc,
-  conditions,
-  firstAid,
-  warnSigns,
-  seeDoctor,
-  specialist,
-  healing,
-  doNot
-) {
+function addImageAnalysisToChat(data, severity, severityIcon, certainty, sanityNote,
+                                  visualDesc, conditions, firstAid, warnSigns,
+                                  seeDoctor, specialist, healing, doNot) {
   const msgId = `img-analysis-${Date.now()}`;
   const infectionRisk = data.infection_risk || "low";
   const infectionNote = data.infection_note || "";
-  const scoringNote = data.scoring_note || "";
+  const scoringNote   = data.scoring_note   || "";
   const severityScore = data.severity_score != null ? data.severity_score : "";
 
   // Build checklist items HTML (Fix 2)
-  const checklistHTML = firstAid
-    .map(
-      (step, i) => `
+  const checklistHTML = firstAid.map((step, i) => `
     <label class="aid-check-item" style="display:flex;align-items:flex-start;gap:8px;margin:4px 0;cursor:pointer;">
       <input type="checkbox" id="aid-${msgId}-${i}" style="margin-top:3px;accent-color:var(--primary,#6c63ff);flex-shrink:0;"
         onchange="this.parentElement.style.opacity=this.checked?'0.5':'1';">
       <span>${step}</span>
-    </label>`
-    )
-    .join("");
+    </label>`).join("");
 
   // Infection risk banner (Fix 4 UI)
-  const infectionBanner =
-    infectionRisk === "high"
-      ? `
+  const infectionBanner = infectionRisk === "high" ? `
     <div style="background:#fff3cd;border-left:4px solid #ff9800;padding:8px 12px;border-radius:6px;margin:8px 0;font-size:0.85em;">
-      🦠 <strong>Infection Risk: HIGH</strong> — ${
-        infectionNote ||
-        "Infection indicators detected. Seek medical attention."
-      }
-    </div>`
-      : "";
+      🦠 <strong>Infection Risk: HIGH</strong> — ${infectionNote || "Infection indicators detected. Seek medical attention."}
+    </div>` : "";
 
   // Warning signs
-  const warningsHTML = warnSigns.map((w) => `<li>${w}</li>`).join("");
-  const doNotHTML = doNot
-    .map((d) => `<li style="color:#e74c3c;">${d}</li>`)
-    .join("");
+  const warningsHTML = warnSigns.map(w => `<li>${w}</li>`).join("");
+  const doNotHTML    = doNot.map(d => `<li style="color:#e74c3c;">${d}</li>`).join("");
 
   // Delta comparison banner (comparative healing intelligence)
-  const delta = data.delta || "";
-  const deltaScore = data.delta_score || 0;
-  const deltaExp = data.delta_explanation || "";
-  const sessionNum = data.session_number || "";
+  const delta        = data.delta || "";
+  const deltaScore   = data.delta_score || 0;
+  const deltaExp     = data.delta_explanation || "";
+  const sessionNum   = data.session_number || "";
   const isComparison = data.is_comparison || false;
 
   // Re-add scoreBadge (previously accidentally removed)
-  const scoreBadge =
-    severityScore !== ""
-      ? `<span style="font-size:0.8em;opacity:0.7;margin-left:6px;">Severity score: ${severityScore}/10</span>`
-      : "";
+  const scoreBadge = severityScore !== "" ? `<span style="font-size:0.8em;opacity:0.7;margin-left:6px;">Severity score: ${severityScore}/10</span>` : "";
 
   let deltaBanner = "";
   if (isComparison && delta) {
-    const dColor =
-      delta === "improved"
-        ? "#27ae60"
-        : delta === "worsened"
-        ? "#e74c3c"
-        : "#f39c12";
-    const dIcon =
-      delta === "improved" ? "📈" : delta === "worsened" ? "📉" : "➡️";
+    const dColor = delta === "improved" ? "#27ae60" : delta === "worsened" ? "#e74c3c" : "#f39c12";
+    const dIcon  = delta === "improved" ? "📈" : delta === "worsened" ? "📉" : "➡️";
     const dLabel = delta.charAt(0).toUpperCase() + delta.slice(1);
     // delta_score: -3 to +3. Map to 0-100% bar width where 0=50%.
     const barFill = Math.round(50 + (deltaScore / 3) * 50);
@@ -2471,79 +2376,35 @@ function addImageAnalysisToChat(
 
   const html = `
 <div style="font-family:inherit;line-height:1.6;">
-  <div style="font-weight:700;font-size:1.05em;margin-bottom:6px;">📸 Health Image Analysis — Gemini Vision${
-    sessionNum ? ` (Day ${sessionNum})` : ""
-  }</div>
+  <div style="font-weight:700;font-size:1.05em;margin-bottom:6px;">📸 Health Image Analysis — Gemini Vision${sessionNum ? ` (Day ${sessionNum})` : ""}</div>
   ${deltaBanner}
 
   <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px;">
-    <span style="font-weight:600;">Identified:</span> ${
-      data.injury_type || "Not identified"
-    } ${severityIcon} ${
-    severity.charAt(0).toUpperCase() + severity.slice(1)
-  } ${scoreBadge}
+    <span style="font-weight:600;">Identified:</span> ${data.injury_type || "Not identified"} ${severityIcon} ${severity.charAt(0).toUpperCase()+severity.slice(1)} ${scoreBadge}
   </div>
   <div style="font-size:0.82em;opacity:0.65;margin-bottom:8px;">Model certainty (approx.): ${certainty}% — heuristic, not calibrated</div>
-  ${
-    sanityNote
-      ? `<div style="font-size:0.8em;background:#e8f4fd;padding:4px 8px;border-radius:4px;margin-bottom:6px;">ℹ️ ${sanityNote}</div>`
-      : ""
-  }
+  ${sanityNote ? `<div style="font-size:0.8em;background:#e8f4fd;padding:4px 8px;border-radius:4px;margin-bottom:6px;">ℹ️ ${sanityNote}</div>` : ""}
   ${infectionBanner}
 
-  ${
-    visualDesc
-      ? `<div style="margin:8px 0;"><strong>What I See:</strong><br>${visualDesc}</div>`
-      : ""
-  }
+  ${visualDesc ? `<div style="margin:8px 0;"><strong>What I See:</strong><br>${visualDesc}</div>` : ""}
 
-  ${
-    conditions.length > 0
-      ? `<div style="margin:8px 0;"><strong>Possible Conditions:</strong><ol style="margin:4px 0 0 18px;">${conditions
-          .map((c) => `<li>${c}</li>`)
-          .join("")}</ol></div>`
-      : ""
-  }
+  ${conditions.length > 0 ? `<div style="margin:8px 0;"><strong>Possible Conditions:</strong><ol style="margin:4px 0 0 18px;">${conditions.map(c=>`<li>${c}</li>`).join("")}</ol></div>` : ""}
 
-  ${
-    firstAid.length > 0
-      ? `
+  ${firstAid.length > 0 ? `
   <div style="margin:10px 0;">
     <strong>✅ First Aid Checklist:</strong>
     <div style="margin-top:6px;padding:8px 10px;background:rgba(108,99,255,0.06);border-radius:8px;">
       ${checklistHTML}
     </div>
-  </div>`
-      : ""
-  }
+  </div>` : ""}
 
-  ${
-    warnSigns.length > 0
-      ? `<div style="margin:8px 0;"><strong>⚠️ Go to ER / Call Doctor If:</strong><ul style="margin:4px 0 0 18px;">${warningsHTML}</ul></div>`
-      : ""
-  }
+  ${warnSigns.length > 0 ? `<div style="margin:8px 0;"><strong>⚠️ Go to ER / Call Doctor If:</strong><ul style="margin:4px 0 0 18px;">${warningsHTML}</ul></div>` : ""}
 
-  ${
-    seeDoctor
-      ? `<div style="margin:6px 0;"><strong>When to See a Doctor:</strong> ${seeDoctor}</div>`
-      : ""
-  }
-  ${
-    specialist
-      ? `<div style="margin:4px 0;"><strong>Recommended Specialist:</strong> ${specialist}</div>`
-      : ""
-  }
-  ${
-    healing
-      ? `<div style="margin:4px 0;"><strong>Expected Healing Time:</strong> ${healing}</div>`
-      : ""
-  }
+  ${seeDoctor ? `<div style="margin:6px 0;"><strong>When to See a Doctor:</strong> ${seeDoctor}</div>` : ""}
+  ${specialist ? `<div style="margin:4px 0;"><strong>Recommended Specialist:</strong> ${specialist}</div>` : ""}
+  ${healing    ? `<div style="margin:4px 0;"><strong>Expected Healing Time:</strong> ${healing}</div>` : ""}
 
-  ${
-    doNot.length > 0
-      ? `<div style="margin:8px 0;"><strong>🚫 Do NOT:</strong><ul style="margin:4px 0 0 18px;">${doNotHTML}</ul></div>`
-      : ""
-  }
+  ${doNot.length > 0 ? `<div style="margin:8px 0;"><strong>🚫 Do NOT:</strong><ul style="margin:4px 0 0 18px;">${doNotHTML}</ul></div>` : ""}
 
   <div style="margin-top:10px;font-size:0.78em;opacity:0.6;border-top:1px solid rgba(0,0,0,0.1);padding-top:6px;">
     ⚠️ AI analysis — not a medical diagnosis. Always consult a healthcare professional.
@@ -2556,8 +2417,7 @@ function addImageAnalysisToChat(
     const wrapper = document.createElement("div");
     wrapper.className = "message ai-message";
     wrapper.id = msgId;
-    wrapper.style.cssText =
-      "padding:14px 16px;border-radius:16px 16px 16px 4px;max-width:90%;margin:8px 0;";
+    wrapper.style.cssText = "padding:14px 16px;border-radius:16px 16px 16px 4px;max-width:90%;margin:8px 0;";
     wrapper.innerHTML = html;
     chatMessages.appendChild(wrapper);
     chatMessages.scrollTop = chatMessages.scrollHeight;
@@ -2572,10 +2432,7 @@ function _offerHealingTracker(injuryType) {
   const pill = document.createElement("div");
   pill.style.cssText = "display:flex;align-items:center;gap:8px;margin:8px 0;";
   pill.innerHTML = `
-    <button onclick="_startHealingTracker('${(injuryType || "injury").replace(
-      /'/g,
-      "\\'"
-    )} ')"
+    <button onclick="_startHealingTracker('${(injuryType||"injury").replace(/'/g,"\\'")} ')"
       style="display:flex;align-items:center;gap:6px;background:linear-gradient(135deg,#6c63ff,#48cae4);
              color:#fff;border:none;border-radius:20px;padding:8px 16px;cursor:pointer;font-size:0.85em;
              box-shadow:0 2px 8px rgba(108,99,255,0.3);transition:transform 0.15s;"
@@ -2593,15 +2450,12 @@ function _startHealingTracker(injuryType) {
   if (!window.state) window.state = {};
   window.state.healingTrackerActive = true;
   window.state.healingTrackerInjury = injuryType;
-  window.state.healingTrackerDay = (window.state.healingTrackerDay || 0) + 1;
+  window.state.healingTrackerDay    = (window.state.healingTrackerDay || 0) + 1;
 
   const day = window.state.healingTrackerDay;
-  const msg =
-    day === 1
-      ? `📅 **Healing Tracker Started** for: _${injuryType}_\n\nGreat! Upload a photo each day and I'll compare your healing progress. Use the 📎 button to upload today's photo (Day ${day}).`
-      : `📅 **Healing Tracker — Day ${day}** for: _${injuryType}_\n\nUpload today's photo using the 📎 button and I'll assess how your healing has progressed since Day ${
-          day - 1
-        }.`;
+  const msg = day === 1
+    ? `📅 **Healing Tracker Started** for: _${injuryType}_\n\nGreat! Upload a photo each day and I'll compare your healing progress. Use the 📎 button to upload today's photo (Day ${day}).`
+    : `📅 **Healing Tracker — Day ${day}** for: _${injuryType}_\n\nUpload today's photo using the 📎 button and I'll assess how your healing has progressed since Day ${day - 1}.`;
 
   addMessageToChat("ai", msg, { context: "healing-tracker" });
 }
@@ -2653,10 +2507,10 @@ async function handleChatImageUpload(event) {
               image: imageDataUrl,
               user_id: state.userId || state.user?.uid || "anonymous",
               notes: "Analyze this health image and provide detailed insights.",
-              tracking_session: !!window.state?.healingTrackerActive,
+              tracking_session: !!(window.state?.healingTrackerActive),
             }),
           },
-          30000 // 30s — comparison calls are slower
+          30000   // 30s — comparison calls are slower
         );
 
         const data = await response.json();
@@ -2665,53 +2519,33 @@ async function handleChatImageUpload(event) {
 
         if (data.success) {
           const injuryType = data.injury_type || "Not identified";
-          const severity = data.severity || "unknown";
-          const certainty = data.model_certainty_approx ?? data.confidence ?? 0;
+          const severity   = data.severity    || "unknown";
+          const certainty  = data.model_certainty_approx ?? data.confidence ?? 0;
           const sanityNote = data.sanity_note || "";
 
-          const visualDesc =
-            data.visual_description ||
-            data.description ||
-            "No visual description available.";
-          const firstAid = data.immediate_first_aid || data.cure_steps || [];
-          const warnSigns = data.warning_signs || [];
-          const seeDoctor = data.see_doctor_if || data.medical_advice || "";
+          const visualDesc = data.visual_description || data.description || "No visual description available.";
+          const firstAid   = data.immediate_first_aid || data.cure_steps || [];
+          const warnSigns  = data.warning_signs || [];
+          const seeDoctor  = data.see_doctor_if || data.medical_advice || "";
           const specialist = data.recommended_specialist || "";
-          const healing = data.healing_time || "";
-          const conditions =
-            data.possible_conditions || data.disease_characteristics || [];
-          const doNot = data.do_not || [];
+          const healing    = data.healing_time || "";
+          const conditions = data.possible_conditions || data.disease_characteristics || [];
+          const doNot      = data.do_not || [];
 
-          const severityIcon =
-            severity === "emergency"
-              ? "🚨"
-              : severity === "severe"
-              ? "🔴"
-              : severity === "moderate"
-              ? "🟡"
-              : "🟢";
+          const severityIcon = severity === "emergency" ? "🚨"
+                             : severity === "severe"    ? "🔴"
+                             : severity === "moderate"  ? "🟡" : "🟢";
 
           // Render rich HTML checklist card
-          addImageAnalysisToChat(
-            data,
-            severity,
-            severityIcon,
-            certainty,
-            sanityNote,
-            visualDesc,
-            conditions,
-            firstAid,
-            warnSigns,
-            seeDoctor,
-            specialist,
-            healing,
-            doNot
-          );
+          addImageAnalysisToChat(data, severity, severityIcon, certainty, sanityNote,
+                                  visualDesc, conditions, firstAid, warnSigns,
+                                  seeDoctor, specialist, healing, doNot);
 
           // Offer healing tracker after short delay
           setTimeout(() => _offerHealingTracker(data.injury_type), 1200);
 
           showToast("Image analyzed with Gemini Vision AI!", "success");
+
         } else {
           // Show the actual error from backend, not a generic message
           const errMsg = data.error || data.message || "Analysis failed.";
@@ -3087,9 +2921,7 @@ function _restoreChatHistoryToUI(history) {
     "border-top:1px dashed #e5e7eb",
     "margin:4px 0",
   ].join(";");
-  badge.textContent = `💾 ${slice.length} message${
-    slice.length !== 1 ? "s" : ""
-  } restored from your last session`;
+  badge.textContent = `💾 ${slice.length} message${slice.length !== 1 ? 's' : ''} restored from your last session`;
   chatMessages.insertBefore(badge, chatMessages.firstChild.nextSibling);
   setTimeout(() => badge.remove(), 5000); // Fade out after 5s
 
@@ -3574,23 +3406,20 @@ function openLiveLocation() {
 
         // Second attempt: Try again with lower accuracy requirements
         navigator.geolocation.getCurrentPosition(
-          (pos) => {
-            const mapsUrl = `https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`;
-            window.open(mapsUrl, "_blank");
-            locationSpan.textContent = originalText;
-          },
-          (err) => {
-            console.error("❌ Fallback location also failed:", err);
-            // Fallback: Open Google Maps to Greater Noida, Uttar Pradesh, India
-            const fallbackUrl =
-              "https://www.google.com/maps/place/Greater+Noida,+Uttar+Pradesh,+India";
-            window.open(fallbackUrl, "_blank");
-            locationSpan.textContent = originalText;
-            alert(
-              "Could not get your precise location. Opening our office location instead."
-            );
-          },
-          { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 }
+            (pos) => {
+                const mapsUrl = `https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`;
+                window.open(mapsUrl, "_blank");
+                locationSpan.textContent = originalText;
+            },
+            (err) => {
+                console.error("❌ Fallback location also failed:", err);
+                // Fallback: Open Google Maps to Greater Noida, Uttar Pradesh, India
+                const fallbackUrl = "https://www.google.com/maps/place/Greater+Noida,+Uttar+Pradesh,+India";
+                window.open(fallbackUrl, "_blank");
+                locationSpan.textContent = originalText;
+                alert("Could not get your precise location. Opening our office location instead.");
+            },
+            { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 }
         );
       },
       {
@@ -3673,48 +3502,38 @@ const initializeApp = () => {
 
 // --- Dark Mode Logic ---
 function toggleDarkMode() {
-  const currentTheme = document.documentElement.getAttribute("data-theme");
-  const isDark = currentTheme !== "dark";
+  const currentTheme = document.documentElement.getAttribute('data-theme');
+  const isDark = currentTheme !== 'dark';
 
-  document.documentElement.setAttribute(
-    "data-theme",
-    isDark ? "dark" : "light"
-  );
-  document.documentElement.classList.toggle("dark-mode", isDark);
-  document.body.classList.toggle("dark-mode", isDark);
+  document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+  document.documentElement.classList.toggle('dark-mode', isDark);
+  document.body.classList.toggle('dark-mode', isDark);
 
-  const newValue = isDark ? "1" : "0";
-  localStorage.setItem("medicsense_dark_mode", newValue);
+  const newValue = isDark ? '1' : '0';
+  localStorage.setItem('medicsense_dark_mode', newValue);
 
-  const icon = document.getElementById("darkModeIcon");
+  const icon = document.getElementById('darkModeIcon');
   if (icon) {
-    icon.className = isDark ? "fas fa-sun" : "fas fa-moon";
+    icon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
   }
 }
 
 // Restore dark mode preference
-(function () {
-  const storedTheme = localStorage.getItem("medicsense_dark_mode");
-  // Default to dark mode if no preference is saved
-  const isDark = storedTheme === null ? true : storedTheme === "1";
-
+(function() {
+  const isDark = localStorage.getItem('medicsense_dark_mode') === '1';
   if (isDark) {
-    document.documentElement.setAttribute("data-theme", "dark");
-    document.documentElement.classList.add("dark-mode");
-    document.body.classList.add("dark-mode");
+    document.documentElement.setAttribute('data-theme', 'dark');
+    document.documentElement.classList.add('dark-mode');
+    document.body.classList.add('dark-mode');
     setTimeout(() => {
-      const icon = document.getElementById("darkModeIcon");
+      const icon = document.getElementById('darkModeIcon');
       if (icon) {
-        icon.className = "fas fa-sun";
+        icon.className = 'fas fa-sun';
       }
     }, 100);
-    // Save the default preference
-    if (storedTheme === null) {
-      localStorage.setItem("medicsense_dark_mode", "1");
-    }
   } else {
-    document.documentElement.setAttribute("data-theme", "light");
-    document.documentElement.classList.remove("dark-mode");
+    document.documentElement.setAttribute('data-theme', 'light');
+    document.documentElement.classList.remove('dark-mode');
   }
 })();
 
