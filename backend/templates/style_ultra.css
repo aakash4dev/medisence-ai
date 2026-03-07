@@ -2689,71 +2689,97 @@ select.form-control option:focus {
   gap: 1rem;
 }
 
-.severity-container {
-  width: 100%;
-  max-width: 600px;
-}
-
-.severity-label {
-  color: #e5e7eb;
-  font-weight: 600;
-  font-size: 16px;
-}
-
-.severity-label span {
-  color: #ef4444;
-}
-
 .severity-slider {
-  -webkit-appearance: none;
-  appearance: none;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
   width: 100%;
-  height: 8px;
-  border-radius: 10px;
-  outline: none;
-  background: #e5e7eb; /* Fallback */
-  margin-top: 12px;
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  cursor: pointer;
+  padding: 4px 0;
 }
 
-/* Filled track portion */
+/* ── Webkit (Chrome, Safari, Edge) ── */
+.severity-slider::-webkit-slider-container {
+  overflow: hidden;
+  border-radius: 6px;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
 .severity-slider::-webkit-slider-runnable-track {
-  height: 8px;
-  border-radius: 10px;
+  height: 6px;
+  background: #e2e8f0;
+  border: none !important;
+  border-radius: 6px;
+  box-shadow: none !important;
+  outline: none !important;
 }
 
-.severity-slider::-moz-range-track {
-  height: 8px;
-  border-radius: 10px;
-}
-
-/* Custom Thumb (Circle) */
 .severity-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
-  height: 20px;
-  width: 20px;
+  height: 18px;
+  width: 18px;
   border-radius: 50%;
   background: #6366f1;
-  cursor: pointer;
-  margin-top: -6px; /* Centering on track */
-  box-shadow: 0 0 10px rgba(99, 102, 241, 0.7);
+  border: 2px solid #ffffff !important;
+  box-shadow: -100vw 0 0 100vw #6366f1, 0 1px 6px rgba(99, 102, 241, 0.5);
+  margin-top: -6px;
+  transition: transform 150ms ease;
+}
+
+.severity-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+/* ── Firefox ── */
+.severity-slider::-moz-range-track {
+  height: 6px;
+  background: #e2e8f0;
+  border: none !important;
+  border-radius: 6px;
+  box-shadow: none !important;
+}
+
+.severity-slider::-moz-range-progress {
+  height: 6px;
+  background: #6366f1;
+  border-radius: 6px 0 0 6px;
 }
 
 .severity-slider::-moz-range-thumb {
-  height: 20px;
-  width: 20px;
+  height: 18px;
+  width: 18px;
   border-radius: 50%;
   background: #6366f1;
+  border: 2px solid #ffffff !important;
+  box-shadow: 0 1px 6px rgba(99, 102, 241, 0.5);
   cursor: pointer;
-  border: none;
-  box-shadow: 0 0 10px rgba(99, 102, 241, 0.7);
 }
 
-.severity-value {
-  text-align: center;
-  font-size: 32px;
-  font-weight: 700;
-  color: #e5e7eb;
-  margin-top: 14px;
+/* Remove ALL focus borders/outlines */
+.severity-slider:focus,
+.severity-slider:focus-visible,
+.severity-slider:active {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.severity-slider:focus::-webkit-slider-runnable-track {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.severity-slider:focus::-webkit-slider-container {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
 }
 
 /* Dark mode track */
@@ -3569,9 +3595,9 @@ select.form-control option:focus {
     0.12
   ); /* Increased from 0.06 for better visibility */
   border: 1px solid rgba(0, 0, 0, 0.2); /* Stronger border */
-  padding: 6px 12px;
+  padding: 0.5rem 1rem;
   border-radius: var(--radius-full);
-  font-size: 13px;
+  font-size: 0.875rem;
   cursor: pointer;
   transition: all var(--transition-fast);
   color: #1f2937;
@@ -3634,98 +3660,46 @@ select.form-control option:focus {
   padding: 10px 16px 14px !important;
 }
 
-.chat-input-wrapper{
-display:flex;
-align-items:center;
-gap:12px;
-padding:10px 16px;
-border-radius:28px;
-background:rgba(30,41,59,0.85);
-border:1px solid rgba(255,255,255,0.08);
-height:56px;
-width:100%;
+.chat-input-wrapper {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  flex-wrap: nowrap !important;
+  gap: 10px !important;
+  margin-bottom: 0 !important;
+  background: var(--bg-input, #f9fafb) !important;
+  border: 1px solid var(--border-main, #e5e7eb) !important;
+  border-radius: 28px !important;
+  padding: 4px 8px !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
 }
 
-.chat-input{
-flex:1;
-border:none;
-outline:none;
-
-background:transparent;   /* removes dark rectangle */
-
-color:#cbd5f5;
-font-size:15px;
-
-resize:none;               /* removes arrows */
-overflow:hidden;
-
-height:36px;
-line-height:36px;
-padding:0;
+.chat-input-wrapper:focus-within {
+  border-color: #6366f1 !important;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.08) !important;
 }
 
-textarea::-webkit-resizer{
-display:none;
+.input-action-btn {
+  width: 44px !important;
+  height: 44px !important;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 10px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer;
+  transition: background 150ms ease, color 150ms ease, transform 150ms ease !important;
+  flex-shrink: 0 !important;
+  color: var(--gray-400, #9ca3af) !important;
 }
 
-.chat-input::placeholder{
-color:rgba(203,213,245,0.6);
-}
-
-/* ATTACH */
-.attach-btn{
-display:flex;
-align-items:center;
-justify-content:center;
-width:36px;
-height:36px;
-border-radius:10px;
-border:none;
-background:rgba(255,255,255,0.06);
-color:white;
-cursor:pointer;
-}
-
-/* MIC */
-.mic-btn{
-border:none;
-background:transparent;
-color:rgba(255,255,255,0.6);
-font-size:18px;
-cursor:pointer;
-}
-
-.mic-btn:hover{
-color:white;
-}
-
-/* SEND */
-.send-btn{
-width:40px;
-height:40px;
-border-radius:50%;
-border:none;
-background:linear-gradient(135deg,#6366f1,#8b5cf6);
-color:white;
-cursor:pointer;
-display:flex;
-align-items:center;
-justify-content:center;
-box-shadow:0 0 12px rgba(139,92,246,0.6);
-}
-
-.send-btn:hover{
-transform:scale(1.05);
-}
-
-/* FOOTER */
-.chat-footer{
-display: block !important;
-text-align: center !important;
-width: 100% !important;
-margin: 10px auto 0 !important;
-font-size: 12px;
-color: rgba(255, 255, 255, 0.55);
+.input-action-btn:hover {
+  background: rgba(99, 102, 241, 0.08) !important;
+  color: #6366f1 !important;
+  transform: scale(1.1) !important;
 }
 
 /* Voice Input Listening State */
@@ -3764,7 +3738,60 @@ color: rgba(255, 255, 255, 0.55);
   color: white !important;
 }
 
+.chat-input {
+  flex: 1 1 0% !important;
+  min-width: 0 !important;
+  width: auto !important;
+  height: 46px !important;
+  min-height: 46px !important;
+  padding: 0 4px !important;
+  border: none !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  resize: none !important;
+  font-family: var(--font-primary) !important;
+  font-size: 15px !important;
+  line-height: 46px !important;
+  max-height: 120px !important;
+  box-shadow: none !important;
+  outline: none !important;
+  overflow: hidden !important;
+}
 
+.chat-input:focus {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.send-btn {
+  width: 44px !important;
+  height: 44px !important;
+  background: #6366f1 !important;
+  border: none !important;
+  border-radius: 50% !important;
+  color: white !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  transition: all var(--transition-fast) !important;
+  flex-shrink: 0 !important;
+}
+
+.send-btn:hover {
+  background: #4f46e5 !important;
+  transform: scale(1.05) !important;
+}
+
+.input-hint {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--gray-500);
+  justify-content: center;
+}
 
 /* ========================================
    REPORTS SECTION
@@ -5250,34 +5277,4 @@ textarea.form-control.is-invalid {
 .auth-modal,
 .modal-content {
   border-radius: 24px !important;
-}
-
-/* ============================================================
-   AI MESSAGE COPY BUTTON
-   ============================================================ */
-.copy-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin-top: 12px;
-  padding: 6px 12px;
-  background: rgba(45, 50, 60, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 8px !important; /* Overrides the global 24px */
-  color: #ffffff;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.copy-btn:hover {
-  background: rgba(65, 70, 80, 0.95);
-  border-color: rgba(255, 255, 255, 0.3);
-  transform: translateY(-1px);
-}
-
-.copy-btn i {
-  font-size: 14px;
 }

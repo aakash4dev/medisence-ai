@@ -143,14 +143,18 @@ function displayAppointments(appointments) {
   const aptList = document.getElementById("appointmentsList");
   if (!aptList) return;
 
-  if (appointments.length === 0) {
+  const upcoming = appointments
+    .filter(a => a.status === "confirmed")
+    .slice(0, 3);
+
+  if (upcoming.length === 0) {
     aptList.innerHTML = '<p class="no-data">No upcoming appointments</p>';
     return;
   }
 
   let html = '<div class="appointments-grid">';
 
-  appointments.forEach((apt) => {
+  upcoming.forEach((apt) => {
     html += `
             <div class="appointment-card">
                 <div class="apt-header">
@@ -184,23 +188,29 @@ async function cancelAppointment(appointmentId) {
   if (!confirm("Are you sure you want to cancel this appointment?")) return;
 
   try {
+    const userId = typeof userState !== "undefined" ? userState.userId : localStorage.getItem("medicsense_user_id") || "guest_user";
     const response = await fetch(
-      `http://localhost:5000/api/appointments/${appointmentId}/cancel`,
+      `/api/appointments/${appointmentId}/cancel`,
       {
-        method: "POST",
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          user_id: userState.userId,
-          appointment_id: appointmentId,
-        }),
+        body: JSON.stringify({ userId: userId }),
       }
     );
 
     const data = await response.json();
 
-    if (data.success) {
-      showNotification("✅ Appointment cancelled", "success");
-      loadAppointments();
+    if (data.success || response.ok) {
+      showNotification("✔ Appointment cancelled successfully", "success");
+
+      const card = document.querySelector(`#appointment-${appointmentId}`);
+      if (card) card.remove();
+
+      // 🔥 refresh dashboard
+      await loadAppointments();
+      if (typeof updateAppointmentsList === 'function') {
+        await updateAppointmentsList();
+      }
     }
   } catch (error) {
     console.error("Error cancelling appointment:", error);

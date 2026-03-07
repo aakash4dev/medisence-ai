@@ -55,16 +55,16 @@
   <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
 
   <!-- Styles -->
-  <link rel="stylesheet" href="style_ultra.css?v=motion8" />
-  <link rel="stylesheet" href="premium_enhancements.css?v=1" />
-  <link rel="stylesheet" href="layout_rebalance.css?v=1" />
-  <link rel="stylesheet" href="micro_interactions.css?v=1" />
-  <link rel="stylesheet" href="inline_slots.css?v=1" />
-  <link rel="stylesheet" href="flow_optimization.css?v=1" />
-  <link rel="stylesheet" href="visual_confidence.css?v=1" />
-  <link rel="stylesheet" href="vertical_compaction.css?v=1" />
-  <link rel="stylesheet" href="ultra_compact.css?v=1" />
-  <link rel="stylesheet" href="ai_chat_refined.css?v=1" />
+  <link rel="stylesheet" href="style_ultra.css?v=motion13" />
+  <link rel="stylesheet" href="premium_enhancements.css?v=2" />
+  <link rel="stylesheet" href="layout_rebalance.css?v=2" />
+  <link rel="stylesheet" href="micro_interactions.css?v=2" />
+  <link rel="stylesheet" href="inline_slots.css?v=2" />
+  <link rel="stylesheet" href="flow_optimization.css?v=2" />
+  <link rel="stylesheet" href="visual_confidence.css?v=2" />
+  <link rel="stylesheet" href="vertical_compaction.css?v=2" />
+  <link rel="stylesheet" href="ultra_compact.css?v=2" />
+  <link rel="stylesheet" href="ai_chat_refined.css?v=6" />
   <style>
     /* Auth Modal Styles */
     .modal-overlay {
@@ -188,6 +188,26 @@
       /* Color removed to inherit original theme (blue/purple) */
     }
 
+    .apt-soon-label {
+      color: #f39c12;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      animation: pulse 2s infinite;
+    }
+    .apt-completed-label {
+      color: #7f8c8d;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.7; }
+      100% { opacity: 1; }
+    }
   </style>
 
   <!-- Favicon -->
@@ -278,6 +298,13 @@
             </a>
           </li>
 
+          <li>
+            <a href="history.html" class="nav-link nav-link-calm">
+              <i class="fas fa-stream"></i>
+              <span>Health Timeline</span>
+            </a>
+          </li>
+
           <!-- VISUAL SEPARATOR -->
           <li class="nav-separator"></li>
 
@@ -363,6 +390,9 @@
         <li>
           <a href="#symptom-checker" onclick="toggleMobileMenu()"><i class="fas fa-stethoscope"></i> Symptom Check</a>
         </li>
+        <li>
+          <a href="history.html" onclick="toggleMobileMenu()"><i class="fas fa-stream"></i> Health Timeline</a>
+        </li>
         <li class="mobile-divider"></li>
         <li>
           <a href="#appointments" onclick="toggleMobileMenu()" style="font-weight: 700; color: var(--primary-600);">
@@ -371,6 +401,12 @@
         </li>
         <li>
           <a href="notifications.html" onclick="toggleMobileMenu()"><i class="fas fa-bell"></i> Notifications</a>
+        </li>
+        <li class="mobile-divider"></li>
+        <li>
+          <a href="#" onclick="runHealthDemo(); toggleMobileMenu();" style="color: #8b5cf6; font-weight: 700;">
+            <i class="fas fa-play-circle"></i> Run Health Demo
+          </a>
         </li>
         <li class="mobile-divider"></li>
         <li>
@@ -528,11 +564,13 @@
                 <small class="input-helper-text">Helps assess symptom progression</small>
               </div>
 
-              <div class="form-group">
-                <label>Severity (1-10) <span style="color: var(--danger-500)">*</span></label>
-                <input type="range" id="severityRange" class="severity-slider" min="0" max="10" value="0" />
+              <div class="severity-container">
+                <label class="severity-label">
+                  Severity (1-10) <span>*</span>
+                </label>
+                <input type="range" id="severityRange" class="severity-slider" min="1" max="10" value="1" />
                 <div class="severity-value">
-                  <span id="severityValue">0</span>/10
+                  <span id="severityValue">1</span>/10
                 </div>
               </div>
             </div>
@@ -833,7 +871,39 @@
           </div>
 
           <!-- Health Score Widget -->
-          <!-- Health Score Removed -->
+          <div class="health-score-card" style="background: var(--bg-card); border-radius: 16px; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border: 1px solid rgba(255,255,255,0.05); text-align: center;">
+            <h4 style="margin: 0 0 15px 0; color: var(--text-main); font-size: 1.1rem; display: flex; align-items: center; justify-content: center; gap: 8px;">
+              <i class="fas fa-heartbeat" style="color: #ef4444;"></i> Health Profile
+            </h4>
+
+            <div style="position: relative; width: 120px; height: 120px; margin: 0 auto 15px auto;">
+              <!-- Circle Background -->
+              <svg viewBox="0 0 36 36" style="width: 100%; height: 100%;">
+                <path
+                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                  fill="none" stroke="rgba(0,0,0,0.05)" stroke-width="3"
+                />
+                <!-- Value Arc (Moderate = ~65%) -->
+                <path
+                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                  fill="none" stroke="#f59e0b" stroke-width="3"
+                  stroke-dasharray="65, 100"
+                  animation="stroke 1s ease-out forwards"
+                />
+              </svg>
+              <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center;">
+                <span style="font-size: 1.8rem; font-weight: 800; color: #f59e0b;">65</span>
+                <span style="font-size: 0.65rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px;">Score</span>
+              </div>
+            </div>
+
+            <div style="background: rgba(245, 158, 11, 0.1); color: #d97706; padding: 8px 12px; border-radius: 8px; font-weight: 700; font-size: 0.9rem; margin-bottom: 10px;">
+              MODERATE RISK
+            </div>
+            <p style="margin: 0; font-size: 0.85rem; color: #64748b; line-height: 1.4;">
+              Based on recent symptoms and check-ins. Recommend monitoring vitals today.
+            </p>
+          </div>
 
 
           <!-- Recent Activity -->
@@ -909,43 +979,43 @@
 
             <!-- Quick Suggestions -->
             <div class="quick-suggestions" id="quickSuggestions">
-              <button class="suggestion-chip" onclick="sendQuickMessage('I have fever and headache')">
+              <button class="suggestion-chip" onclick="sendQuickMessage('I have fever and headache', this)">
                 💊 I have fever and headache
               </button>
-              <button class="suggestion-chip" onclick="sendQuickMessage('Need medication information')">
-                � Medication info
+              <button class="suggestion-chip" onclick="sendQuickMessage('Need medication information', this)">
+                💊 Medication info
               </button>
-              <button class="suggestion-chip" onclick="sendQuickMessage('Check my health status')">
+              <button class="suggestion-chip" onclick="sendQuickMessage('Check my health status', this)">
                 ❤️ Health status
               </button>
-              <button class="suggestion-chip" onclick="sendQuickMessage('What are my vital signs?')">
+              <button class="suggestion-chip" onclick="sendQuickMessage('What are my vital signs?', this)">
                 📊 My vitals
               </button>
             </div>
 
             <!-- Chat Input -->
             <div class="chat-input-container">
+              <div id="charCounter" class="char-counter" style="text-align: right; font-size: 0.82rem; color: rgba(255, 255, 255, 0.5); font-weight: 500; margin-bottom: 4px; display: none;">0/1000</div>
+
               <div class="chat-input-wrapper">
-                <button class="input-action-btn" onclick="attachFile()" title="Attach Image">
-                  <i class="fas fa-paperclip"></i>
-                </button>
-                <input type="file" id="chatFileInput" accept="image/*" style="display: none"
-                  onchange="handleChatImageUpload(event)" />
+                  <button class="attach-btn" onclick="attachFile()" title="Attach Image">📎</button>
+                  <input type="file" id="chatFileInput" accept="image/*" style="display: none" onchange="handleChatImageUpload(event)" />
 
-                <textarea id="chatInput" class="chat-input" placeholder="Type your message... (Press Enter to send)"
-                  rows="1" onkeypress="handleChatKeyPress(event)"></textarea>
+                  <textarea
+                      id="chatInput"
+                      class="chat-input"
+                      placeholder="Type your message... (Press Enter to send)"
+                      rows="1"
+                      onkeypress="handleChatKeyPress(event)"
+                  ></textarea>
 
-                <button class="input-action-btn" id="voiceInputBtnChat" data-voice-type="chat" title="Voice Input">
-                  <i class="fas fa-microphone"></i>
-                </button>
+                  <button class="mic-btn" id="voiceInputBtnChat" data-voice-type="chat" title="Voice Input">🎤</button>
 
-                <button class="send-btn" onclick="sendChatMessage()" title="Send Message">
-                  <i class="fas fa-paper-plane"></i>
-                </button>
+                  <button class="send-btn" onclick="sendChatMessage()" id="sendBtn" title="Send Message">✈</button>
               </div>
-              <div class="input-hint">
-                <i class="fas fa-info-circle"></i>
-                Powered by Google Gemini • 100% Private & Secure
+
+              <div class="chat-footer">
+                ℹ️ Powered by Google Gemini • 100% Private & Secure
               </div>
             </div>
           </div>
@@ -963,27 +1033,9 @@
       </div>
 
       <div class="testimonials-grid">
-        <div class="testimonial-card" data-aos="fade-right">
-          <div class="stars">★★★★★</div>
-          <p>"The AI symptom checker was incredibly accurate and helped me decide to see a cardiologist just in time. Truly life-saving tech!"</p>
-          <div class="patient-info">
-            <strong>- Rajesh Kumar</strong>
-          </div>
-        </div>
-        <div class="testimonial-card" data-aos="fade-up" data-aos-delay="100">
-          <div class="stars">★★★★★</div>
-          <p>"Booking an appointment has never been easier. No phone calls, no waiting. The WhatsApp integration is brilliant."</p>
-          <div class="patient-info">
-            <strong>- Anita Sharma</strong>
-          </div>
-        </div>
-        <div class="testimonial-card" data-aos="fade-left" data-aos-delay="200">
-          <div class="stars">★★★★★</div>
-          <p>"The 24/7 AI chat gives me peace of mind when I have minor health questions at night. Professional and secure."</p>
-          <div class="patient-info">
-            <strong>- David Miller</strong>
-          </div>
-        </div>
+        <div class="testimonial-card" id="review1" data-aos="fade-right"></div>
+        <div class="testimonial-card" id="review2" data-aos="fade-up" data-aos-delay="100"></div>
+        <div class="testimonial-card" id="review3" data-aos="fade-left" data-aos-delay="200"></div>
       </div>
     </div>
   </section>
@@ -1007,7 +1059,7 @@
           <ul class="footer-links">
             <li><a href="about.html#fromFooter">About Us</a></li>
             <li><a href="how-it-works.html#fromFooter">How It Works</a></li>
-            <li><a href="faq.html">F.A.Q</a></li>
+            <li><a href="/faq.html">F.A.Q</a></li>
             <li><a href="privacy.html#fromFooter">Privacy Policy</a></li>
             <li><a href="terms.html#fromFooter">Terms of Service</a></li>
           </ul>
@@ -1090,6 +1142,48 @@
   <script src="profile_menu.js" defer></script>
   <script src="script_ultra.js" defer></script>
   <script src="premium_ui_enhancements.js" defer></script>
+
+  <!-- ── Testimonial Auto-Rotate ── -->
+  <script>
+    const reviews = [
+      { text: "The AI symptom checker was incredibly accurate and helped me decide to see a cardiologist just in time. Truly life-saving tech!", name: "Rajesh Kumar" },
+      { text: "Booking an appointment has never been easier. No phone calls, no waiting. The WhatsApp integration is brilliant.", name: "Anita Sharma" },
+      { text: "The 24/7 AI chat gives me peace of mind when I have minor health questions at night. Professional and secure.", name: "David Miller" },
+      { text: "The skin scanner helped detect my allergy early. Incredibly accurate and fast — amazing technology.", name: "Priya Mehta" },
+      { text: "I avoided an unnecessary hospital visit thanks to the AI guidance. Saved me both time and money.", name: "Amit Verma" },
+      { text: "MedicSense gave me clear answers at 2 AM when I was anxious. It felt like having a doctor on call.", name: "Sarah Johnson" },
+      { text: "The health records feature keeps everything in one place. My doctor was impressed at our last appointment.", name: "Vikram Singh" }
+    ];
+
+    let reviewIndex = 0;
+
+    function buildCard(r) {
+      return `
+        <div class="stars">★★★★★</div>
+        <p>"${r.text}"</p>
+        <div class="patient-info"><strong>- ${r.name}</strong></div>
+      `;
+    }
+
+    function renderReviews() {
+      const cards = ["review1", "review2", "review3"];
+      cards.forEach((id, offset) => {
+        const card = document.getElementById(id);
+        if (!card) return;
+        card.style.opacity = "0";
+        setTimeout(() => {
+          card.innerHTML = buildCard(reviews[(reviewIndex + offset) % reviews.length]);
+          card.style.opacity = "1";
+        }, 300);
+      });
+      reviewIndex++;
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      renderReviews();
+      setInterval(renderReviews, 5000);
+    });
+  </script>
 
   <script>
     // Initialize AOS (Animate on Scroll) - Non-blocking

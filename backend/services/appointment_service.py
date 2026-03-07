@@ -4,13 +4,13 @@ from datetime import datetime
 from typing import Dict, List, Tuple
 from repositories.appointment_repository import AppointmentRepository
 from repositories.doctor_repository import DoctorRepository
-from notifications_service import NotificationsService
+from notification_triggers import notification_triggers
 
 class AppointmentService:
     def __init__(self):
         self.apt_repo = AppointmentRepository()
         self.doc_repo = DoctorRepository()
-        self.notification_service = NotificationsService()
+
 
     def get_available_slots(self, doctor_id: str, date: str) -> List[str]:
         # Validate date format (YYYY-MM-DD)
@@ -32,18 +32,10 @@ class AppointmentService:
         return [slot for slot in all_slots if slot not in booked_times]
 
     def validate_appointment_request(self, data: Dict) -> Tuple[bool, str]:
-        required_fields = ['user_id', 'doctor_id', 'date', 'time', 'name', 'phone']
+        required_fields = ['user_id', 'doctor_id', 'date', 'time']
         for field in required_fields:
             if not data.get(field):
                 return False, f"Missing required field: {field}"
-
-        # Email regex
-        if data.get('email') and not re.match(r"[^@]+@[^@]+\.[^@]+", data['email']):
-            return False, "Invalid email format"
-
-        # Phone regex (simple)
-        if not re.match(r"^\+?[\d\s-]{10,}$", data['phone']):
-            return False, "Invalid phone number"
 
         # Date validation
         try:
@@ -77,42 +69,39 @@ class AppointmentService:
         # Generate ID
         appointment_id = f"APT{uuid.uuid4().hex[:8].upper()}"
 
+        # Get doctor name
+        doctor_name = data.get('doctor_name')
+        if not doctor_name and doctor:
+            doctor_name = doctor.get('name', 'Unknown Doctor')
+        if not doctor_name:
+            doctor_name = "Unknown Doctor"
+
         booking_data = {
-            "id": appointment_id,
-            "user_id": data['user_id'],
-            "doctor_id": data['doctor_id'],
-            "date": data['date'],
-            "time": data['time'],
-            "reason": data.get('reason', ''),
-            "type": data.get('type', 'in-person'),
-            "status": "confirmed",
-            "name": data.get('name'),
-            "phone": data.get('phone'),
-            "email": data.get('email'),
-            "created_at": datetime.now().isoformat()
+            "user_id":     data['user_id'],
+            "doctor_id":   data['doctor_id'],
+            "doctor_name": doctor_name,
+            "date":        data['date'],
+            "time":        data['time'],
+            "type":        data.get('type', 'in-person'),
+            "reason":      data.get('reason', ''),
+            "status":      "confirmed",
         }
 
         try:
-             self.apt_repo.create_appointment(booking_data)
+             inserted_row = self.apt_repo.create_appointment(booking_data)
+             real_id = inserted_row["id"]
 
-             # Create notification
-             doctor_name = doctor.get('name', 'your doctor') if doctor else 'your doctor'
-             self.notification_service.create_appointment_notification(
+             # Phase 6 — Trigger A: Appointment booked notification (automatic)
+             notification_triggers.on_appointment_booked(
                  user_id=data['user_id'],
-                 appointment_id=appointment_id,
-                 title="Appointment Confirmed",
-                 message=f"Your appointment with {doctor_name} is confirmed for {data['date']} at {data['time']}.",
-                 metadata={
-                     "appointment_id": appointment_id,
-                     "deep_link": "#appointments"
-                 }
+                 appointment=inserted_row,
              )
 
              return {
                  "success": True,
-                 "appointmentId": appointment_id,
+                 "appointmentId": real_id,
                  "message": "Appointment booked successfully",
-                 "appointment": booking_data
+                 "appointment": inserted_row
              }, 201
         except Exception as e:
              if "Slot already booked" in str(e) or "UNIQUE constraint failed" in str(e):
@@ -126,13 +115,10 @@ class AppointmentService:
         try:
             result = self.apt_repo.cancel_appointment(appointment_id, user_id)
             if result:
-                # Create notification
-                self.notification_service.create_notification(
+                # Phase 6 — Trigger B: Appointment cancelled notification (automatic)
+                notification_triggers.on_appointment_cancelled(
                     user_id=user_id,
-                    notification_type="appointment",
-                    title="Appointment Cancelled",
-                    message=f"The appointment (ID: {appointment_id}) has been cancelled successfully.",
-                    metadata={"appointment_id": appointment_id}
+                    appointment_id=appointment_id,
                 )
                 return {"success": True, "message": "Appointment cancelled successfully"}, 200
             else:

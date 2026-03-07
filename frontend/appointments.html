@@ -1,7 +1,28 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark" class="dark-mode">
   <head>
     <meta charset="UTF-8" />
+    <script>
+      (function () {
+        const storageKey = "medicsense_dark_mode";
+        const storedTheme = localStorage.getItem(storageKey);
+        // Default to dark mode if no preference is saved
+        const isDark = storedTheme === null ? true : storedTheme === "1";
+        document.documentElement.setAttribute(
+          "data-theme",
+          isDark ? "dark" : "light"
+        );
+        if (isDark) {
+          document.documentElement.classList.add("dark-mode");
+        } else {
+          document.documentElement.classList.remove("dark-mode");
+        }
+        // Save the default preference
+        if (storedTheme === null) {
+          localStorage.setItem(storageKey, "1");
+        }
+      })();
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>My Appointments - MedicSense AI</title>
     <link
@@ -40,7 +61,7 @@
       }
 
       .apt-content-section {
-        background: var(--bg-card) ;
+        background: var(--bg-card);
         border-radius: 20px;
         padding: 2rem;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
@@ -103,7 +124,7 @@
       .apt-filter-tab {
         padding: 0.5rem 1.25rem;
         border: 1.5px solid #e2e8f0;
-        background: var(--bg-card) ;
+        background: var(--bg-card);
         border-radius: 8px;
         cursor: pointer;
         transition: all 0.2s;
@@ -200,40 +221,60 @@
         font-size: 0.9rem;
         font-weight: 500;
         color: #fff;
-        box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
         z-index: 9999;
         opacity: 0;
         transform: translateY(12px);
         transition: opacity 0.3s, transform 0.3s;
         pointer-events: none;
       }
-      #aptToast.show { opacity: 1; transform: translateY(0); }
-      #aptToast.success { background: #10b981; }
-      #aptToast.error   { background: #ef4444; }
-      #aptToast.info    { background: #667eea; }
+      #aptToast.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      #aptToast.success {
+        background: #10b981;
+      }
+      #aptToast.error {
+        background: #ef4444;
+      }
+      #aptToast.info {
+        background: #667eea;
+      }
 
       /* === Confirm Dialog === */
       #aptConfirmOverlay {
         display: none;
         position: fixed;
         inset: 0;
-        background: rgba(0,0,0,0.45);
+        background: rgba(0, 0, 0, 0.45);
         z-index: 9990;
         align-items: center;
         justify-content: center;
       }
-      #aptConfirmOverlay.show { display: flex; }
+      #aptConfirmOverlay.show {
+        display: flex;
+      }
       #aptConfirmBox {
-        background: var(--bg-card) ;
+        background: var(--bg-card);
         border-radius: 16px;
         padding: 2rem;
         max-width: 380px;
         width: 90%;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
         text-align: center;
       }
-      #aptConfirmBox p { color: #374151; margin: 0 0 1.5rem; line-height: 1.6; font-size: 0.95rem; }
-      .confirm-actions { display: flex; gap: 0.75rem; justify-content: center; }
+      #aptConfirmBox p {
+        color: #374151;
+        margin: 0 0 1.5rem;
+        line-height: 1.6;
+        font-size: 0.95rem;
+      }
+      .confirm-actions {
+        display: flex;
+        gap: 0.75rem;
+        justify-content: center;
+      }
       .confirm-btn-yes {
         padding: 0.6rem 1.5rem;
         background: #ef4444;
@@ -245,7 +286,9 @@
         transition: background 0.2s;
         font-family: inherit;
       }
-      .confirm-btn-yes:hover { background: #dc2626; }
+      .confirm-btn-yes:hover {
+        background: #dc2626;
+      }
       .confirm-btn-no {
         padding: 0.6rem 1.5rem;
         background: #e2e8f0;
@@ -257,18 +300,51 @@
         transition: background 0.2s;
         font-family: inherit;
       }
-      .confirm-btn-no:hover { background: #cbd5e1; }
-
-      @media (max-width: 768px) {
-        .apt-page-container { padding: 1rem; }
-        .apt-stats-row { grid-template-columns: repeat(2, 1fr); }
-        .apt-content-section { padding: 1.25rem; }
-        .apt-header h1 { font-size: 1.5rem; }
+      .confirm-btn-no:hover {
+        background: #cbd5e1;
       }
 
-      @media (max-width: 480px) {
-        .apt-filter-tabs { gap: 0.35rem; }
-        .apt-filter-tab { padding: 0.4rem 0.75rem; font-size: 0.8rem; }
+      @media (max-width: 768px) {
+        .apt-page-container {
+          padding: 1rem;
+        }
+        .apt-stats-row {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .apt-content-section {
+          padding: 1.25rem;
+        }
+        .apt-header h1 {
+          font-size: 1.5rem;
+        }
+      }
+
+      .cancelled-label {
+        color: #e74c3c;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+      }
+      .apt-soon-label {
+        color: #f39c12;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        animation: pulse 2s infinite;
+      }
+      .apt-completed-label {
+        color: #7f8c8d;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+      }
+      @keyframes pulse {
+        0% { opacity: 1; }
+        50% { opacity: 0.7; }
+        100% { opacity: 1; }
       }
     </style>
   </head>
@@ -319,7 +395,9 @@
         <p id="aptConfirmMsg">Are you sure?</p>
         <div class="confirm-actions">
           <button class="confirm-btn-no" id="aptConfirmNo">Cancel</button>
-          <button class="confirm-btn-yes" id="aptConfirmYes">Yes, Confirm</button>
+          <button class="confirm-btn-yes" id="aptConfirmYes">
+            Yes, Confirm
+          </button>
         </div>
       </div>
     </div>
@@ -344,7 +422,7 @@
         t.textContent = msg;
         t.className = `show ${type}`;
         clearTimeout(_toastTimer);
-        _toastTimer = setTimeout(() => t.className = "", 3500);
+        _toastTimer = setTimeout(() => (t.className = ""), 3500);
       }
 
       // === Custom Confirm ===
@@ -354,17 +432,76 @@
           const overlay = document.getElementById("aptConfirmOverlay");
           overlay.classList.add("show");
           const yes = document.getElementById("aptConfirmYes");
-          const no  = document.getElementById("aptConfirmNo");
+          const no = document.getElementById("aptConfirmNo");
           const cleanup = (val) => {
             overlay.classList.remove("show");
             yes.replaceWith(yes.cloneNode(true));
             no.replaceWith(no.cloneNode(true));
             resolve(val);
           };
-          document.getElementById("aptConfirmYes").addEventListener("click", () => cleanup(true),  { once: true });
-          document.getElementById("aptConfirmNo").addEventListener("click",  () => cleanup(false), { once: true });
+          document
+            .getElementById("aptConfirmYes")
+            .addEventListener("click", () => cleanup(true), { once: true });
+          document
+            .getElementById("aptConfirmNo")
+            .addEventListener("click", () => cleanup(false), { once: true });
         });
       }
+
+      // ---- Formatting (Correct Fix) ----
+      function formatAppointmentTime(dateString) {
+        if (!dateString) return "No date set";
+        const now = new Date();
+        const date = new Date(dateString);
+
+        if (isNaN(date.getTime())) return dateString;
+
+        const diff = date - now;
+        const minutes = Math.floor(diff / 60000);
+        const hours = Math.floor(diff / 3600000);
+        const days = Math.floor(diff / 86400000);
+
+        // Highlight "Starting soon" if within 1 hour
+        if (minutes > 0 && minutes < 60) {
+          return `<span class="apt-soon-label"><i class="fas fa-clock"></i> Starting in ${minutes} min</span>`;
+        }
+
+        if (hours > 0 && hours < 24) {
+          return `In ${hours} hours at ${date.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}`;
+        }
+
+        if (days === 0) {
+          return `Today at ${date.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}`;
+        }
+
+        if (days === 1) {
+          return `Tomorrow at ${date.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}`;
+        }
+
+        if (days > 1 && days < 7) {
+          return `In ${days} days at ${date.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}`;
+        }
+
+        if (diff < 0) {
+          return `<span class="apt-completed-label"><i class="fas fa-check-circle"></i> Completed</span>`;
+        }
+
+        return date.toLocaleDateString() + " at " +
+               date.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+      }
+
+      function updateAppointmentTimes() {
+        document.querySelectorAll(".appointment-date").forEach(el => {
+          const time = el.dataset.time;
+          if (time) {
+            el.innerHTML = `<i class="fas fa-calendar-alt"></i> ${formatAppointmentTime(time)}`;
+          }
+        });
+      }
+
+      // Initialize on load and refresh every minute
+      document.addEventListener("DOMContentLoaded", updateAppointmentTimes);
+      setInterval(updateAppointmentTimes, 60000);
 
       // ---- Load Data ----
       function loadAppointments() {
@@ -381,8 +518,12 @@
 
       // ---- Stats ----
       function updateStats() {
-        const confirmed = appointments.filter(a => a.status === "confirmed").length;
-        const cancelled = appointments.filter(a => a.status === "cancelled").length;
+        const confirmed = appointments.filter(
+          (a) => a.status === "confirmed"
+        ).length;
+        const cancelled = appointments.filter(
+          (a) => a.status === "cancelled"
+        ).length;
         document.getElementById("countAll").textContent = appointments.length;
         document.getElementById("countConfirmed").textContent = confirmed;
         document.getElementById("countCancelled").textContent = cancelled;
@@ -391,9 +532,12 @@
       // ---- Filter ----
       function getFilteredAppointments() {
         switch (activeFilter) {
-          case "confirmed": return appointments.filter(a => a.status === "confirmed");
-          case "cancelled": return appointments.filter(a => a.status === "cancelled");
-          default: return [...appointments];
+          case "confirmed":
+            return appointments.filter((a) => a.status === "confirmed");
+          case "cancelled":
+            return appointments.filter((a) => a.status === "cancelled");
+          default:
+            return [...appointments];
         }
       }
 
@@ -404,7 +548,8 @@
         listEl.innerHTML = "";
 
         const filtered = getFilteredAppointments().sort(
-          (a, b) => new Date(b.timestamp || b.date) - new Date(a.timestamp || a.date)
+          (a, b) =>
+            new Date(b.timestamp || b.date) - new Date(a.timestamp || a.date)
         );
 
         if (filtered.length === 0) {
@@ -420,29 +565,57 @@
           return;
         }
 
-        listEl.innerHTML = filtered.map(apt => `
-          <div class="appointment-card" data-id="${apt.id}">
-            <div class="appointment-info">
-              <h4>${apt.doctor || "Doctor"}</h4>
-              <p><i class="fas fa-calendar-alt"></i> ${apt.date} at ${apt.time}</p>
-              ${apt.reason ? `<p><i class="fas fa-notes-medical"></i> ${apt.reason}</p>` : ""}
-              <span class="status-badge ${apt.status}">${apt.status.charAt(0).toUpperCase() + apt.status.slice(1)}</span>
-            </div>
-            <div class="appointment-actions">
-              ${apt.status !== "cancelled"
-                ? `<button class="cancel-btn" data-apt-id="${apt.id}">Cancel</button>`
-                : `<span class="cancelled-label"><i class="fas fa-ban"></i> Cancelled</span>`}
-            </div>
-          </div>`).join("");
+        listEl.innerHTML = filtered
+          .map(
+            (apt) => {
+              const fullTime = apt.datetime || (apt.date + 'T' + apt.time + ':00');
+              const isPast = new Date(fullTime) < new Date();
 
-        listEl.querySelectorAll(".cancel-btn").forEach(btn => {
-          btn.addEventListener("click", () => cancelAppointment(btn.dataset.aptId, btn));
+              return `
+                <div class="appointment-card" data-id="${apt.id}">
+                  <div class="appointment-info">
+                    <h4>👨‍⚕️ ${apt.doctor_name || apt.doctor || "Doctor"}</h4>
+                    <div class="appointment-date" data-time="${fullTime}">
+                      <!-- Content populated by updateAppointmentTimes -->
+                    </div>
+                    ${
+                      apt.reason
+                        ? `<p class="appointment-reason"><i class="fas fa-notes-medical"></i> ${apt.reason}</p>`
+                        : ""
+                    }
+                    <span class="status-badge ${apt.status}">${
+                    apt.status.charAt(0).toUpperCase() + apt.status.slice(1)
+                  }</span>
+                  </div>
+                  <div class="appointment-actions">
+                    ${
+                      apt.status !== "cancelled" && !isPast
+                        ? `<button class="cancel-btn" data-apt-id="${apt.id}">Cancel</button>`
+                        : apt.status === "cancelled"
+                          ? `<span class="cancelled-label"><i class="fas fa-ban"></i> Cancelled</span>`
+                          : ""
+                    }
+                  </div>
+                </div>`;
+            }
+          )
+          .join("");
+
+        // Immediately update formatting after injection
+        updateAppointmentTimes();
+
+        listEl.querySelectorAll(".cancel-btn").forEach((btn) => {
+          btn.addEventListener("click", () =>
+            cancelAppointment(btn.dataset.aptId, btn)
+          );
         });
       }
 
       // ---- Cancel ----
       async function cancelAppointment(appointmentId, btnElement) {
-        const ok = await aptConfirm("Cancel this appointment? This cannot be undone.");
+        const ok = await aptConfirm(
+          "Cancel this appointment? This cannot be undone."
+        );
         if (!ok) return;
 
         btnElement.innerText = "Cancelling...";
@@ -455,7 +628,8 @@
           return;
         }
 
-        const userId = localStorage.getItem("medicsense_user_id") || "guest_user";
+        const userId =
+          localStorage.getItem("medicsense_user_id") || "guest_user";
 
         try {
           const response = await fetch(
@@ -465,18 +639,27 @@
           const data = await response.json();
 
           if (data.success) {
-            const apt = appointments.find(a => a.id === appointmentId);
+            const apt = appointments.find((a) => String(a.id) === String(appointmentId));
             if (apt) apt.status = "cancelled";
-            localStorage.setItem("medicsense_appointments", JSON.stringify(appointments));
+            localStorage.setItem(
+              "medicsense_appointments",
+              JSON.stringify(appointments)
+            );
 
-            const card = document.querySelector(`.appointment-card[data-id="${appointmentId}"]`);
+            const card = document.querySelector(
+              `.appointment-card[data-id="${appointmentId}"]`
+            );
             if (card) {
               card.style.transition = "opacity 0.3s ease, transform 0.3s ease";
               card.style.opacity = "0";
               card.style.transform = "translateY(-10px)";
-              setTimeout(() => { updateStats(); renderAppointments(); }, 300);
+              setTimeout(() => {
+                updateStats();
+                renderAppointments();
+              }, 300);
             } else {
-              updateStats(); renderAppointments();
+              updateStats();
+              renderAppointments();
             }
             showToast("Appointment cancelled", "success");
           } else {
@@ -494,20 +677,23 @@
 
       // ---- Cancel All ----
       async function cancelAllAppointments() {
-        const confirmed = appointments.filter(a => a.status === "confirmed");
+        const confirmed = appointments.filter((a) => a.status === "confirmed");
         if (confirmed.length === 0) {
           showToast("No confirmed appointments to cancel.", "info");
           return;
         }
 
-        const ok = await aptConfirm(`Cancel all ${confirmed.length} confirmed appointment(s)? This cannot be undone.`);
+        const ok = await aptConfirm(
+          `Cancel all ${confirmed.length} confirmed appointment(s)? This cannot be undone.`
+        );
         if (!ok) return;
 
         const btn = document.getElementById("cancelAllBtn");
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Cancelling...';
         btn.disabled = true;
 
-        const userId = localStorage.getItem("medicsense_user_id") || "guest_user";
+        const userId =
+          localStorage.getItem("medicsense_user_id") || "guest_user";
         let successCount = 0;
 
         for (const apt of confirmed) {
@@ -517,25 +703,37 @@
               { method: "POST" }
             );
             const data = await response.json();
-            if (data.success) { apt.status = "cancelled"; successCount++; }
+            if (data.success) {
+              apt.status = "cancelled";
+              successCount++;
+            }
           } catch (e) {
             console.error(`Failed to cancel ${apt.id}:`, e);
           }
         }
 
-        localStorage.setItem("medicsense_appointments", JSON.stringify(appointments));
+        localStorage.setItem(
+          "medicsense_appointments",
+          JSON.stringify(appointments)
+        );
         updateStats();
         renderAppointments();
-        btn.innerHTML = '<i class="fas fa-times-circle"></i> Cancel All Confirmed';
+        btn.innerHTML =
+          '<i class="fas fa-times-circle"></i> Cancel All Confirmed';
         btn.disabled = false;
-        showToast(`Cancelled ${successCount} of ${confirmed.length} appointment(s)`, successCount === confirmed.length ? "success" : "info");
+        showToast(
+          `Cancelled ${successCount} of ${confirmed.length} appointment(s)`,
+          successCount === confirmed.length ? "success" : "info"
+        );
       }
 
       // ---- Tab Switching ----
       document.getElementById("filterTabs").addEventListener("click", (e) => {
         const tab = e.target.closest(".apt-filter-tab");
         if (!tab) return;
-        document.querySelectorAll(".apt-filter-tab").forEach(t => t.classList.remove("active"));
+        document
+          .querySelectorAll(".apt-filter-tab")
+          .forEach((t) => t.classList.remove("active"));
         tab.classList.add("active");
         activeFilter = tab.dataset.filter;
         renderAppointments();

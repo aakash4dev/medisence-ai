@@ -56,15 +56,26 @@ def get_appointments():
         return jsonify({"error": "user_id is required"}), 400
 
     appointments = appointment_service.get_user_appointments(user_id)
+
+    # Add combined ISO datetime for frontend formatting
+    for apt in appointments:
+        if 'date' in apt and 'time' in apt:
+            # Combine YYYY-MM-DD and HH:MM to YYYY-MM-DDTHH:MM:00
+            apt['datetime'] = f"{apt['date']}T{apt['time']}:00"
+
     return jsonify({"success": True, "data": appointments}), 200
 
 @appointments_bp.route('/appointments/<user_id>', methods=['GET'])
 def get_user_appointments_legacy(user_id):
     """Get appointments for a user (path param style)"""
     appointments = appointment_service.get_user_appointments(user_id)
+    for apt in appointments:
+        if 'date' in apt and 'time' in apt:
+            apt['datetime'] = f"{apt['date']}T{apt['time']}:00"
     return jsonify({"success": True, "data": appointments}), 200
 
 @appointments_bp.route('/appointments/<appointment_id>/cancel', methods=['POST', 'PUT', 'DELETE'])
+@appointments_bp.route('/appointments/<appointment_id>', methods=['DELETE'])
 def cancel_appointment(appointment_id):
     """Cancel an appointment"""
     # Be flexible: check query params first, then JSON body

@@ -32,7 +32,17 @@ from symptom_analyzer import SymptomAnalyzer
 init_db()
 
 app = Flask(__name__, template_folder="templates", static_folder="static")
-# ... config ...
+app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 0
+
+
+@app.after_request
+def add_header(response):
+    """Prevent aggressive browser caching during development."""
+    response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+    return response
+
 
 # Register Blueprints
 app.register_blueprint(appointments_bp, url_prefix="/api")
@@ -86,6 +96,229 @@ FAMILY_DOCTOR_FILE = "family_doctor.json"
 def home():
     """Serve frontend index"""
     return render_template("index.html")
+
+
+@app.route("/history.html")
+def history():
+    """Serve Health Timeline page"""
+    return render_template("history.html")
+
+
+@app.route("/api/history", methods=["GET"])
+def get_history():
+    """
+    GET /api/history?user_id=<uid>
+    Returns a merged, sorted (newest-first) timeline of all user events:
+      - AI chat conversations  (type: "ai_chat")
+      - Appointments           (type: "appointment")
+      - Image analyses         (type: "image_analysis")
+      - Emergency events       (type: "emergency")
+      - Symptom records        (type: "symptom")
+    Each event has a `created_at` ISO timestamp for dynamic label generation.
+    """
+    try:
+        user_id = request.args.get("user_id", "").strip()
+        if not user_id:
+            return jsonify({"success": False, "error": "user_id is required"}), 400
+
+        events = []
+
+        # ── 1. Chat conversations ─────────────────────────────────────────────
+        try:
+            conversations = db.get_conversations(user_id, limit=20)
+            for conv in conversations:
+                messages = db.get_messages(conv["id"], limit=50)
+                user_msgs = [m for m in messages if m["role"] == "user"]
+                ai_msgs = [m for m in messages if m["role"] == "assistant"]
+
+                # Detect emergency
+                emergency_keywords = [
+                    "chest pain",
+                    "can't breathe",
+                    "heart attack",
+                    "stroke",
+                    "unconscious",
+                    "emergency",
+                    "ambulance",
+                ]
+                is_emergency = any(
+                    any(kw in m["content"].lower() for kw in emergency_keywords)
+                    for m in user_msgs
+                )
+
+                if user_msgs:
+                    first_query = user_msgs[0]["content"][:120]
+                    last_query = (
+                        user_msgs[-1]["content"][:120] if len(user_msgs) > 1 else ""
+                    )
+                    ai_snippet = ai_msgs[0]["content"][:200] if ai_msgs else ""
+                    # Strip markdown bold markers from AI response
+                    ai_snippet = ai_snippet.replace("**", "")
+
+                    # Session time range: first message → last message
+                    try:
+                        timestamps = [
+                            m["created_at"] for m in messages if m.get("created_at")
+                        ]
+                        session_start = (
+                            timestamps[0] if timestamps else conv.get("created_at", "")
+                        )
+                        session_end = timestamps[-1] if len(timestamps) > 1 else ""
+                    except Exception:
+                        session_start = conv.get("created_at", "")
+                        session_end = ""
+
+                    # Duration in minutes
+                    session_minutes = None
+                    if session_start and session_end:
+                        try:
+                            t0 = datetime.datetime.fromisoformat(
+                                str(session_start).replace(" ", "T")
+                            )
+                            t1 = datetime.datetime.fromisoformat(
+                                str(session_end).replace(" ", "T")
+                            )
+                            session_minutes = max(
+                                1, int((t1 - t0).total_seconds() / 60)
+                            )
+                        except Exception:
+                            pass
+
+                    event_type = "emergency" if is_emergency else "ai_chat"
+                    events.append(
+                        {
+                            "type": event_type,
+                            "title": (
+                                "Emergency Protocol Activated"
+                                if is_emergency
+                                else "AI Health Consultation"
+                            ),
+                            "description": first_query,
+                            "ai_response": ai_snippet,
+                            "message_count": len(messages),
+                            "user_msg_count": len(user_msgs),
+                            "session_start": session_start,
+                            "session_end": session_end,
+                            "session_minutes": session_minutes,
+                            "created_at": conv.get(
+                                "created_at", datetime.datetime.now().isoformat()
+                            ),
+                            "badge": "Emergency" if is_emergency else "AI",
+                        }
+                    )
+        except Exception as _ce:
+            print(f"[WARN] history: chat fetch failed: {_ce}")
+
+        # ── 2. Appointments ───────────────────────────────────────────────────
+        try:
+            if os.path.exists(APPOINTMENTS_FILE):
+                with open(APPOINTMENTS_FILE, "r") as _f:
+                    all_appts = json.load(_f)
+                user_appts = [
+                    a
+                    for a in all_appts
+                    if a.get("user_id") == user_id or a.get("userId") == user_id
+                ]
+                for appt in user_appts:
+                    events.append(
+                        {
+                            "type": "appointment",
+                            "title": "Appointment Confirmed",
+                            "doctor": appt.get(
+                                "doctor", appt.get("doctorName", "Doctor")
+                            ),
+                            "description": appt.get(
+                                "reason", appt.get("symptoms", "General consultation")
+                            ),
+                            "time": appt.get("time", appt.get("slot", "")),
+                            "date": appt.get("date", ""),
+                            "status": appt.get("status", "confirmed"),
+                            "created_at": appt.get(
+                                "created_at",
+                                appt.get(
+                                    "bookedAt", datetime.datetime.now().isoformat()
+                                ),
+                            ),
+                            "badge": "Clinical",
+                        }
+                    )
+        except Exception as _ae:
+            print(f"[WARN] history: appointment fetch failed: {_ae}")
+
+        # ── 3. Image / injury analyses ────────────────────────────────────────
+        try:
+            from injury_tracker import get_progress as _gp
+
+            snapshots = _gp(user_id, limit=20)
+            for snap in snapshots:
+                events.append(
+                    {
+                        "type": "image_analysis",
+                        "title": "Vision AI: "
+                        + snap.get("injury_type", "Health Analysis"),
+                        "description": snap.get(
+                            "visual_description", "Image analyzed by Gemini Vision AI."
+                        ),
+                        "severity": snap.get("severity", "mild"),
+                        "created_at": snap.get(
+                            "created_at", datetime.datetime.now().isoformat()
+                        ),
+                        "badge": "AI",
+                    }
+                )
+        except Exception as _ie:
+            print(f"[WARN] history: image analysis fetch failed: {_ie}")
+
+        # ── 4. Symptom history ─────────────────────────────────────────────────
+        try:
+            HEALTH_RECORDS_FILE = "health_records.json"
+            if os.path.exists(HEALTH_RECORDS_FILE):
+                with open(HEALTH_RECORDS_FILE, "r") as _f:
+                    all_records = json.load(_f)
+                user_records = all_records.get(user_id, {})
+                for sym in user_records.get("symptom_history", []):
+                    events.append(
+                        {
+                            "type": "symptom",
+                            "title": "Symptom Check",
+                            "description": "Reported symptoms: "
+                            + ", ".join(sym.get("symptoms", [])),
+                            "severity": sym.get("severity", 1),
+                            "created_at": sym.get(
+                                "timestamp", datetime.datetime.now().isoformat()
+                            ),
+                            "badge": "Health",
+                        }
+                    )
+        except Exception as _se:
+            print(f"[WARN] history: symptom fetch failed: {_se}")
+
+        # ── Sort newest first ─────────────────────────────────────────────────
+        def _sort_key(e):
+            try:
+                return datetime.datetime.fromisoformat(
+                    str(e.get("created_at", "")).replace("Z", "+00:00")
+                )
+            except Exception:
+                return datetime.datetime.min
+
+        events.sort(key=_sort_key, reverse=True)
+
+        return (
+            jsonify(
+                {
+                    "success": True,
+                    "user_id": user_id,
+                    "count": len(events),
+                    "events": events,
+                }
+            ),
+            200,
+        )
+
+    except Exception as exc:
+        print(f"[ERROR] /api/history: {exc}")
+        return jsonify({"success": False, "error": "Could not load history"}), 500
 
 
 # ── Rate-limit store (in-process, single-worker Flask) ───────────────────────
@@ -1768,18 +2001,18 @@ def log_activity():
 
 
 if __name__ == "__main__":
-    print("🚀 MedicSense AI Backend Starting...")
-    print("📡 Server running at http://localhost:5000")
-    print("💊 Medical chatbot ready to assist")
-    print("🤖 AI-powered responses enabled")
-    print("📸 Image analysis ready")
-    print("🔔 Notifications endpoint enabled")
-    print("📄 Reports endpoint enabled")
-    print("🔍 Search endpoint enabled")
-    print("� Google OAuth authentication ONLY")
-    print("⚠️  Email/password auth has been removed")
+    print("[START] MedicSense AI Backend Starting...")
+    print("[INFO] Server running at http://localhost:5000")
+    print("[OK] Medical chatbot ready to assist")
+    print("[OK] AI-powered responses enabled")
+    print("[OK] Image analysis ready")
+    print("[OK] Notifications endpoint enabled")
+    print("[OK] Reports endpoint enabled")
+    print("[OK] Search endpoint enabled")
+    print("[INFO] Google OAuth authentication ONLY")
+    print("[WARN] Email/password auth has been removed")
     print(
-        "\n💡 Tip: Get a free Gemini API key from https://makersuite.google.com/app/apikey"
+        "\n[TIP] Get a free Gemini API key from https://makersuite.google.com/app/apikey"
     )
     print("   Add it to backend/.env file to enable advanced AI features\n")
     app.run(debug=False, port=5000, use_reloader=False)

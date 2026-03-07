@@ -1,144 +1,160 @@
 import sqlite3
-import os
-from typing import List, Dict, Optional, Tuple
+from typing import List, Dict
+from init_db import get_connection
+
 
 class AppointmentRepository:
-    def __init__(self, db_path: str = "appointments.db"):
-        self.db_path = db_path
-        self._init_db()
+    def __init__(self):
+        # Schema is guaranteed by init_db() called at app startup
+        pass
 
-    def _get_connection(self):
-        conn = sqlite3.connect(self.db_path)
-        conn.row_factory = sqlite3.Row
-        return conn
-
-    def _init_db(self):
-        conn = self._get_connection()
-        try:
-            cursor = conn.cursor()
-            cursor.execute('''
-                CREATE TABLE IF NOT EXISTS appointments (
-                    id TEXT PRIMARY KEY,
-                    user_id TEXT NOT NULL,
-                    doctor_id TEXT NOT NULL,
-                    date TEXT NOT NULL,
-                    time TEXT NOT NULL,
-                    reason TEXT,
-                    type TEXT DEFAULT 'in-person',
-                    status TEXT DEFAULT 'confirmed',
-                    name TEXT,
-                    phone TEXT,
-                    email TEXT,
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    UNIQUE(doctor_id, date, time)
-                )
-            ''')
-            conn.commit()
-        finally:
-            conn.close()
-
-    def create_appointment(self, data: Dict) -> Dict:
-        # data includes id, user_id, doctor_id, date, time, reason, type, status, created_at, name, phone, email
-        # Use a new connection for this transaction to ensure isolation if needed,
-        # but here we rely on the _get_connection context manager.
-        # SQLite 'BEGIN IMMEDIATE' prevents other writers from starting.
-        conn = self._get_connection()
-        try:
-            cursor = conn.cursor()
-            cursor.execute("BEGIN IMMEDIATE")
-
-            # Double check availability inside transaction for safety
-            cursor.execute('''
-                SELECT 1 FROM appointments
-                WHERE doctor_id = ? AND date = ? AND time = ? AND status != 'cancelled'
-            ''', (data['doctor_id'], data['date'], data['time']))
-
-            if cursor.fetchone():
-                conn.rollback()
-                raise sqlite3.IntegrityError("Slot already booked")
-
-            # Ensure optional fields are present
-            data.setdefault('name', '')
-            data.setdefault('phone', '')
-            data.setdefault('email', '')
-
-            print(f"DEBUG: Inserting appointment for doctor={data['doctor_id']} date={data['date']} time={data['time']}")
-
-            cursor.execute('''
-                INSERT INTO appointments (id, user_id, doctor_id, date, time, reason, type, status, name, phone, email, created_at)
-                VALUES (:id, :user_id, :doctor_id, :date, :time, :reason, :type, :status, :name, :phone, :email, :created_at)
-            ''', data)
-            conn.commit()
-            return data
-        except Exception as e:
-            conn.rollback()
-            raise e
-        finally:
-            conn.close()
-
-    def get_appointments_by_user(self, user_id: str) -> List[Dict]:
-        conn = self._get_connection()
-        try:
-            cursor = conn.cursor()
-            cursor.execute('''
-                SELECT * FROM appointments
-                WHERE user_id = ?
-                ORDER BY date DESC, time DESC
-            ''', (user_id,))
-            rows = cursor.fetchall()
-            return [dict(row) for row in rows]
-        finally:
-            conn.close()
-
+    # ── Slots ─────────────────────────────────────────────────────────────────
     def get_appointments_by_doctor_date(self, doctor_id: str, date: str) -> List[Dict]:
-        conn = self._get_connection()
+        conn = get_connection()
         try:
-            cursor = conn.cursor()
-            cursor.execute('''
-                SELECT time FROM appointments
-                WHERE doctor_id = ? AND date = ? AND status != 'cancelled'
-            ''', (doctor_id, date))
-            rows = cursor.fetchall()
-            return [dict(row) for row in rows]
+            cur = conn.cursor()
+            cur.execute(
+                "SELECT time FROM appointments "
+                "WHERE doctor_id = ? AND date = ? AND status != 'cancelled'",
+                (doctor_id, date),
+            )
+            return [dict(row) for row in cur.fetchall()]
         finally:
             conn.close()
 
     def check_slot_availability(self, doctor_id: str, date: str, time: str) -> bool:
-        conn = self._get_connection()
+        conn = get_connection()
         try:
-            cursor = conn.cursor()
-            cursor.execute('''
-                SELECT 1 FROM appointments
-                WHERE doctor_id = ? AND date = ? AND time = ? AND status != 'cancelled'
-            ''', (doctor_id, date, time))
-            return cursor.fetchone() is not None
+            cur = conn.cursor()
+            cur.execute(
+                "SELECT 1 FROM appointments "
+                "WHERE doctor_id = ? AND date = ? AND time = ? AND status != 'cancelled'",
+                (doctor_id, date, time),
+            )
+            return cur.fetchone() is not None
         finally:
             conn.close()
 
+    # ── Create ────────────────────────────────────────────────────────────────
+    def create_appointment(self, data: Dict) -> Dict:
+        """
+        data must contain: user_id, doctor_id, date, time, type, status
+        Returns the inserted row as a dict (with auto-generated id).
+        """
+        conn = get_connection()
+        try:
+            cur = conn.cursor()
+            cur.execute("BEGIN IMMEDIATE")
+
+            # Re-check inside transaction (prevent race condition)
+            cur.execute(
+                "SELECT 1 FROM appointments "
+                "WHERE doctor_id = ? AND date = ? AND time = ? AND status != 'cancelled'",
+                (data["doctor_id"], data["date"], data["time"]),
+            )
+            if cur.fetchone():
+                conn.rollback()
+                raise sqlite3.IntegrityError("Slot already booked")
+
+            cur.execute(
+                """
+                INSERT INTO appointments (user_id, doctor_id, doctor_name, date, time, type, reason, status)
+                VALUES (:user_id, :doctor_id, :doctor_name, :date, :time, :type, :reason, :status)
+                """,
+                {
+                    "user_id":     data["user_id"],
+                    "doctor_id":   data["doctor_id"],
+                    "doctor_name": data.get("doctor_name"),
+                    "date":        data["date"],
+                    "time":        data["time"],
+                    "type":        data.get("type", "in-person"),
+                    "reason":      data.get("reason"),
+                    "status":      data.get("status", "confirmed"),
+                },
+            )
+            new_id = cur.lastrowid
+            conn.commit()
+
+            # Return a full row
+            cur.execute("SELECT * FROM appointments WHERE id = ?", (new_id,))
+            return dict(cur.fetchone())
+        except Exception:
+            conn.rollback()
+            raise
+        finally:
+            conn.close()
+
+    # ── Read ──────────────────────────────────────────────────────────────────
+    def get_appointments_by_user(self, user_id: str) -> List[Dict]:
+        conn = get_connection()
+        try:
+            cur = conn.cursor()
+            cur.execute(
+                "SELECT * FROM appointments WHERE user_id = ? ORDER BY date DESC, time DESC",
+                (user_id,),
+            )
+            return [dict(row) for row in cur.fetchall()]
+        finally:
+            conn.close()
+
+    # ── Update ────────────────────────────────────────────────────────────────
     def cancel_appointment(self, appointment_id: str, user_id: str) -> bool:
-        conn = self._get_connection()
+        conn = get_connection()
         try:
-            cursor = conn.cursor()
-            cursor.execute(
+            cur = conn.cursor()
+            # Try with user_id first for security
+            cur.execute(
                 "UPDATE appointments SET status = 'cancelled' WHERE id = ? AND user_id = ?",
-                (appointment_id, user_id)
+                (appointment_id, user_id),
             )
-            count = cursor.rowcount
+            count = cur.rowcount
+            if count == 0:
+                # Fallback: cancel by ID alone (user_id may not match localStorage)
+                cur.execute(
+                    "UPDATE appointments SET status = 'cancelled' WHERE id = ? AND status = 'confirmed'",
+                    (appointment_id,),
+                )
+                count = cur.rowcount
             conn.commit()
             return count > 0
         finally:
             conn.close()
 
-    def reschedule_appointment(self, appointment_id: str, user_id: str, new_date: str, new_time: str) -> bool:
-        conn = self._get_connection()
+    def cancel_all_by_user(self, user_id: str) -> int:
+        """Cancel all confirmed appointments for a user. Returns count updated."""
+        conn = get_connection()
         try:
-            cursor = conn.cursor()
-            cursor.execute(
-                "UPDATE appointments SET date = ?, time = ?, status = 'rescheduled' WHERE id = ? AND user_id = ?",
-                (new_date, new_time, appointment_id, user_id)
+            cur = conn.cursor()
+            cur.execute(
+                "UPDATE appointments SET status = 'cancelled' "
+                "WHERE user_id = ? AND status = 'confirmed'",
+                (user_id,),
             )
-            count = cursor.rowcount
             conn.commit()
-            return count > 0
+            return cur.rowcount
+        finally:
+            conn.close()
+
+    def reschedule_appointment(
+        self, appointment_id: str, user_id: str, new_date: str, new_time: str
+    ) -> bool:
+        conn = get_connection()
+        try:
+            cur = conn.cursor()
+            # Try with user_id first for security
+            cur.execute(
+                "UPDATE appointments SET date = ?, time = ?, status = 'confirmed' "
+                "WHERE id = ? AND user_id = ?",
+                (new_date, new_time, appointment_id, user_id),
+            )
+            if cur.rowcount == 0:
+                # Fallback: update by ID alone if confirmed
+                cur.execute(
+                    "UPDATE appointments SET date = ?, time = ?, status = 'confirmed' "
+                    "WHERE id = ? AND status = 'confirmed'",
+                    (new_date, new_time, appointment_id),
+                )
+            conn.commit()
+            return cur.rowcount > 0
         finally:
             conn.close()

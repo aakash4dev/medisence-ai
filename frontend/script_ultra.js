@@ -12,7 +12,7 @@ const getConfig = () => {
   // Try to get from window.ENV (loaded by env-loader.js)
   if (window.ENV) {
     return {
-      API_BASE_URL: window.ENV.API_BASE_URL || "http://localhost:5000/api",
+      API_BASE_URL: window.ENV.API_BASE_URL || "/api",
       USER_ID: "user_" + Math.random().toString(36).substr(2, 9),
       AI_ENABLED:
         window.ENV.APP?.AI_ENABLED !== undefined
@@ -29,7 +29,7 @@ const getConfig = () => {
 
   // Fallback to default values
   return {
-    API_BASE_URL: "http://localhost:5000/api",
+    API_BASE_URL: "/api",
     USER_ID: "user_" + Math.random().toString(36).substr(2, 9),
     AI_ENABLED: true,
     MAX_FILE_SIZE: 10 * 1024 * 1024, // 10MB
@@ -38,6 +38,122 @@ const getConfig = () => {
 };
 
 const CONFIG = getConfig();
+
+// ========================================
+// SMART APPOINTMENT FORMATTING (Correct Fix)
+// ========================================
+
+// Doctor specialty icons for visual identity
+const DOCTOR_ICONS = {
+  cardiologist: { icon: "❤️", label: "Cardiologist" },
+  cardiology: { icon: "❤️", label: "Cardiologist" },
+  dermatologist: { icon: "🧴", label: "Dermatologist" },
+  dermatology: { icon: "🧴", label: "Dermatologist" },
+  neurologist: { icon: "🧠", label: "Neurologist" },
+  neurology: { icon: "🧠", label: "Neurologist" },
+  pediatrician: { icon: "👶", label: "Pediatrician" },
+  pediatrics: { icon: "👶", label: "Pediatrician" },
+  orthopedic: { icon: "🦴", label: "Orthopedic" },
+  orthopedics: { icon: "🦴", label: "Orthopedic" },
+  psychiatrist: { icon: "🧘", label: "Psychiatrist" },
+  psychiatry: { icon: "🧘", label: "Psychiatrist" },
+  oncologist: { icon: "🎗️", label: "Oncologist" },
+  oncology: { icon: "🎗️", label: "Oncologist" },
+  gynecologist: { icon: "🌸", label: "Gynecologist" },
+  gynecology: { icon: "🌸", label: "Gynecologist" },
+  dentist: { icon: "🦷", label: "Dentist" },
+  dental: { icon: "🦷", label: "Dentist" },
+  ophthalmologist: { icon: "👁️", label: "Ophthalmologist" },
+  eye: { icon: "👁️", label: "Eye Doctor" },
+  ent: { icon: "👂", label: "ENT Specialist" },
+  general: { icon: "👨‍⚕️", label: "General Physician" },
+};
+
+function getDoctorIcon(apt) {
+  const specialty = (
+    apt.specialty ||
+    apt.speciality ||
+    apt.type ||
+    apt.reason ||
+    ""
+  ).toLowerCase();
+  const doctorName = (apt.doctor_name || apt.doctor || "").toLowerCase();
+  // Match by specialty field first, then by doctor name keywords
+  for (const [key, val] of Object.entries(DOCTOR_ICONS)) {
+    if (specialty.includes(key) || doctorName.includes(key)) return val;
+  }
+  return DOCTOR_ICONS.general;
+}
+
+function formatAppointmentTime(dateString) {
+  if (!dateString) return "No date set";
+  const now = new Date();
+  const date = new Date(dateString);
+
+  if (isNaN(date.getTime())) return dateString;
+
+  const diff = date - now;
+  const minutes = Math.floor(diff / 60000);
+  const hours = Math.floor(diff / 3600000);
+  const days = Math.floor(diff / 86400000);
+
+  // Highlight "Starting soon" if within 1 hour
+  if (minutes > 0 && minutes < 60) {
+    return `<span class="apt-soon-label"><i class="fas fa-clock"></i> Starting in ${minutes} min</span>`;
+  }
+
+  if (hours > 0 && hours < 24) {
+    return `In ${hours} hours at ${date.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    })}`;
+  }
+
+  if (days === 0) {
+    return `Today at ${date.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    })}`;
+  }
+
+  if (days === 1) {
+    return `Tomorrow at ${date.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    })}`;
+  }
+
+  if (days > 1 && days < 7) {
+    return `In ${days} days at ${date.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    })}`;
+  }
+
+  if (diff < 0) {
+    return `<span class="apt-completed-label"><i class="fas fa-check-circle"></i> Completed</span>`;
+  }
+
+  return (
+    date.toLocaleDateString() +
+    " at " +
+    date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+  );
+}
+
+function updateAppointmentTimes() {
+  document.querySelectorAll(".appointment-date").forEach((el) => {
+    const time = el.dataset.time;
+    if (time) {
+      el.innerHTML = `<i class="fas fa-calendar-alt"></i> ${formatAppointmentTime(
+        time
+      )}`;
+    }
+  });
+}
+
+// Global auto-refresh for appointment times
+setInterval(updateAppointmentTimes, 60000);
 
 // ========================================
 // UTILITY: FETCH WITH TIMEOUT
@@ -342,6 +458,30 @@ document.addEventListener("click", (e) => {
   if (!profileBtn) return;
 
   toggleProfileMenu();
+});
+
+// ========================================
+// EVENT DELEGATION - CANCEL APPOINTMENT BUTTONS
+// ========================================
+// Handle cancel buttons for Recent Appointments using event delegation
+document.addEventListener("click", (e) => {
+  const cancelBtn = e.target.closest(".cancel-btn");
+  if (!cancelBtn) return;
+
+  e.preventDefault();
+  e.stopPropagation();
+
+  const aptId =
+    cancelBtn.dataset.aptId || cancelBtn.getAttribute("data-apt-id");
+  console.log(
+    `[Appointments] Cancel button clicked via event delegation for: ${aptId}`
+  );
+
+  if (aptId) {
+    cancelAppointmentUI(aptId, cancelBtn);
+  } else {
+    console.error("[Appointments] No appointment ID found on cancel button");
+  }
 });
 
 function initializeAppCore() {
@@ -759,17 +899,19 @@ function closeAlert() {
 // ========================================
 function updateSeverityDisplay() {
   const slider = document.getElementById("severityRange");
-  const valueDisplay = document.getElementById("severityValue");
+  const valueDisp = document.getElementById("severityValue");
+  if (!slider || !valueDisp) return;
 
-  if (slider && valueDisplay) {
-    const update = () => {
-      valueDisplay.textContent = slider.value === "0" ? "-" : slider.value;
-    };
-    slider.addEventListener("input", update);
-    slider.addEventListener("change", update); // Ensure updates on release
-    // Initialize
-    update();
-  }
+  const update = () => {
+    const val = slider.value;
+    valueDisp.textContent = val;
+    const percent = ((val - slider.min) / (slider.max - slider.min)) * 100;
+    slider.style.background = `linear-gradient(90deg, #6366f1 ${percent}%, #e5e7eb ${percent}%)`;
+  };
+
+  slider.addEventListener("input", update);
+  // Initial call
+  update();
 }
 
 // Input validation for symptom textarea
@@ -792,11 +934,8 @@ function setupSymptomInputValidation() {
   };
 
   // Severity Slider Feedback
-  if (severitySlider && severityValue) {
-    severitySlider.addEventListener("input", (e) => {
-      severityValue.textContent = e.target.value;
-      checkValidity();
-    });
+  if (severitySlider) {
+    severitySlider.addEventListener("input", checkValidity);
   }
 
   // Symptom Input Validation
@@ -812,6 +951,19 @@ function setupSymptomInputValidation() {
 
   // Initialize state
   checkValidity();
+
+  // ── Premium Upgrade: Chat Character Counter ────────────────────────
+  const chatInput = document.getElementById("chatInput");
+  const charCounter = document.getElementById("charCounter");
+  if (chatInput && charCounter) {
+    chatInput.addEventListener("input", () => {
+      const len = chatInput.value.length;
+      charCounter.textContent = `${len}/1000`;
+
+      charCounter.classList.toggle("limit-near", len > 800 && len <= 1000);
+      charCounter.classList.toggle("limit-reached", len > 1000);
+    });
+  }
 }
 
 function addSymptom(symptom, element) {
@@ -917,8 +1069,16 @@ async function analyzeSymptoms() {
 
   resultsBody.innerHTML = `
     <div class="loading-state">
-      <div class="loading-spinner"></div>
-      <h3>Analyzing your symptoms...</h3>
+      <div class="skeleton-loader">
+        <div class="skeleton skeleton-title"></div>
+        <div class="skeleton skeleton-text"></div>
+        <div class="skeleton skeleton-text"></div>
+        <div class="skeleton skeleton-text" style="width: 80%"></div>
+        <div class="skeleton skeleton-text" style="margin-top: 20px"></div>
+        <div class="skeleton skeleton-text"></div>
+        <div class="skeleton skeleton-text" style="width: 90%"></div>
+      </div>
+      <h3 style="margin-top: 20px">Analyzing your symptoms...</h3>
       <p>This may take a few moments</p>
     </div>
   `;
@@ -1661,6 +1821,9 @@ async function bookAppointment() {
           phone,
           email,
           doctorId: doctor,
+          doctor_name: doctorSelect.options[doctorSelect.selectedIndex].text
+            .split("-")[0]
+            .trim(),
           date,
           time,
           reason,
@@ -1674,13 +1837,14 @@ async function bookAppointment() {
 
     if (data.success) {
       playSuccessSound(); // Play confirmation sound
-      const appointment = {
+      const appointment = data.appointment || {
         id: data.appointmentId || "apt_" + Date.now(),
         name,
         phone,
         email,
         doctor,
         doctorId: doctor,
+        doctor_name: doctor, // Fallback
         date,
         time,
         reason,
@@ -1806,61 +1970,79 @@ function updateAppointmentsList() {
   const listElement = document.getElementById("myAppointmentsList");
   if (!listElement) return;
 
-  // Dashboard widget: show only confirmed/upcoming (not cancelled, not past)
-  const today = new Date().toISOString().split("T")[0];
-  const recentAppointments = state.appointments
-    .filter((apt) => apt.status !== "cancelled" && apt.date >= today)
-    .sort(
-      (a, b) =>
-        new Date(b.timestamp || b.date) - new Date(a.timestamp || a.date)
-    )
+  // Show confirmed upcoming; also show completed/cancelled for history context
+  const upcoming = state.appointments
+    .filter((a) => a.status !== "cancelled")
     .slice(0, 3);
+  const recentAppointments = upcoming;
 
-  // ── Improvement 4: Rich empty state ───────────────────────────────
+  // ── Empty State ────────────────────────────────────────────────────
   if (recentAppointments.length === 0) {
     listElement.innerHTML = `
-      <div style="text-align:center;padding:24px 16px;color:#9ca3af;">
-        <div style="font-size:2.5rem;margin-bottom:8px;">📅</div>
-        <p style="font-weight:600;color:#6b7280;margin:0 0 4px;">No upcoming appointments</p>
-        <p style="font-size:0.82rem;margin:0;">Book one below and it'll appear here</p>
+      <div class="apt-empty-state">
+        <div class="apt-empty-icon">📅</div>
+        <p class="apt-empty-title">No upcoming appointments</p>
+        <p class="apt-empty-sub">Book a doctor consultation in seconds</p>
+        <button class="apt-book-now-btn" onclick="document.getElementById('bookingSection')?.scrollIntoView({behavior:'smooth'}) || document.querySelector('[data-section=appointments]')?.click()">
+          <i class="fas fa-plus"></i> Book Appointment
+        </button>
       </div>`;
     return;
   }
 
   listElement.innerHTML = recentAppointments
-    .map(
-      (apt) => `
-        <div class="appointment-card" data-id="${apt.id}" id="apt_${apt.id}">
+    .map((apt) => {
+      const fullTime = apt.datetime || apt.date + "T" + apt.time + ":00";
+      const docInfo = getDoctorIcon(apt);
+      const statusClass = `status-${apt.status}`;
+      const statusLabel =
+        apt.status.charAt(0).toUpperCase() + apt.status.slice(1);
+      const doctorDisplay = apt.doctor_name || apt.doctor || "Doctor";
+      // Show cancel button only for confirmed/upcoming appointments
+      const showCancel = apt.status === "confirmed";
+      return `
+        <div class="appointment-card apt-card-${apt.status}" id="appointment-${
+        apt.id
+      }" data-id="${apt.id}">
+            <div class="apt-doctor-avatar">${docInfo.icon}</div>
             <div class="appointment-info">
-                <h4>${apt.doctor || "Doctor"}</h4>
-                <p><i class="fas fa-calendar-alt"></i> ${apt.date} at ${
-        apt.time
-      }</p>
-                <span class="status-badge ${apt.status}">${
-        apt.status.charAt(0).toUpperCase() + apt.status.slice(1)
-      }</span>
+                <h4>${doctorDisplay}</h4>
+                <span class="apt-specialty-label">${docInfo.label}</span>
+                <div class="appointment-date" data-time="${fullTime}"></div>
+                ${
+                  apt.reason
+                    ? `<p class="appointment-reason"><i class="fas fa-notes-medical"></i> ${apt.reason}</p>`
+                    : ""
+                }
+                <span class="status-badge ${statusClass}">${statusLabel}</span>
             </div>
             <div class="appointment-actions">
-              <button class="cancel-btn" data-apt-id="${apt.id}">Cancel</button>
+              ${
+                showCancel
+                  ? `<button class="cancel-btn" data-apt-id="${apt.id}">Cancel</button>`
+                  : ""
+              }
             </div>
-        </div>
-    `
-    )
+        </div>`;
+    })
     .join("");
 
-  // Attach cancel button event listeners (no inline onclick)
-  listElement.querySelectorAll(".cancel-btn").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      cancelAppointmentUI(btn.dataset.aptId, btn);
-    });
-  });
+  // Immediately populate countdown times
+  updateAppointmentTimes();
 }
 
 async function cancelAppointmentUI(appointmentId, btnElement) {
+  console.log(
+    `[Appointments] cancelAppointmentUI called with ID: ${appointmentId}`
+  );
+
   const confirmed = confirm(
     "Are you sure you want to cancel this appointment?"
   );
-  if (!confirmed) return;
+  if (!confirmed) {
+    console.log("[Appointments] User cancelled the confirmation dialog");
+    return;
+  }
 
   // Loading state on button
   if (btnElement) {
@@ -1869,60 +2051,74 @@ async function cancelAppointmentUI(appointmentId, btnElement) {
     btnElement.classList.add("cancel-btn--loading");
   }
 
-  const userId = getUserId();
-  try {
-    const response = await fetchWithTimeout(
-      `${CONFIG.API_BASE_URL}/appointments/${appointmentId}/cancel?user_id=${userId}`,
-      {
-        method: "POST",
-      }
+  // Find appointment in local state
+  const apt = state.appointments.find(
+    (a) => String(a.id) === String(appointmentId)
+  );
+
+  if (!apt) {
+    console.error(
+      `[Appointments] Appointment ${appointmentId} not found in local state`
     );
-
-    const data = await response.json();
-    if (data.success) {
-      showToast("Appointment cancelled successfully", "success");
-
-      // Update local state
-      const apt = state.appointments.find((a) => a.id === appointmentId);
-      if (apt) apt.status = "cancelled";
-      saveUserData();
-
-      // Animated card removal
-      const card = document.querySelector(
-        `.appointment-card[data-id="${appointmentId}"]`
-      );
-      if (card) {
-        card.style.transition = "opacity 0.3s ease, transform 0.3s ease";
-        card.style.opacity = "0";
-        card.style.transform = "translateY(-10px)";
-        setTimeout(() => {
-          updateAppointmentsList();
-        }, 300);
-      } else {
-        updateAppointmentsList();
-      }
-
-      // Force notification fetch to show the "Cancelled" notification
-      fetchNotifications();
-    } else {
-      showToast(data.message || "Failed to cancel appointment", "error");
-      // Restore button
-      if (btnElement) {
-        btnElement.innerText = "Cancel";
-        btnElement.disabled = false;
-        btnElement.classList.remove("cancel-btn--loading");
-      }
-    }
-  } catch (error) {
-    console.error("Error cancelling appointment:", error);
-    showToast("Error connecting to server", "error");
-    // Restore button
+    showToast("Appointment not found", "error");
     if (btnElement) {
       btnElement.innerText = "Cancel";
       btnElement.disabled = false;
       btnElement.classList.remove("cancel-btn--loading");
     }
+    return;
   }
+
+  console.log(`[Appointments] Found appointment in local state:`, apt);
+
+  // Try to cancel via API (for backend sync), but don't fail if backend doesn't have it
+  const userId = getUserId();
+  const apiUrl = `/api/appointments/${appointmentId}/cancel`;
+
+  console.log(`[Appointments] Attempting backend sync to: ${apiUrl}`);
+
+  try {
+    const response = await fetchWithTimeout(apiUrl, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId: userId }),
+    });
+
+    console.log(`[Appointments] Backend response status: ${response.status}`);
+    const data = await response.json();
+    console.log(`[Appointments] Backend response data:`, data);
+
+    // Backend sync attempted (may succeed or fail)
+    if (data.success) {
+      console.log("[Appointments] Backend sync successful");
+    } else {
+      console.warn(
+        "[Appointments] Backend sync failed (appointment may be localStorage-only):",
+        data.message
+      );
+    }
+  } catch (error) {
+    console.warn(
+      "[Appointments] Backend sync error (continuing with local cancellation):",
+      error.message
+    );
+  }
+
+  // ALWAYS cancel locally in localStorage (regardless of backend response)
+  console.log(`[Appointments] Cancelling appointment locally in localStorage`);
+  apt.status = "cancelled";
+  saveUserData();
+
+  showToast("Appointment cancelled successfully", "success");
+
+  // remove card instantly
+  const card = document.querySelector(`#appointment-${appointmentId}`);
+  if (card) {
+    card.remove();
+  }
+
+  // Reload list
+  updateAppointmentsList();
 }
 
 function showAppointmentConfirmation(appointment) {
@@ -2161,10 +2357,54 @@ function addMessageToChat(role, content, metadata = {}) {
       <img src="${metadata.image}" alt="Uploaded image" style="max-width: 100%; border-radius: 8px; margin-top: 8px; max-height: 300px; object-fit: contain;">
     `;
   } else if (role === "ai") {
-    bubbleDiv.innerHTML =
-      typeof marked !== "undefined"
-        ? marked.parse(content)
-        : content.replace(/\n/g, "<br>");
+    // NEW EMERGENCY HIGHLIGHT UI
+    const emergencyRegex =
+      /(emergency|immediate|chest pain|severe.*pain|critical|112|hospital)/i;
+    // Don't trigger on every single hospital mention, but combine it with the metadata
+    const isEmergency =
+      metadata.severity === "critical" ||
+      (metadata.severity === "high" && emergencyRegex.test(content));
+
+    // Fallback detection if no metadata
+    const isObviousEmergency =
+      Object.keys(metadata).length === 0 &&
+      emergencyRegex.test(content) &&
+      content.toLowerCase().includes("call");
+
+    if (isEmergency || isObviousEmergency) {
+      // Strip markdown for the simplified emergency view to keep it clean
+      const cleanContent = content.replace(/\*\*/g, "").replace(/_/g, "");
+
+      bubbleDiv.innerHTML = `
+        <div style="background: linear-gradient(135deg, #ef4444, #dc2626); color: white; border-radius: 12px; padding: 1.5rem; text-align: center; box-shadow: 0 10px 25px rgba(239, 68, 68, 0.4); border: 2px solid #b91c1c; margin-bottom: 5px;">
+          <h3 style="margin: 0 0 10px 0; font-size: 1.2rem; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 8px;">
+            <i class="fas fa-exclamation-triangle" style="font-size: 1.5rem; animation: pulse 1s infinite;"></i>
+            POSSIBLE MEDICAL EMERGENCY
+          </h3>
+          <p style="margin: 0 0 15px 0; font-size: 0.95rem; opacity: 0.9; text-align: left;">
+            ${cleanContent.replace(/\n/g, "<br>")}
+          </p>
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <button onclick="window.location.href='tel:112'" style="background: white; color: #dc2626; border: none; padding: 12px; border-radius: 8px; font-weight: 800; font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+              <i class="fas fa-phone-alt"></i> Call 112 Immediately
+            </button>
+            <button onclick="findNearestHospital()" style="background: rgba(0,0,0,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); padding: 10px; border-radius: 8px; font-weight: 600; font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; transition: background 0.2s;" onmouseover="this.style.background='rgba(0,0,0,0.3)'" onmouseout="this.style.background='rgba(0,0,0,0.2)'">
+              <i class="fas fa-hospital"></i> Find Nearby Hospital
+            </button>
+          </div>
+        </div>
+        `;
+
+      // Remove background styling from the normal message bubble so the red card takes over completely
+      bubbleDiv.style.background = "transparent";
+      bubbleDiv.style.boxShadow = "none";
+      bubbleDiv.style.padding = "0";
+    } else {
+      bubbleDiv.innerHTML =
+        typeof marked !== "undefined"
+          ? marked.parse(content)
+          : content.replace(/\n/g, "<br>");
+    }
   } else {
     bubbleDiv.textContent = content;
   }
@@ -2178,7 +2418,7 @@ function addMessageToChat(role, content, metadata = {}) {
         })}</span>
         ${
           metadata.context
-            ? `<span class="context-badge"><i class="fas fa-tag"></i> ${metadata.context}</span>`
+            ? `<span class="context-badge"><i class="fas fa-brain"></i> ${metadata.context}</span>`
             : ""
         }
         ${
@@ -2188,15 +2428,32 @@ function addMessageToChat(role, content, metadata = {}) {
         }
     `;
 
-  contentDiv.appendChild(bubbleDiv);
-  if (role === "ai") contentDiv.appendChild(metaDiv);
+  // Add Copy Button for AI messages
+  if (role === "ai") {
+    const copyBtn = document.createElement("button");
+    copyBtn.className = "copy-btn";
+    copyBtn.innerHTML = '<i class="fas fa-copy"></i> Copy Advice';
+    copyBtn.onclick = () => {
+      const textToCopy = content.replace(/\*\*/g, ""); // Simple markdown strip
+      navigator.clipboard.writeText(textToCopy).then(() => {
+        copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+        copyBtn.style.color = "var(--success-500)";
+        setTimeout(() => {
+          copyBtn.innerHTML = '<i class="fas fa-copy"></i> Copy Advice';
+          copyBtn.style.color = "";
+        }, 2000);
+      });
+    };
+    contentDiv.appendChild(copyBtn);
+  }
+
+  contentDiv.prepend(bubbleDiv);
+  contentDiv.appendChild(metaDiv);
 
   messageDiv.appendChild(avatarDiv);
   messageDiv.appendChild(contentDiv);
 
   chatMessages.appendChild(messageDiv);
-
-  // Scroll to bottom
   chatMessages.scrollTop = chatMessages.scrollHeight;
 
   // Hide quick suggestions after first message
@@ -2222,7 +2479,19 @@ function hideTypingIndicator() {
   state.isTyping = false;
 }
 
-function sendQuickMessage(message) {
+function sendQuickMessage(message, clickedBtn) {
+  // Highlight the active chip
+  document
+    .querySelectorAll(".suggestion-chip")
+    .forEach((b) => b.classList.remove("active"));
+  if (clickedBtn) {
+    clickedBtn.classList.add("active");
+  } else {
+    // Fallback: match by message text
+    document.querySelectorAll(".suggestion-chip").forEach((b) => {
+      if (b.textContent.trim() === message.trim()) b.classList.add("active");
+    });
+  }
   sendChatMessage(message);
 }
 
@@ -3052,6 +3321,31 @@ function loadUserData() {
     if (savedAppointments) {
       state.appointments = JSON.parse(savedAppointments);
       updateAppointmentsList();
+    } else {
+      // ── Demo seed: pre-fill one appointment so dashboard is never empty ──
+      const demoDate = new Date();
+      demoDate.setDate(demoDate.getDate() + 4); // 4 days from now
+      const demoDateStr = demoDate.toISOString().split("T")[0];
+      state.appointments = [
+        {
+          id: "demo_seed_001",
+          name: "Demo Patient",
+          phone: "9876543210",
+          email: "demo@medicsense.ai",
+          doctor: "dr_sharma",
+          doctor_name: "Dr. Priya Sharma",
+          specialty: "Cardiologist",
+          date: demoDateStr,
+          time: "10:30",
+          reason: "Routine cardiac check-up",
+          type: "in-person",
+          status: "confirmed",
+          timestamp: new Date().toISOString(),
+        },
+      ];
+      saveUserData();
+      updateAppointmentsList();
+      console.log("📅 Demo appointment seeded for first run");
     }
 
     const savedSymptoms = localStorage.getItem("medicsense_symptoms");
@@ -3646,6 +3940,145 @@ document.addEventListener("keydown", (e) => {
 console.log(
   "✅ MedicSense AI Ultra - Ready to solve healthcare automation challenges!"
 );
+
+// ========================================
+// HACKATHON AUTOMATED DEMO SCRIPT
+// ========================================
+async function runHealthDemo() {
+  console.log("🎬 Starting Automated Health Demo");
+
+  // Disable demo button temporarily
+  const demoBtns = document.querySelectorAll('[onclick="runHealthDemo()"]');
+  demoBtns.forEach((b) => {
+    b.style.opacity = "0.5";
+    b.style.pointerEvents = "none";
+  });
+
+  showToast("Starting Automated Demo...", "info");
+
+  // Step 1: Scroll to chat
+  scrollToSection("ai-chat");
+
+  // Step 2: Simulate User Chat
+  setTimeout(() => {
+    addMessageToChat(
+      "user",
+      "I have a fever, body ache, and a mild headache.",
+      {}
+    );
+    showTypingIndicator();
+
+    // Step 3: Simulate AI Response
+    setTimeout(() => {
+      hideTypingIndicator();
+      addMessageToChat(
+        "ai",
+        "I'm sorry you're not feeling well. Your symptoms suggest a viral infection or flu. \n\n**Recommendation**: I strongly advise consulting a **General Physician**. \n\nI can book an appointment automatically. Scheduling with Dr. Sharma...",
+        {
+          context: "Diagnosis Complete",
+          severity: "moderate",
+        }
+      );
+
+      // Step 4: Scroll to Appointments & Book
+      setTimeout(() => {
+        scrollToSection("appointments");
+        showToast("AI is automatically booking your appointment...", "info");
+
+        // Highlight form mentally for the user
+        const formObj = document.getElementById("bookingForm");
+        if (formObj) {
+          formObj.style.boxShadow = "0 0 20px rgba(139, 92, 246, 0.5)";
+          setTimeout(() => (formObj.style.boxShadow = ""), 1500);
+        }
+
+        setTimeout(() => {
+          // Programmatic Booking
+          const demoId = "demo_apt_" + Math.floor(Math.random() * 10000);
+
+          const tomorrow = new Date();
+          tomorrow.setDate(tomorrow.getDate() + 1);
+          const dateStr = tomorrow.toISOString().split("T")[0];
+
+          const demoAppointment = {
+            id: demoId,
+            name: "Demo Patient",
+            phone: "9876543210",
+            email: "demo@example.com",
+            doctor: "dr_sharma",
+            doctor_name: "Dr. Sharma",
+            date: dateStr,
+            time: "10:30",
+            reason: "Fever and body ache",
+            type: "in-person",
+            status: "confirmed",
+            timestamp: new Date().toISOString(),
+          };
+
+          state.appointments.unshift(demoAppointment); // Put at top
+          saveUserData();
+          updateAppointmentsList();
+
+          if (typeof playSuccessSound === "function") playSuccessSound();
+          showToast(
+            "Appointment Confirmed! Dr. Sharma tomorrow at 10:30 AM.",
+            "success"
+          );
+
+          fetchNotifications(); // Update bell
+
+          // Step 5: Simulate Cancellation Workflow
+          setTimeout(() => {
+            showToast("Demo: Simulating Appointment Cancellation...", "info");
+
+            // Highlight the cancel button briefly
+            const cancelBtn = document.querySelector(
+              `#appointment-${demoId} .cancel-btn`
+            );
+            if (cancelBtn) {
+              cancelBtn.classList.add("cancel-btn--loading");
+              cancelBtn.innerText = "Cancelling...";
+            }
+
+            setTimeout(() => {
+              // Programmatic Cancel
+              const aptIdx = state.appointments.findIndex(
+                (a) => a.id === demoId
+              );
+              if (aptIdx > -1) {
+                state.appointments[aptIdx].status = "cancelled";
+              }
+              saveUserData();
+
+              const card = document.querySelector(`#appointment-${demoId}`);
+              if (card) {
+                card.style.transition =
+                  "opacity 0.5s ease, transform 0.5s ease";
+                card.style.opacity = "0";
+                card.style.transform = "scale(0.9)";
+                setTimeout(() => {
+                  card.remove();
+                  updateAppointmentsList();
+                }, 500);
+              }
+
+              showToast("Appointment successfully cancelled.", "success");
+
+              // Demo Complete
+              setTimeout(() => {
+                showToast("🎬 Demo Complete!", "info");
+                demoBtns.forEach((b) => {
+                  b.style.opacity = "1";
+                  b.style.pointerEvents = "auto";
+                });
+              }, 2000);
+            }, 1500); // Wait 1.5s reading cancellation
+          }, 4000); // Wait 4 seconds reading appointment
+        }, 1500); // Wait 1.5s looking at form
+      }, 3000); // Wait 3 seconds reading AI response
+    }, 2500); // 2.5s Typing Delay
+  }, 1000); // 1s Initial Delay
+}
 
 // Initialize symptom input validation and notification polling when page loads
 const initializeApp = () => {
