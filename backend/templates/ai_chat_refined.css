@@ -592,8 +592,7 @@
   cursor: pointer !important;
   box-shadow: 0 2px 8px rgba(99, 102, 241, 0.35) !important;
   transition: background 150ms ease,
-    transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1),
-    box-shadow 150ms ease !important;
+    transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 150ms ease !important;
 }
 
 .send-btn:hover {
@@ -858,8 +857,22 @@
    GLOBAL BORDER / DIVIDER REMOVAL  (loads last — wins all)
    ============================================================ */
 
-/* 1. Remove accidental divider lines between form sections */
-.form-section {
+/* ===== REMOVE ALL HORIZONTAL DIVIDERS ===== */
+hr,
+.divider,
+.section-divider,
+.form-divider,
+.card-divider {
+  display: none !important;
+}
+
+/* Remove borders from ALL form/section containers */
+.form-section,
+.form-group,
+.form-row,
+.section,
+.reason-section,
+.appointment-section {
   border: none !important;
   border-top: none !important;
   border-bottom: none !important;
@@ -872,35 +885,52 @@
   transform: none !important;
 }
 
-/* Keep dark-mode background but no border */
 [data-theme="dark"] .form-section {
   border: none !important;
   box-shadow: none !important;
 }
 
-/* 2. Remove the inner glow pseudo-element that acts as a border */
-.form-section::after {
+/* Remove ALL pseudo divider lines */
+.form-section::before,
+.form-section::after,
+.section::before,
+.section::after,
+.chat-container::before,
+.chat-container::after {
   display: none !important;
+  content: none !important;
 }
 
-/* 3. Remove the horizontal line between quick chips and chat input */
+/* Remove chat / AI container separator lines */
+.chat-container,
+.chat-footer,
+.ai-assistant,
+.ai-chat-container,
 .chat-input-container {
-  border-top: none !important;
   border: none !important;
+  border-top: none !important;
+  border-bottom: none !important;
 }
 
+[data-theme="dark"] .chat-container,
+[data-theme="dark"] .chat-footer,
+[data-theme="dark"] .ai-assistant,
+[data-theme="dark"] .ai-chat-container,
 [data-theme="dark"] .chat-input-container {
-  border-top: none !important;
   border: none !important;
+  border-top: none !important;
+  border-bottom: none !important;
 }
 
-/* 4. Remove dividers from section/page headers inside the appointment form */
+/* Remove dividers from section/page headers */
+.page-header,
+.section-header,
 [data-theme="dark"] .page-header,
 [data-theme="dark"] .section-header {
   border-bottom: none !important;
 }
 
-/* 5. Remove box-shadow inset separators from cards */
+/* Remove box-shadow inset separators from cards */
 .appointment-form-card,
 .available-slots-card,
 .my-appointments-card,
@@ -917,31 +947,25 @@
   box-shadow: none !important;
 }
 
-/* 6. Remove outline on all focused form elements */
+/* Remove outline on all focused form elements */
 input:focus,
 textarea:focus,
 select:focus {
   outline: none !important;
-  box-shadow: none !important;
 }
 
-/* 7. Suppress any stray <hr> */
-hr {
-  display: none !important;
-}
-
-/* 8. Remove bottom border from form section headers */
+/* Remove bottom border from form section headers */
 .form-section-header {
   border-bottom: none !important;
   box-shadow: none !important;
 }
 
-/* 9. FAQ answer separator — keep intentional UI lines only where needed */
+/* FAQ answer separator */
 [data-theme="dark"] .faq-answer {
   border-top: none !important;
 }
 
-/* 10. Modal header border — clean */
+/* Modal header border — clean */
 [data-theme="dark"] .modal-header {
   border-bottom: none !important;
 }
