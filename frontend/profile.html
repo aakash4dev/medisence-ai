@@ -13,7 +13,7 @@
             padding: 2rem;
         }
         .profile-header {
-            background: white;
+            background: var(--bg-card) ;
             border-radius: 20px;
             padding: 2rem;
             margin-bottom: 2rem;
@@ -44,7 +44,7 @@
         }
         .profile-info h1 {
             margin: 0 0 0.5rem 0;
-            color: #1e293b;
+            color: var(--text-main);
         }
         .profile-info p {
             color: #64748b;
@@ -57,7 +57,7 @@
             margin-bottom: 2rem;
         }
         .stat-card {
-            background: white;
+            background: var(--bg-card) ;
             border-radius: 15px;
             padding: 1.5rem;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
@@ -76,14 +76,14 @@
             margin: 0;
         }
         .profile-section {
-            background: white;
+            background: var(--bg-card) ;
             border-radius: 20px;
             padding: 2rem;
             margin-bottom: 2rem;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         }
         .profile-section h2 {
-            color: #1e293b;
+            color: var(--text-main);
             margin: 0 0 1.5rem 0;
             display: flex;
             align-items: center;
@@ -102,7 +102,7 @@
         }
         .appointment-item h3 {
             margin: 0 0 0.5rem 0;
-            color: #1e293b;
+            color: var(--text-main);
         }
         .appointment-item p {
             margin: 0.25rem 0;
@@ -121,11 +121,11 @@
             color: #059669;
         }
         .status-pending {
-            background: #fef3c7;
+            background: var(--warning-bg) ;
             color: #d97706;
         }
         .status-cancelled {
-            background: #fee2e2;
+            background: var(--danger-bg) ;
             color: #dc2626;
         }
         .btn-primary {
@@ -144,7 +144,7 @@
         }
         .btn-secondary {
             background: #e2e8f0;
-            color: #1e293b;
+            color: var(--text-main);
             border: none;
             padding: 0.75rem 1.5rem;
             border-radius: 10px;
@@ -169,7 +169,7 @@
             position: fixed;
             top: 2rem;
             left: 2rem;
-            background: white;
+            background: var(--bg-card) ;
             border: none;
             padding: 0.75rem 1rem;
             border-radius: 10px;
@@ -185,7 +185,7 @@
 </head>
 <body>
     <div class="profile-container">
-        <button class="back-btn" onclick="window.location.href='index.html'">
+        <button class="back-btn" onclick="window.history.back()">
             <i class="fas fa-arrow-left"></i> Back
         </button>
 
@@ -347,4 +347,3 @@
     </script>
 </body>
 </html>
-

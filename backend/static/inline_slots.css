@@ -1,0 +1,106 @@
+/**
+ * INLINE TIME SLOT INTEGRATION
+ * Styles for time slot grid moved into Appointment Details section
+ */
+
+/* ========================================
+   INLINE SLOTS CONTAINER
+   ======================================== */
+
+/* Container for inline time slots */
+.inline-slots-container {
+  margin-top: var(--space-3); /* 12px */
+  padding: var(--space-4); /* 16px */
+  background: rgba(248, 250, 252, 0.4); /* Subtle tint */
+  border: var(--border-width) solid var(--color-border-light);
+  border-radius: var(--border-radius-md);
+  min-height: 120px;
+}
+
+/* Hint text when no slots available */
+.inline-slots-container .slots-hint {
+  text-align: center;
+  color: var(--color-text-tertiary);
+  font-size: var(--text-sm);
+  padding: var(--space-8) var(--space-4); /* 32px 16px */
+  margin: 0;
+  background: transparent;
+  border: none;
+}
+
+/* Slots grid inside form */
+.inline-slots-container .slots-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(88px, 1fr));
+  gap: var(--space-2); /* 8px */
+  margin-top: 0;
+  padding: 0;
+}
+
+/* Hide hint when slots are loaded */
+.inline-slots-container .slots-grid:not(:empty) ~ .slots-hint,
+.inline-slots-container .slots-hint:has(+ .slots-grid:not(:empty)) {
+  display: none;
+}
+
+/* Show hint when slots grid is empty */
+.inline-slots-container .slots-grid:empty {
+  display: none;
+}
+
+.inline-slots-container .slots-grid:empty + .slots-hint {
+  display: block;
+}
+
+/* ========================================
+   LAYOUT REBALANCE AFTER PANEL REMOVAL
+   ======================================== */
+
+/* Convert to single dominant column layout */
+.appointments-container {
+  display: grid;
+  grid-template-columns: 1fr; /* Single column - form is dominant */
+  gap: var(--space-8); /* 32px */
+  max-width: 900px; /* Constrain width for better readability */
+  margin: 0 auto; /* Center the form */
+}
+
+/* Right column (now only contains Your Appointments) */
+.appointment-info-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6); /* 24px */
+}
+
+/* Your Appointments card - full width */
+.my-appointments-card {
+  width: 100%;
+}
+
+/* ========================================
+   RESPONSIVE ADJUSTMENTS
+   ======================================== */
+
+@media (max-width: 768px) {
+  .inline-slots-container {
+    padding: var(--space-3); /* 12px on mobile */
+  }
+
+  .inline-slots-container .slots-grid {
+    grid-template-columns: repeat(auto-fill, minmax(75px, 1fr));
+    gap: var(--space-2); /* 8px */
+  }
+
+  .appointments-container {
+    max-width: 100%;
+  }
+}
+
+/* ========================================
+   REMOVED STYLES CLEANUP
+   ======================================== */
+
+/* Remove styles for deleted Available Slots Card */
+.available-slots-card {
+  display: none; /* Ensure it's hidden if any remnants exist */
+}

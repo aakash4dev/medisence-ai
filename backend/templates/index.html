@@ -1,0 +1,1263 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark" class="dark-mode">
+
+<head>
+  <meta charset="UTF-8" />
+  <script>
+    (function() {
+      const storageKey = 'medicsense_dark_mode';
+      const storedTheme = localStorage.getItem(storageKey);
+      // Default to dark mode if no preference is saved
+      const isDark = storedTheme === null ? true : storedTheme === '1';
+      document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+      if (isDark) {
+        document.documentElement.classList.add('dark-mode');
+      } else {
+        document.documentElement.classList.remove('dark-mode');
+      }
+      // Save the default preference
+      if (storedTheme === null) {
+        localStorage.setItem(storageKey, '1');
+      }
+    })();
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>
+    MedicSense AI - AI-Enabled Healthcare Assistant | Problem Statement
+    Solution
+  </title>
+  <meta name="description"
+    content="AI-powered symptom checking, automated appointment scheduling, and intelligent patient engagement with NLP" />
+
+  <!-- PWA Meta Tags -->
+  <meta name="theme-color" content="#667eea" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="MedicSense AI" />
+  <link rel="manifest" href="/manifest.json" />
+
+  <!-- Fonts - Ultra Professional -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+    rel="stylesheet" />
+
+  <!-- Icons - Multiple Libraries -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+
+  <!-- Animate.css for Advanced Animations -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
+  <!-- AOS (Animate on Scroll) -->
+  <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="style_ultra.css?v=motion13" />
+  <link rel="stylesheet" href="premium_enhancements.css?v=2" />
+  <link rel="stylesheet" href="layout_rebalance.css?v=2" />
+  <link rel="stylesheet" href="micro_interactions.css?v=2" />
+  <link rel="stylesheet" href="inline_slots.css?v=2" />
+  <link rel="stylesheet" href="flow_optimization.css?v=2" />
+  <link rel="stylesheet" href="visual_confidence.css?v=2" />
+  <link rel="stylesheet" href="vertical_compaction.css?v=2" />
+  <link rel="stylesheet" href="ultra_compact.css?v=2" />
+  <link rel="stylesheet" href="ai_chat_refined.css?v=8" />
+  <style>
+    /* Auth Modal Styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      backdrop-filter: blur(5px);
+    }
+
+    .auth-modal {
+      background: var(--bg-card) ;
+      padding: 2rem;
+      border-radius: 20px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+      position: relative;
+      animation: slideUp 0.3s ease;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+      color: #64748b;
+    }
+
+    .auth-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .auth-header h2 {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+      color: var(--text-main);
+    }
+
+    .auth-header p {
+      color: #64748b;
+      font-size: 0.9rem;
+    }
+
+    .auth-btn-google {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      background: var(--bg-card) ;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      cursor: pointer;
+      font-weight: 500;
+      color: var(--text-main);
+      transition: all 0.2s;
+    }
+
+    .auth-btn-google:hover {
+      background: var(--gray-50) ;
+      border-color: #cbd5e1;
+    }
+
+    .auth-divider {
+      text-align: center;
+      margin: 1.5rem 0;
+      position: relative;
+    }
+
+    .auth-divider::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      width: 100%;
+      height: 1px;
+      background: #e2e8f0;
+    }
+
+    .auth-divider span {
+      background: var(--bg-card) ;
+      padding: 0 10px;
+      color: #94a3b8;
+      font-size: 0.8rem;
+      position: relative;
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(20px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes gentlePulse {
+      0% { transform: scale(1); opacity: 0.8; }
+      50% { transform: scale(1.1); opacity: 1; filter: drop-shadow(0 0 2px rgba(99, 102, 241, 0.5)); }
+      100% { transform: scale(1); opacity: 0.8; }
+    }
+
+    .motion-icon-bolt {
+      animation: gentlePulse 2s infinite ease-in-out !important;
+      display: inline-block !important;
+      /* Color removed to inherit original theme (blue/purple) */
+    }
+
+    .apt-soon-label {
+      color: #f39c12;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      animation: pulse 2s infinite;
+    }
+    .apt-completed-label {
+      color: #7f8c8d;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.7; }
+      100% { opacity: 1; }
+    }
+  </style>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏥</text></svg>" />
+</head>
+
+<body>
+  <!-- Loading Screen -->
+  <div class="loading-screen" id="loadingScreen">
+    <div class="loading-content">
+      <div class="loading-spinner"></div>
+      <h2 class="loading-text">Initializing AI Healthcare System...</h2>
+      <p class="loading-subtext">Powered by Google Gemini</p>
+    </div>
+    <!-- Safety Timeout: Ensures user is never stuck -->
+    <script>
+      (function() {
+        var loader = document.getElementById('loadingScreen');
+        var tookLong = false;
+
+        console.log("🛡️ Loader safety watchdog active");
+
+        // 1. Show "Taking longer..." if stuck for 2s
+        var slowTimer = setTimeout(function() {
+          if(loader && loader.style.display !== 'none') {
+             var msg = document.querySelector('.loading-subtext');
+             if(msg) {
+               msg.textContent = "Taking longer than expected... Please wait.";
+               msg.style.color = '#fbbf24';
+             }
+             tookLong = true;
+             console.warn("⚠️ Loader still visible after 2s");
+          }
+        }, 2000);
+
+        // 2. Force Kill Loader after 6s (Absolute Max)
+        var killTimer = setTimeout(function() {
+          if(loader && loader.style.display !== 'none') {
+            console.error("🚨 LOADER TIMEOUT: Force-killing after 6s");
+            loader.style.display = 'none';
+
+            // Show error to user
+            var msg = document.querySelector('.loading-subtext');
+            if(msg) msg.textContent = "";
+
+            // Try to show toast if available
+            setTimeout(function() {
+              if (window.showToast) {
+                window.showToast("App loaded with limited functionality. Some services may be unavailable.", "warning");
+              }
+            }, 500);
+          }
+        }, 6000);
+
+        // Expose clear function for successful init
+        window.clearLoaderSafety = function() {
+          clearTimeout(slowTimer);
+          clearTimeout(killTimer);
+          console.log("✅ Loader safety watchdog cleared");
+        };
+      })();
+    </script>
+  </div>
+
+  <!-- Main Navigation - Glassmorphism Style -->
+  <nav class="navbar" id="navbar">
+    <div class="container">
+      <div class="nav-content">
+        <!-- Logo -->
+        <a href="#home" class="logo" style="text-decoration: none; color: inherit; cursor: pointer;">
+          <div class="logo-icon">
+            <i class="fas fa-heartbeat"></i>
+          </div>
+          <div class="logo-text">
+            <span class="logo-main">MedicSense</span>
+            <span class="logo-sub">AI</span>
+          </div>
+        </a>
+
+        <!-- Desktop Menu -->
+        <ul class="nav-menu" id="navMenu">
+          <!-- CALM EXPLORATION (Left) -->
+          <li>
+            <a href="#symptom-checker" class="nav-link nav-link-calm">
+              <i class="fas fa-stethoscope"></i>
+              <span>Symptom Check</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="history.html" class="nav-link nav-link-calm">
+              <i class="fas fa-stream"></i>
+              <span>Health Timeline</span>
+            </a>
+          </li>
+
+          <!-- VISUAL SEPARATOR -->
+          <li class="nav-separator"></li>
+
+          <!-- PRIMARY ACTION (Center) -->
+          <li>
+            <a href="#appointments" class="nav-link nav-link-calm nav-link-appointment">
+              <i class="fas fa-calendar-plus"></i>
+              <span>Book Appointment</span>
+            </a>
+          </li>
+        </ul>
+
+        <!-- User Actions -->
+        <div class="nav-actions">
+          <!-- User Controls Group -->
+          <div class="user-controls">
+            <button class="icon-btn notification-btn" onclick="window.location.href='notifications.html'" title="Notifications">
+              <i class="fas fa-bell"></i>
+              <span class="badge hidden" id="notificationBadge" style="display: none;"></span>
+            </button>
+
+            <button class="icon-btn theme-toggle-btn" onclick="toggleDarkMode()" title="Toggle Theme">
+              <i class="fas fa-moon" id="darkModeIcon"></i>
+            </button>
+
+            <div class="profile-menu-container">
+              <button class="icon-btn auth-btn" onclick="toggleProfileMenu()" id="authBtn" title="Account">
+                <i class="fas fa-user-circle"></i>
+              </button>
+
+              <!-- Profile Dropdown Menu -->
+              <div class="profile-dropdown" id="profileDropdown" style="display: none;">
+                <button class="profile-close-btn" onclick="closeProfileMenu()">
+                  <i class="fas fa-times"></i>
+                </button>
+
+                <div class="profile-user-info">
+                  <div class="profile-avatar">
+                    <img id="profileAvatar" src="" alt="User Avatar">
+                  </div>
+                  <h3 id="profileName">User Name</h3>
+                  <p id="profileEmail">user@example.com</p>
+                </div>
+
+                <button class="profile-signout-btn" onclick="handleSignOut()">
+                  <i class="fas fa-sign-out-alt"></i>
+                  <span>Sign Out</span>
+                </button>
+
+                <div class="profile-footer">
+                  MedicSense AI • Secure Session
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Emergency Button - Isolated -->
+          <button class="btn emergency-btn" onclick="handleEmergency()">
+            <i class="fas fa-ambulance"></i>
+            <span>Emergency</span>
+          </button>
+
+          <button class="icon-btn mobile-menu-btn" onclick="toggleMobileMenu()">
+            <i class="fas fa-bars"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+      <div class="mobile-menu-header">
+        <h3>Menu</h3>
+        <button onclick="toggleMobileMenu()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <ul class="mobile-nav-links">
+        <li>
+          <a href="#home" onclick="toggleMobileMenu()"><i class="fas fa-home"></i> Home</a>
+        </li>
+        <li>
+          <a href="#symptom-checker" onclick="toggleMobileMenu()"><i class="fas fa-stethoscope"></i> Symptom Check</a>
+        </li>
+        <li>
+          <a href="history.html" onclick="toggleMobileMenu()"><i class="fas fa-stream"></i> Health Timeline</a>
+        </li>
+        <li class="mobile-divider"></li>
+        <li>
+          <a href="#appointments" onclick="toggleMobileMenu()" style="font-weight: 700; color: var(--primary-600);">
+            <i class="fas fa-calendar-plus"></i> Book Appointment
+          </a>
+        </li>
+        <li>
+          <a href="notifications.html" onclick="toggleMobileMenu()"><i class="fas fa-bell"></i> Notifications</a>
+        </li>
+        <li class="mobile-divider"></li>
+        <li>
+          <a href="#" onclick="runHealthDemo(); toggleMobileMenu();" style="color: #8b5cf6; font-weight: 700;">
+            <i class="fas fa-play-circle"></i> Run Health Demo
+          </a>
+        </li>
+        <li class="mobile-divider"></li>
+        <li>
+          <a href="#" onclick="handleEmergency(); toggleMobileMenu();" style="color: #ef4444; font-weight: 700;">
+            <i class="fas fa-ambulance"></i> EMERGENCY
+          </a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero Section - Ultra Modern -->
+  <section class="hero" id="home">
+    <div class="hero-background">
+      <div class="hero-gradient"></div>
+      <div class="hero-pattern"></div>
+    </div>
+
+    <div class="container">
+      <div class="hero-content">
+        <div class="hero-left" data-aos="fade-right">
+          <div class="hero-badge">
+            <span class="badge-dot"></span>
+            Enterprise Healthcare Intelligence Platform
+          </div>
+
+          <h1 class="hero-title">
+            AI-Assisted Healthcare <span class="gradient-text">Intelligence</span>
+          </h1>
+
+          <p class="hero-description">
+            Supporting health awareness through AI-assisted symptom analysis, intelligent scheduling, and patient engagement tools designed to help users decide appropriate next steps.
+          </p>
+
+          <!-- Problem Statement Highlights -->
+          <div class="hero-highlights">
+            <div class="highlight-item">
+              <i class="fas fa-check-circle"></i>
+              <span>Streamlined Symptom Assessment</span>
+            </div>
+            <div class="highlight-item">
+              <i class="fas fa-check-circle"></i>
+              <span>Care Navigation Support</span>
+            </div>
+            <div class="highlight-item">
+              <i class="fas fa-check-circle"></i>
+              <span>Continuous Patient Engagement</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-right" data-aos="fade-left">
+          <!-- Assistant Preview Card -->
+          <div class="hero-card floating-animation">
+            <div class="card-header">
+              <div class="ai-avatar">
+                <i class="fas fa-robot"></i>
+              </div>
+              <div>
+                <h3>Health Assistant</h3>
+                <p class="status">
+                  <span class="status-dot"></span> Online Now
+                </p>
+              </div>
+            </div>
+
+            <div class="card-body">
+              <div class="chat-preview">
+                <div class="chat-bubble ai-bubble">
+                  Welcome to MedicSense. I'm your AI-assisted health support companion.
+                  How may I assist you today?
+                </div>
+              </div>
+            </div>
+
+            <button class="card-cta" onclick="scrollToSection('ai-chat')">
+              Begin Consultation <i class="fas fa-arrow-right"></i>
+            </button>
+          </div>
+
+          <!-- Hero Features Container -->
+          <div class="hero-features-container">
+
+            <!-- Group 1: Capabilities (Trust Layer) -->
+            <div class="capabilities-group">
+              <div class="feature-card">
+                <i class="fas fa-brain"></i>
+                <span>Symptom<br>Analysis</span>
+              </div>
+              <div class="feature-card">
+                <i class="fas fa-cloud"></i>
+                <span>Cloud<br>Infrastructure</span>
+              </div>
+              <div class="feature-card">
+                <i class="fas fa-shield-alt"></i>
+                <span>Privacy-Focused<br>Design</span>
+              </div>
+            </div>
+
+            <!-- Group 2: Platform Signals (Confidence Layer) -->
+            <div class="signals-group">
+              <div class="stat-card">
+                <div class="stat-label">Platform Availability</div>
+                <div class="stat-value">24×7</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">Emergency Escalation</div>
+                <div class="stat-value">Ready</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">Typical AI Response</div>
+                <div class="stat-value">&lt;2 min</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- AI-Powered Symptom Checker Section -->
+  <section class="symptom-checker-section" id="symptom-checker">
+    <div class="container">
+      <div class="section-header" data-aos="fade-up">
+        <span class="section-badge">AI-Powered Assessment</span>
+        <h2 class="section-title">AI Symptom Checker</h2>
+      </div>
+
+      <div class="symptom-checker-container">
+        <div class="symptom-checker-left" data-aos="fade-right">
+          <!-- Symptom Input Form -->
+          <div class="symptom-form-card">
+            <h3><i class="fas fa-stethoscope"></i> Describe Your Symptoms</h3>
+
+            <div class="form-group symptom-input-group">
+              <label>What are you experiencing?</label>
+              <textarea id="symptomInput" class="symptom-textarea"
+                placeholder="Type naturally... e.g., 'I have fever since yesterday and body aches'" rows="4"></textarea>
+            </div>
+
+            <div class="form-row symptom-details-row">
+              <div class="form-group">
+                <label>Duration <span style="color: var(--danger-500)">*</span></label>
+                <select id="symptomDuration" class="form-control form-select-sm">
+                  <option value="" disabled selected hidden>Select duration</option>
+                  <option value="hours">A few hours</option>
+                  <option value="1-2 days">1–2 days</option>
+                  <option value="3-7 days">3–7 days</option>
+                  <option value="1-2 weeks">1–2 weeks</option>
+                  <option value="more">More than 2 weeks</option>
+                </select>
+                </select>
+                <small class="input-helper-text">Helps assess symptom progression</small>
+              </div>
+
+              <div class="severity-container">
+                <label class="severity-label">
+                  Severity (1-10) <span>*</span>
+                </label>
+                <input type="range" id="severityRange" class="severity-slider" min="1" max="10" value="1" />
+                <div class="severity-value">
+                  <span id="severityValue">1</span>/10
+                </div>
+              </div>
+            </div>
+
+            <!-- Quick Symptom Tags -->
+            <div class="quick-symptoms symptom-chips-section">
+              <label>Quick Select (Optional):</label>
+              <div class="symptom-tags">
+                <button class="symptom-tag" onclick="addSymptom('fever', this)">
+                  <i class="fas fa-temperature-high"></i> Fever
+                </button>
+                <button class="symptom-tag" onclick="addSymptom('headache', this)">
+                  <i class="fas fa-head-side-virus"></i> Headache
+                </button>
+                <button class="symptom-tag" onclick="addSymptom('cough', this)">
+                  <i class="fas fa-lungs"></i> Cough
+                </button>
+                <button class="symptom-tag" onclick="addSymptom('body pain', this)">
+                  <i class="fas fa-bone"></i> Body Pain
+                </button>
+                <button class="symptom-tag" onclick="addSymptom('nausea', this)">
+                  <i class="fas fa-dizzy"></i> Nausea
+                </button>
+                <button class="symptom-tag" onclick="addSymptom('fatigue', this)">
+                  <i class="fas fa-tired"></i> Fatigue
+                </button>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="form-actions">
+              <button class="btn btn-primary" id="analyzeBtn" disabled>
+                <i class="fas fa-brain"></i>
+                Analyze with AI
+              </button>
+              <button class="btn btn-secondary" id="voiceInputBtnSymptom" data-voice-type="symptom">
+                <i class="fas fa-microphone"></i>
+                Voice Input
+              </button>
+            </div>
+            <p class="hint-text">
+              <i class="fas fa-info-circle"></i> This tool supports health awareness and does not provide medical diagnosis.
+            </p>
+          </div>
+        </div>
+
+        <div class="symptom-checker-right" data-aos="fade-left">
+          <!-- Results Card -->
+          <div class="symptom-results-card" id="symptomResults" style="display: none">
+            <div class="results-header">
+              <h3><i class="fas fa-chart-line"></i> AI Analysis Results</h3>
+
+            </div>
+
+            <div class="results-body" id="symptomResultsBody">
+              <!-- Results will be dynamically inserted here -->
+            </div>
+
+            <div class="results-actions">
+              <button class="btn btn-primary" onclick="bookAppointmentFromSymptom()">
+                <i class="fas fa-calendar-plus"></i>
+                Book Appointment
+              </button>
+              <button class="btn btn-outline-secondary" onclick="exportSymptomReport()">
+                <i class="fas fa-download"></i>
+                Download Report
+              </button>
+            </div>
+          </div>
+
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Appointment Scheduling Section -->
+  <section class="appointments-section" id="appointments">
+    <div class="container">
+      <div class="section-header" data-aos="fade-up">
+        <span class="section-badge">Cloud-Automated System</span>
+        <h2 class="section-title">Smart Appointment Scheduling</h2>
+        <p class="section-description">
+          Book appointments instantly with our intelligent scheduling system -
+          No more waiting, no more phone calls
+        </p>
+      </div>
+
+      <div class="appointments-container">
+        <!-- Appointment Form -->
+        <div class="appointment-form-card" data-aos="fade-right">
+          <h3>
+            <i class="fas fa-calendar-check"></i> Schedule Your Appointment
+          </h3>
+
+          <!-- SECTION 1: Personal Information -->
+          <div class="form-section">
+            <div class="form-section-header">
+              <div class="form-section-icon">
+                <i class="fas fa-user"></i>
+              </div>
+              <div>
+                <h4 class="form-section-title">Personal Information</h4>
+                <p class="form-section-subtitle">Tell us about yourself</p>
+              </div>
+            </div>
+
+            <div class="form-group has-validation">
+              <label><i class="fas fa-user"></i> Full Name</label>
+              <input type="text" id="patientName" class="form-control" placeholder="Enter your full name" />
+            </div>
+
+            <div class="form-row">
+              <div class="form-group has-validation">
+                <label><i class="fas fa-phone"></i> Phone Number</label>
+                <input type="tel" id="patientPhone" class="form-control" placeholder="+91 XXXXX-XXXXX" />
+              </div>
+
+              <div class="form-group has-validation">
+                <label><i class="fas fa-envelope"></i> Email</label>
+                <input type="email" id="patientEmail" class="form-control" placeholder="your@email.com" />
+              </div>
+            </div>
+          </div>
+
+          <!-- SECTION 2: Appointment Details -->
+          <div class="form-section">
+            <div class="form-section-header">
+              <div class="form-section-icon">
+                <i class="fas fa-calendar-alt"></i>
+              </div>
+              <div>
+                <h4 class="form-section-title">Appointment Details</h4>
+                <p class="form-section-subtitle">Choose your preferred time</p>
+              </div>
+            </div>
+
+
+            <div class="doctor-date-row">
+              <div class="form-group">
+                <label><i class="fas fa-user-md"></i> Doctor / Department</label>
+                <select id="doctorSelect" class="form-control" onchange="loadAvailableSlots()">
+                  <option value="">Select doctor or department</option>
+                  <option value="dr_tushar">Dr. Tushar ZX (Devfest Noida)</option>
+                  <option value="dr_aakash">Dr. Aakash Singh Rajput</option>
+                  <option value="dr_sharma">
+                    Dr. Sharma - General Physician
+                  </option>
+                  <option value="dr_patel">Dr. Patel - Cardiologist</option>
+                  <option value="dr_verma">Dr. Verma - Dermatologist</option>
+                  <option value="dr_singh">Dr. Singh - Pediatrician</option>
+                  <option value="dr_kumar">Dr. Kumar - Orthopedic</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label><i class="fas fa-calendar"></i> Preferred Date</label>
+                <input type="date" id="appointmentDate" class="form-control" onchange="loadAvailableSlots()" />
+              </div>
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-clock"></i> Preferred Time</label>
+                <!-- Hidden select for backend compatibility -->
+                <select id="appointmentTime" class="form-control" style="display: none;">
+                  <option value="">Select time slot</option>
+                </select>
+                <!-- Inline time slot grid (moved from right panel) -->
+                <div class="inline-slots-container">
+                  <p class="slots-hint" id="slotsHint">
+                    Select doctor and date to view available slots
+                  </p>
+                  <div class="slots-grid" id="slotsGrid">
+                    <!-- Slots will be dynamically loaded -->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SECTION 3: Visit Information -->
+          <div class="form-section">
+            <div class="form-section-header">
+              <div class="form-section-icon">
+                <i class="fas fa-notes-medical"></i>
+              </div>
+              <div>
+                <h4 class="form-section-title">Visit Information</h4>
+                <p class="form-section-subtitle">Help us prepare for your visit</p>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label><i class="fas fa-notes-medical"></i> Reason for Visit</label>
+              <textarea id="appointmentReason" class="form-control" rows="3"
+                placeholder="Brief description of your concern"></textarea>
+            </div>
+
+            <div class="appointment-cta-row">
+              <div class="appointment-type">
+                <label>Appointment Type:</label>
+                <div class="type-options">
+                  <label class="type-option">
+                    <input type="radio" name="appointmentType" value="in-person" checked />
+                    <span><i class="fas fa-hospital"></i> In-Person</span>
+                  </label>
+                  <label class="type-option">
+                    <input type="radio" name="appointmentType" value="video" />
+                    <span><i class="fas fa-video"></i> Video Call</span>
+                  </label>
+                </div>
+              </div>
+
+              <button class="btn btn-primary btn-large btn-book-appointment" onclick="bookAppointment()">
+                <i class="fas fa-calendar-check"></i>
+                <span class="btn-text">Book Appointment</span>
+              </button>
+            </div>
+        </div>
+
+        <!-- Appointment Info & Calendar -->
+        <div class="appointment-info-section" data-aos="fade-left">
+
+          <!-- REMOVED: Available Time Slots panel - now integrated into Appointment Details section -->
+
+
+
+          <!-- REMOVED: "Why Book With Us" marketing section for cleaner focus on booking form -->
+
+
+          <!-- My Appointments Card -->
+          <div class="my-appointments-card">
+            <div class="my-appointments-header">
+              <h3><i class="fas fa-list"></i> Recent Appointments</h3>
+              <a href="appointments.html" class="view-all-link">View All <i class="fas fa-arrow-right"></i></a>
+            </div>
+            <div class="appointments-list" id="myAppointmentsList">
+              <p class="no-appointments">No appointments scheduled yet</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AI Chat Assistant Section (ULTRA ADVANCED) -->
+  <section class="ai-chat-section" id="ai-chat">
+    <div class="container">
+      <div class="section-header" data-aos="fade-up">
+        <span class="section-badge">Google Gemini Powered</span>
+        <h2 class="section-title">24/7 AI Health Assistant</h2>
+        <p class="section-description">
+          Intelligent patient engagement with context-aware conversations and
+          instant medical guidance
+        </p>
+      </div>
+
+      <div class="chat-container">
+        <!-- Chat Sidebar -->
+        <div class="chat-sidebar" data-aos="fade-right">
+          <!-- AI Info Card -->
+          <div class="ai-info-card">
+            <div class="ai-avatar-large">
+              <i class="fas fa-robot"></i>
+              <span class="status-indicator"></span>
+            </div>
+            <h3>AI Health Assistant</h3>
+            <p class="ai-status">
+              <span class="status-dot"></span>
+              Online & Ready to Help
+            </p>
+            <div class="ai-capabilities">
+              <span class="capability-badge"><i class="fas fa-brain"></i> NLP</span>
+              <span class="capability-badge"><i class="fas fa-language"></i> Multi-lang</span>
+              <span class="capability-badge"><i class="fas fa-shield-alt"></i> Secure</span>
+            </div>
+          </div>
+
+          <!-- Quick Actions -->
+          <div class="quick-actions-card">
+            <h4><i class="fas fa-bolt"></i> Quick Actions</h4>
+            <button class="quick-action-btn" onclick="quickAction('symptoms')">
+              <i class="fas fa-stethoscope"></i>
+              <span>Check Symptoms</span>
+            </button>
+            <button class="quick-action-btn" onclick="quickAction('appointment')">
+              <i class="fas fa-calendar"></i>
+              <span>Book Appointment</span>
+            </button>
+            <button class="quick-action-btn" onclick="quickAction('medication')">
+              <i class="fas fa-pills"></i>
+              <span>Medication Info</span>
+            </button>
+            <button class="quick-action-btn" onclick="quickAction('emergency')">
+              <i class="fas fa-ambulance"></i>
+              <span>Emergency Help</span>
+            </button>
+          </div>
+
+          <!-- Health Score Widget -->
+          <div class="health-score-card" style="background: var(--bg-card); border-radius: 16px; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border: 1px solid rgba(255,255,255,0.05); text-align: center;">
+            <h4 style="margin: 0 0 15px 0; color: var(--text-main); font-size: 1.1rem; display: flex; align-items: center; justify-content: center; gap: 8px;">
+              <i class="fas fa-heartbeat" style="color: #ef4444;"></i> Health Profile
+            </h4>
+
+            <div style="position: relative; width: 120px; height: 120px; margin: 0 auto 15px auto;">
+              <!-- Circle Background -->
+              <svg viewBox="0 0 36 36" style="width: 100%; height: 100%;">
+                <path
+                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                  fill="none" stroke="rgba(0,0,0,0.05)" stroke-width="3"
+                />
+                <!-- Value Arc (Moderate = ~65%) -->
+                <path
+                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                  fill="none" stroke="#f59e0b" stroke-width="3"
+                  stroke-dasharray="65, 100"
+                  animation="stroke 1s ease-out forwards"
+                />
+              </svg>
+              <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center;">
+                <span style="font-size: 1.8rem; font-weight: 800; color: #f59e0b;">65</span>
+                <span style="font-size: 0.65rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px;">Score</span>
+              </div>
+            </div>
+
+            <div style="background: rgba(245, 158, 11, 0.1); color: #d97706; padding: 8px 12px; border-radius: 8px; font-weight: 700; font-size: 0.9rem; margin-bottom: 10px;">
+              MODERATE RISK
+            </div>
+            <p style="margin: 0; font-size: 0.85rem; color: #64748b; line-height: 1.4;">
+              Based on recent symptoms and check-ins. Recommend monitoring vitals today.
+            </p>
+          </div>
+
+
+          <!-- Recent Activity -->
+          <!-- Recent Activity Removed -->
+
+        </div>
+
+        <!-- Main Chat Area -->
+        <div class="chat-main" data-aos="fade-left">
+          <div class="chat-card">
+            <!-- Chat Header -->
+            <div class="chat-header">
+              <div class="chat-header-left">
+                <div class="ai-avatar-small">
+                  <i class="fas fa-robot"></i>
+                </div>
+                <div>
+                  <h3>AI Assistant</h3>
+                  <p class="chat-subtitle">Powered by Google Gemini</p>
+                </div>
+              </div>
+              <div class="chat-header-actions">
+                <button class="icon-btn" onclick="clearChat()" title="Clear Chat">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Chat Messages -->
+            <div class="chat-messages" id="chatMessages">
+              <!-- Welcome Message -->
+              <div class="message ai-message">
+                <div class="message-avatar">
+                  <i class="fas fa-robot"></i>
+                </div>
+                <div class="message-content">
+                  <div class="message-bubble">
+                    <p><strong>👋 Welcome to MedicSense AI!</strong></p>
+                    <p>
+                      I'm your AI health assistant powered by Google Gemini. I
+                      can help you with:
+                    </p>
+                    <ul>
+                      <li>✅ Symptom checking and analysis</li>
+                      <li>✅ Appointment scheduling</li>
+                      <li>✅ Health questions and guidance</li>
+                      <li>✅ Medication information</li>
+                      <li>✅ Emergency assistance</li>
+                    </ul>
+                    <p>How can I help you today?</p>
+                  </div>
+                  <div class="message-meta">
+                    <span class="message-time">Just now</span>
+                    <span class="context-badge"><i class="fas fa-brain"></i> AI</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Messages will be added here dynamically -->
+            </div>
+
+            <!-- Typing Indicator -->
+            <div class="typing-indicator" id="typingIndicator" style="display: none">
+              <div class="message-avatar">
+                <i class="fas fa-robot"></i>
+              </div>
+              <div class="typing-dots">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            </div>
+
+            <!-- Quick Suggestions -->
+            <div class="quick-suggestions" id="quickSuggestions">
+              <button class="suggestion-chip" onclick="sendQuickMessage('I have fever and headache', this)">
+                💊 I have fever and headache
+              </button>
+              <button class="suggestion-chip" onclick="sendQuickMessage('Need medication information', this)">
+                💊 Medication info
+              </button>
+              <button class="suggestion-chip" onclick="sendQuickMessage('Check my health status', this)">
+                ❤️ Health status
+              </button>
+              <button class="suggestion-chip" onclick="sendQuickMessage('What are my vital signs?', this)">
+                📊 My vitals
+              </button>
+            </div>
+
+            <!-- Chat Input -->
+            <div class="chat-input-container">
+              <div id="charCounter" class="char-counter" style="text-align: right; font-size: 0.82rem; color: rgba(255, 255, 255, 0.5); font-weight: 500; margin-bottom: 4px; display: none;">0/1000</div>
+
+              <div class="chat-input-wrapper">
+                  <button class="attach-btn" onclick="attachFile()" title="Attach Image">📎</button>
+                  <input type="file" id="chatFileInput" accept="image/*" style="display: none" onchange="handleChatImageUpload(event)" />
+
+                  <textarea
+                      id="chatInput"
+                      class="chat-input"
+                      placeholder="Type your message... (Press Enter to send)"
+                      rows="1"
+                      onkeypress="handleChatKeyPress(event)"
+                  ></textarea>
+
+                  <button class="mic-btn" id="voiceInputBtnChat" data-voice-type="chat" title="Voice Input">🎤</button>
+
+                  <button class="send-btn" onclick="sendChatMessage()" id="sendBtn" title="Send Message">✈</button>
+              </div>
+
+              <div class="chat-footer">
+                ℹ️ Powered by Google Gemini • 100% Private & Secure
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section class="testimonials-section">
+    <div class="container">
+      <div class="section-header" data-aos="fade-up">
+        <span class="section-badge">Patient Stories</span>
+        <h2 class="section-title">Trusted by Thousands</h2>
+      </div>
+
+      <div class="testimonials-grid">
+        <div class="testimonial-card" id="review1" data-aos="fade-right"></div>
+        <div class="testimonial-card" id="review2" data-aos="fade-up" data-aos-delay="100"></div>
+        <div class="testimonial-card" id="review3" data-aos="fade-left" data-aos-delay="200"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer" id="fromFooter">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-column">
+          <div class="footer-logo">
+            <i class="fas fa-heartbeat"></i>
+            <span>MedicSense AI</span>
+          </div>
+          <p class="footer-description">
+            An AI-assisted health support platform designed to help users understand symptoms, navigate care options, and improve health communication through secure, intelligent tools.
+          </p>
+        </div>
+
+        <div class="footer-column">
+          <h4>Resources</h4>
+          <ul class="footer-links">
+            <li><a href="about.html#fromFooter">About Us</a></li>
+            <li><a href="how-it-works.html#fromFooter">How It Works</a></li>
+            <li><a href="/faq.html">F.A.Q</a></li>
+            <li><a href="privacy.html#fromFooter">Privacy Policy</a></li>
+            <li><a href="terms.html#fromFooter">Terms of Service</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-column">
+          <h4>Contact</h4>
+          <ul class="footer-contact">
+            <li>
+              <a href="tel:+918006334224" style="color: inherit; text-decoration: none; display: flex; align-items: center; gap: 0.5rem;" title="Click to call">
+                <i class="fas fa-phone"></i> +91-1800-633-4224
+              </a>
+            </li>
+            <li>
+              <a href="https://mail.google.com/mail/?view=cm&fs=1&to=support@medicsense.ai" target="_blank" style="color: inherit; text-decoration: none; display: flex; align-items: center; gap: 0.5rem;" title="Click to send email via Gmail">
+                <i class="fas fa-envelope"></i> support@medicsense.ai
+              </a>
+            </li>
+            <li>
+              <a href="#" onclick="openLiveLocation(); return false;" style="color: inherit; text-decoration: none; display: flex; align-items: center; gap: 0.5rem; cursor: pointer;" title="Click to view on Google Maps">
+                <i class="fas fa-map-marker-alt"></i> <span id="user-location">Detecting location...</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
+          <p style="margin: 0;">&copy; 2026 MedicSense AI. All rights reserved.</p>
+          <p class="powered-by" style="margin: 0;">
+            <i class="fas fa-bolt motion-icon-bolt"></i> Powered by Google Gemini AI
+          </p>
+          <p style="margin: 0; font-size: 0.85rem; color: #94a3b8;">
+            <i class="fas fa-info-circle"></i> <strong>Disclaimer:</strong> This application is for demonstration and educational purposes only. Not intended as a substitute for professional medical advice, diagnosis, or treatment.
+          </p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Emergency Modal -->
+  <div class="modal" id="emergencyModal">
+    <div class="modal-content emergency-modal-content">
+      <div class="modal-header emergency-header">
+        <h2><i class="fas fa-ambulance"></i> Emergency Assistance</h2>
+        <button class="modal-close" onclick="closeEmergencyModal()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="emergency-warning">
+          <i class="fas fa-exclamation-triangle"></i>
+          <p>
+            If this is a life-threatening emergency, please call emergency
+            services immediately!
+          </p>
+        </div>
+        <div class="emergency-actions">
+          <a href="tel:112" class="emergency-action-btn call-btn">
+            <i class="fas fa-phone-alt"></i>
+            <span>Call 112</span>
+          </a>
+          <button class="emergency-action-btn" onclick="findNearestHospital()">
+            <i class="fas fa-hospital"></i>
+            <span>Find Hospital</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <!-- Environment Variables - Load before other scripts -->
+  <script src="env-loader.js"></script>
+  <script src="load-env.js"></script>
+  <script type="module" src="firebase.js"></script>
+  <script src="profile_menu.js" defer></script>
+  <script src="script_ultra.js" defer></script>
+  <script src="premium_ui_enhancements.js" defer></script>
+
+  <!-- ── Testimonial Auto-Rotate ── -->
+  <script>
+    const reviews = [
+      { text: "The AI symptom checker was incredibly accurate and helped me decide to see a cardiologist just in time. Truly life-saving tech!", name: "Rajesh Kumar" },
+      { text: "Booking an appointment has never been easier. No phone calls, no waiting. The WhatsApp integration is brilliant.", name: "Anita Sharma" },
+      { text: "The 24/7 AI chat gives me peace of mind when I have minor health questions at night. Professional and secure.", name: "David Miller" },
+      { text: "The skin scanner helped detect my allergy early. Incredibly accurate and fast — amazing technology.", name: "Priya Mehta" },
+      { text: "I avoided an unnecessary hospital visit thanks to the AI guidance. Saved me both time and money.", name: "Amit Verma" },
+      { text: "MedicSense gave me clear answers at 2 AM when I was anxious. It felt like having a doctor on call.", name: "Sarah Johnson" },
+      { text: "The health records feature keeps everything in one place. My doctor was impressed at our last appointment.", name: "Vikram Singh" }
+    ];
+
+    let reviewIndex = 0;
+
+    function buildCard(r) {
+      return `
+        <div class="stars">★★★★★</div>
+        <p>"${r.text}"</p>
+        <div class="patient-info"><strong>- ${r.name}</strong></div>
+      `;
+    }
+
+    function renderReviews() {
+      const cards = ["review1", "review2", "review3"];
+      cards.forEach((id, offset) => {
+        const card = document.getElementById(id);
+        if (!card) return;
+        card.style.opacity = "0";
+        setTimeout(() => {
+          card.innerHTML = buildCard(reviews[(reviewIndex + offset) % reviews.length]);
+          card.style.opacity = "1";
+        }, 300);
+      });
+      reviewIndex++;
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      renderReviews();
+      setInterval(renderReviews, 5000);
+    });
+  </script>
+
+  <script>
+    // Initialize AOS (Animate on Scroll) - Non-blocking
+    if (typeof AOS !== 'undefined') {
+      AOS.init({
+        duration: 800,
+        once: true,
+        offset: 100,
+      });
+    }
+
+    // Set minimum date for appointment booking (today)
+    document.addEventListener("DOMContentLoaded", function () {
+      const dateInput = document.getElementById("appointmentDate");
+      if (dateInput) {
+        const today = new Date().toISOString().split("T")[0];
+        dateInput.min = today;
+      }
+
+      // Register Service Worker for PWA
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/sw.js')
+          .then((registration) => {
+            console.log('✅ Service Worker registered:', registration);
+          })
+          .catch((error) => {
+            console.warn('⚠️ Service Worker registration failed:', error);
+          });
+      }
+    });
+
+    // FAQ Toggle Functionality
+    document.addEventListener("DOMContentLoaded", function() {
+      const faqItems = document.querySelectorAll('.faq-item');
+      faqItems.forEach(item => {
+        const question = item.querySelector('.faq-question');
+        question.addEventListener('click', () => {
+          // Close others
+          faqItems.forEach(otherItem => {
+            if (otherItem !== item) otherItem.classList.remove('active');
+          });
+          item.classList.toggle('active');
+        });
+      });
+    });
+  </script>
+  <!-- Auth Modal -->
+  <div class="modal-overlay" id="authModal" style="display: none;">
+    <div class="auth-modal">
+      <button class="modal-close" onclick="closeAuthModal()">
+        <i class="fas fa-times"></i>
+      </button>
+      <div class="auth-header">
+        <h2>Welcome Back</h2>
+        <p>Sign in to access your detailed health records</p>
+      </div>
+
+      <div class="auth-options">
+        <button type="button" class="auth-btn-google" onclick="handleGoogleLogin()" id="btnGoogle">
+          <img src="https://www.google.com/favicon.ico" alt="Google" width="20">
+          <span>Continue with Google</span>
+        </button>
+      </div>
+
+      <div class="auth-form">
+        <div id="authError" style="display:none; color: #dc2626; background: var(--danger-bg) ; padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 0.9rem; text-align: center;"></div>
+      </div>
+
+      <p style="text-align: center; color: #64748b; font-size: 0.8rem; margin-top: 20px;">
+        By continuing, you agree to our Terms of Service and Privacy Policy.
+      </p>
+    </div>
+  </div>
+
+</body>
+
+</html>

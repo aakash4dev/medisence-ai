@@ -867,7 +867,7 @@ def register_auth_routes(app, db, auth_manager, otp_service):
             )
 
         except Exception as e:
-            print(f"❌ Session check error: {str(e)}")
+            print(f"[ERROR] Session check error: {str(e)}")
             return jsonify({"success": False, "authenticated": False}), 401
 
-    print("✅ Authentication routes registered successfully")
+    print("[OK] Authentication routes registered successfully")

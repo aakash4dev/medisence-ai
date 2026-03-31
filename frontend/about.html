@@ -1,6 +1,19 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark" class="dark-mode">
   <head>
+    <script>
+      (function() {
+        const storageKey = 'medicsense_dark_mode';
+        const storedTheme = localStorage.getItem(storageKey);
+        const isDark = storedTheme === null ? true : storedTheme === '1';
+        document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+        if (isDark) {
+          document.documentElement.classList.add('dark-mode');
+        } else {
+          document.documentElement.classList.remove('dark-mode');
+        }
+      })();
+    </script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>About Us - MedicSense AI</title>
@@ -14,7 +27,7 @@
         font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
           sans-serif;
         line-height: 1.6;
-        color: #1e293b;
+        color: var(--text-main);
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         min-height: 100vh;
       }
@@ -51,7 +64,7 @@
       }
 
       .legal-content {
-        background: white;
+        background: var(--bg-card);
         border-radius: 20px;
         padding: 40px;
         box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
@@ -96,7 +109,7 @@
       }
 
       .highlight-box {
-        background: #fef2f2;
+        background: var(--danger-bg);
         border-left: 4px solid #ef4444;
         padding: 20px;
         margin: 25px 0;
@@ -104,7 +117,7 @@
       }
 
       .info-box {
-        background: #f0f9ff;
+        background: var(--bg-glass);
         border-left: 4px solid #667eea;
         padding: 20px;
         margin: 25px 0;
@@ -115,7 +128,7 @@
         display: inline-flex;
         align-items: center;
         gap: 10px;
-        background: white;
+        background: var(--bg-card);
         color: #667eea;
         padding: 12px 24px;
         border-radius: 10px;
@@ -176,13 +189,58 @@
           font-size: 1.5rem;
         }
       }
+
+      /* Dark Mode Overrides */
+      [data-theme="dark"] .legal-content {
+        background: rgba(15, 23, 42, 0.95) !important;
+        border: 1px solid rgba(148, 163, 184, 0.2);
+      }
+
+      [data-theme="dark"] .legal-section h2 {
+        color: #818cf8 !important;
+      }
+
+      [data-theme="dark"] .legal-section h3 {
+        color: #a78bfa !important;
+      }
+
+      [data-theme="dark"] .legal-section p,
+      [data-theme="dark"] .legal-section li {
+        color: #cbd5e1 !important;
+      }
+
+      [data-theme="dark"] .feature-card {
+        background: rgba(30, 41, 59, 0.6) !important;
+        border-color: rgba(148, 163, 184, 0.2);
+      }
+
+      [data-theme="dark"] .feature-card h4 {
+        color: #a5b4fc !important;
+      }
+
+      [data-theme="dark"] .feature-card p {
+        color: #cbd5e1 !important;
+      }
+
+      [data-theme="dark"] .back-button {
+        background: rgba(255, 255, 255, 0.15) !important;
+        color: white !important;
+      }
+
+      [data-theme="dark"] .highlight-box {
+        background: rgba(239, 68, 68, 0.15) !important;
+      }
+
+      [data-theme="dark"] .info-box {
+        background: rgba(99, 102, 241, 0.15) !important;
+      }
     </style>
   </head>
   <body>
     <div class="legal-container">
-      <a href="index.html" class="back-button">
-        <i class="fas fa-arrow-left"></i> Back to Home
-      </a>
+      <button onclick="window.history.back()" class="back-button">
+        <i class="fas fa-arrow-left"></i> Back
+      </button>
 
       <div class="legal-header">
         <h1>
@@ -352,8 +410,10 @@
             </li>
             <li><i class="fas fa-phone"></i> Phone: +91-1800-633-4224</li>
             <li>
-              <i class="fas fa-map-marker-alt"></i> Greater Noida, Uttar
-              Pradesh, India
+              <i class="fas fa-map-marker-alt"></i>
+              <span class="dynamic-location"
+                >Greater Noida, Uttar Pradesh, India</span
+              >
             </li>
           </ul>
         </div>
@@ -377,7 +437,8 @@
           "
         >
           <p style="color: #64748b">
-            <i class="fas fa-calendar"></i> Last Updated: January 16, 2026
+            <i class="fas fa-calendar"></i> Last Updated:
+            <span class="dynamic-date">January 16, 2026</span>
           </p>
         </div>
       </div>
@@ -392,6 +453,31 @@
           const currentUrl = backButton.getAttribute("href");
           backButton.setAttribute("href", currentUrl + window.location.hash);
         }
+
+        const today = new Date();
+        const formattedDate = today.toLocaleDateString("en-US", {
+          month: "long",
+          day: "numeric",
+          year: "numeric",
+        });
+
+        document.querySelectorAll(".dynamic-date").forEach((el) => {
+          el.textContent = formattedDate;
+        });
+
+        fetch("https://ipapi.co/json/")
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.city && data.country_name) {
+              const locationString = `${data.city}, ${
+                data.region ? data.region + ", " : ""
+              }${data.country_name}`;
+              document.querySelectorAll(".dynamic-location").forEach((el) => {
+                el.textContent = locationString;
+              });
+            }
+          })
+          .catch((err) => console.log("Location fetch failed, using fallback"));
       });
     </script>
   </body>

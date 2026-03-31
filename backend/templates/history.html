@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark" class="dark-mode">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Health Timeline - MedicSense AI</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="style_ultra.css" />
+    <script>
+      (function () {
+        const storageKey = "medicsense_dark_mode";
+        const storedTheme = localStorage.getItem(storageKey);
+        const isDark = storedTheme === null ? true : storedTheme === "1";
+        document.documentElement.setAttribute(
+          "data-theme",
+          isDark ? "dark" : "light"
+        );
+        if (isDark) document.documentElement.classList.add("dark-mode");
+        else document.documentElement.classList.remove("dark-mode");
+      })();
+    </script>
+    <style>
+      body {
+        padding-top: 0 !important;
+        background: var(--bg-main);
+      }
+
+      .timeline-page-container {
+        min-height: 100vh;
+        padding: 2rem;
+        max-width: 1000px;
+        margin: 0 auto;
+      }
+
+      [data-theme="dark"] .timeline-page-container {
+        background: transparent;
+      }
+
+      .tl-header {
+        margin-bottom: 3rem;
+        text-align: center;
+      }
+
+      .tl-header h1 {
+        font-size: 2.5rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 0.5rem;
+      }
+
+      .tl-header p {
+        color: #94a3b8;
+        font-size: 1.1rem;
+      }
+
+      .back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--text-main);
+        text-decoration: none;
+        font-weight: 500;
+        padding: 0.75rem 1.25rem;
+        background: var(--bg-card);
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        transition: all 0.2s;
+        position: absolute;
+        top: 2rem;
+        left: 2rem;
+      }
+
+      .back-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        color: #667eea;
+      }
+
+      /* Premium Timeline Styling */
+      .timeline {
+        position: relative;
+        padding: 2rem 0;
+      }
+
+      .timeline::before {
+        content: "";
+        position: absolute;
+        left: 155px;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        background: linear-gradient(
+          to bottom,
+          transparent,
+          #667eea,
+          #48cae4,
+          transparent
+        );
+        border-radius: 4px;
+        opacity: 0.35;
+      }
+
+      /* ── Date Group Header ── */
+      .timeline-date-group {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 1.25rem;
+        margin-top: 2.5rem;
+      }
+      .timeline-date-group:first-child {
+        margin-top: 0;
+      }
+      .tl-date-label {
+        font-size: 0.78rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1.2px;
+        color: #667eea;
+        white-space: nowrap;
+        width: 120px;
+        text-align: right;
+      }
+      .tl-date-divider {
+        flex: 1;
+        height: 1px;
+        background: rgba(102, 126, 234, 0.2);
+      }
+
+      /* ── Individual timeline item (no date column — grouped above) ── */
+      .timeline-item {
+        position: relative;
+        margin-bottom: 1rem;
+        padding-left: 60px;
+        display: grid;
+        grid-template-columns: 120px 40px 1fr;
+        align-items: start;
+        gap: 0;
+        opacity: 0;
+        transform: translateY(20px);
+        animation: fadeUp 0.6s forwards;
+      }
+
+      /* Hide individual date (now shown in group header) */
+      .timeline-date {
+        display: none;
+      }
+
+      @keyframes fadeUp {
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .timeline-icon {
+        grid-column: 2;
+        position: relative;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: var(--bg-card);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        box-shadow: 0 0 0 6px var(--bg-main), 0 4px 10px rgba(0, 0, 0, 0.2);
+        z-index: 2;
+        margin-top: 2px;
+        flex-shrink: 0;
+      }
+
+      .icon-chat {
+        color: #8b5cf6;
+        border: 2px solid #8b5cf6;
+      }
+      .icon-image {
+        color: #3b82f6;
+        border: 2px solid #3b82f6;
+      }
+      .icon-book {
+        color: #10b981;
+        border: 2px solid #10b981;
+      }
+      .icon-alert {
+        color: #ef4444;
+        border: 2px solid #ef4444;
+      }
+
+      .timeline-content {
+        grid-column: 3;
+        max-width: 720px;
+        background: var(--bg-card);
+        border-radius: 14px;
+        padding: 1.25rem 1.5rem;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.07);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        position: relative;
+        transition: transform 0.3s, box-shadow 0.3s;
+        margin-left: 16px;
+      }
+
+      .timeline-content:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+      }
+
+      .timeline-content::before {
+        content: "";
+        position: absolute;
+        left: -9px;
+        top: 12px;
+        border-style: solid;
+        border-width: 9px 9px 9px 0;
+        border-color: transparent var(--bg-card) transparent transparent;
+      }
+
+      /* ── Emergency card strong styling ── */
+      .emergency-card {
+        border-left: 4px solid #ff4d4f !important;
+        background: rgba(255, 77, 79, 0.06) !important;
+      }
+      .emergency-card:hover {
+        box-shadow: 0 12px 30px rgba(255, 77, 79, 0.15) !important;
+      }
+
+      .event-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        padding-bottom: 0.75rem;
+      }
+
+      .event-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: var(--text-main);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .event-badge {
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .badge-ai {
+        background: rgba(139, 92, 246, 0.1);
+        color: #c4b5fd;
+      }
+      .badge-clinical {
+        background: rgba(16, 185, 129, 0.1);
+        color: #6ee7b7;
+      }
+      .badge-urgent {
+        background: rgba(239, 68, 68, 0.1);
+        color: #fca5a5;
+      }
+
+      .event-body p {
+        color: #94a3b8;
+        line-height: 1.6;
+        margin: 0 0 1rem 0;
+      }
+
+      /* Embedded Sub-Cards inside timeline */
+      .embedded-card {
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 12px;
+        padding: 1rem;
+        border: 1px solid rgba(255, 255, 255, 0.02);
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+      }
+
+      [data-theme="light"] .embedded-card {
+        background: rgba(0, 0, 0, 0.03);
+      }
+
+      .img-placeholder {
+        width: 80px;
+        height: 80px;
+        border-radius: 8px;
+        background: url("https://images.unsplash.com/photo-1603554471465-bde1194eb094?auto=format&fit=crop&q=80&w=200")
+          center/cover;
+      }
+
+      .card-info h4 {
+        margin: 0 0 0.25rem 0;
+        color: var(--text-main);
+      }
+      .card-info p {
+        margin: 0;
+        font-size: 0.85rem;
+        color: #64748b;
+      }
+
+      /* Responsive tweaks */
+      @media (max-width: 768px) {
+        .back-btn {
+          top: 1rem;
+          left: 1rem;
+        }
+        .timeline::before {
+          left: 20px;
+        }
+        .timeline-item {
+          padding-left: 10px;
+          grid-template-columns: 0px 36px 1fr;
+        }
+        .tl-date-label {
+          width: auto;
+          font-size: 0.72rem;
+        }
+        .timeline-content {
+          margin-left: 10px;
+          max-width: 100%;
+        }
+        .event-header {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 0.5rem;
+        }
+      }
+
+      /* Loading state */
+      .tl-loading {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: #64748b;
+      }
+      .tl-loading i {
+        font-size: 2.5rem;
+        color: #667eea;
+        margin-bottom: 1rem;
+        animation: spin 1s linear infinite;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Empty state */
+      .tl-empty {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: #64748b;
+      }
+      .tl-empty i {
+        font-size: 3rem;
+        color: #334155;
+        margin-bottom: 1rem;
+      }
+      .tl-empty h3 {
+        color: #94a3b8;
+        margin-bottom: 0.5rem;
+      }
+
+      /* Time label on each card */
+      .event-time {
+        font-size: 0.78rem;
+        color: #64748b;
+        margin-top: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+      }
+
+      /* Symptom badge */
+      .badge-health {
+        background: rgba(251, 191, 36, 0.1);
+        color: #fbbf24;
+      }
+    </style>
+  </head>
+  <body>
+    <button onclick="window.history.back()" class="back-btn">
+      <i class="fas fa-arrow-left"></i> Back
+    </button>
+
+    <div class="timeline-page-container">
+      <div class="tl-header">
+        <h1><i class="fas fa-stream"></i> Health Timeline</h1>
+        <p>Your AI Health Activity Timeline</p>
+        <p style="font-size: 0.95rem; color: #64748b; margin-top: 4px">
+          Track symptoms, doctor visits, and AI health insights over time.
+        </p>
+      </div>
+
+      <!-- Dynamic timeline rendered by JS -->
+      <div class="timeline" id="timelineContainer">
+        <div class="tl-loading" id="tlLoading">
+          <i class="fas fa-circle-notch"></i>
+          <p>Loading your health timeline…</p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // ─────────────────────────────────────────────────────────────────────────
+      //  DYNAMIC DATE HELPERS
+      // ─────────────────────────────────────────────────────────────────────────
+
+      /**
+       * formatTimelineDate(dateString)
+       * Converts any ISO timestamp into a human-readable date group label.
+       *   "Today", "Yesterday", "3 days ago", "Mar 12", "Dec 20, 2025"
+       */
+      function formatTimelineDate(dateString) {
+        if (!dateString) return "Unknown date";
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) return "Unknown date";
+
+        const now = new Date();
+        // Midnight of today
+        const todayStart = new Date(
+          now.getFullYear(),
+          now.getMonth(),
+          now.getDate()
+        );
+        const eventStart = new Date(
+          date.getFullYear(),
+          date.getMonth(),
+          date.getDate()
+        );
+        const diffDays = Math.round((todayStart - eventStart) / 86400000);
+
+        if (diffDays === 0) return "Today";
+        if (diffDays === 1) return "Yesterday";
+        if (diffDays > 1 && diffDays <= 6) return `${diffDays} days ago`;
+
+        // Older — show "Mar 12" or "Dec 20, 2025"
+        const monthNames = [
+          "Jan",
+          "Feb",
+          "Mar",
+          "Apr",
+          "May",
+          "Jun",
+          "Jul",
+          "Aug",
+          "Sep",
+          "Oct",
+          "Nov",
+          "Dec",
+        ];
+        const m = monthNames[date.getMonth()];
+        const d = date.getDate();
+        const y = date.getFullYear();
+        if (y === now.getFullYear()) return `${m} ${d}`;
+        return `${m} ${d}, ${y}`;
+      }
+
+      /**
+       * formatEventTime(dateString)
+       * Returns just the time part e.g. "10:30 AM"
+       */
+      function formatEventTime(dateString) {
+        if (!dateString) return "";
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) return "";
+        return date.toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      }
+
+      /**
+       * groupKey(dateString)
+       * Returns a stable string key for grouping (YYYY-MM-DD)
+       */
+      function groupKey(dateString) {
+        if (!dateString) return "unknown";
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) return "unknown";
+        return date.toISOString().slice(0, 10); // "2026-03-07"
+      }
+
+      // ─────────────────────────────────────────────────────────────────────────
+      //  EVENT CARD BUILDERS
+      // ─────────────────────────────────────────────────────────────────────────
+
+      function getIconConfig(type) {
+        const map = {
+          appointment: {
+            cls: "icon-book",
+            fa: "fa-calendar-check",
+            emoji: "📅",
+          },
+          ai_chat: { cls: "icon-chat", fa: "fa-robot", emoji: "🤖" },
+          image_analysis: { cls: "icon-image", fa: "fa-camera", emoji: "📷" },
+          emergency: { cls: "icon-alert", fa: "fa-ambulance", emoji: "🚨" },
+          symptom: { cls: "icon-chat", fa: "fa-heartbeat", emoji: "🩺" },
+        };
+        return (
+          map[type] || { cls: "icon-chat", fa: "fa-notes-medical", emoji: "📋" }
+        );
+      }
+
+      function getBadgeClass(badge) {
+        const map = {
+          AI: "badge-ai",
+          Analysis: "badge-ai",
+          Clinical: "badge-clinical",
+          Emergency: "badge-urgent",
+          Health: "badge-health",
+        };
+        return map[badge] || "badge-ai";
+      }
+
+      function buildEventCard(event, delay) {
+        const icon = getIconConfig(event.type);
+        const badgeCls = getBadgeClass(event.badge);
+        const timeLabel = formatEventTime(event.created_at);
+        const isEmergency = event.type === "emergency";
+        const contentClass = isEmergency
+          ? "timeline-content emergency-card"
+          : "timeline-content";
+
+        let bodyHTML = "";
+
+        if (event.type === "appointment") {
+          bodyHTML = `
+            <p>${escHtml(event.description || "General consultation")}</p>
+            <div class="embedded-card">
+              <div class="card-info" style="width:100%">
+                <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+                  <h4>${escHtml(event.doctor || "Doctor")}</h4>
+                  <span style="color:#10b981;font-weight:700">
+                    <i class="fas fa-check-circle"></i> ${escHtml(
+                      event.status || "Confirmed"
+                    )}
+                  </span>
+                </div>
+                ${
+                  event.time
+                    ? `<p><i class="fas fa-clock"></i> ${escHtml(event.time)}${
+                        event.date ? " · " + escHtml(event.date) : ""
+                      }</p>`
+                    : ""
+                }
+              </div>
+            </div>`;
+        } else if (event.type === "ai_chat") {
+          // ── AI Chat card — rich grouped session view ──
+          const msgCount =
+            event.user_msg_count || Math.ceil((event.message_count || 2) / 2);
+          const msgLabel =
+            msgCount === 1 ? "1 message" : `${msgCount} messages exchanged`;
+          const durationLabel = event.session_minutes
+            ? `Session duration: ${event.session_minutes} min`
+            : "";
+          const startTime = event.session_start
+            ? formatEventTime(event.session_start)
+            : "";
+          const endTime = event.session_end
+            ? formatEventTime(event.session_end)
+            : "";
+          const timeRange =
+            startTime && endTime && startTime !== endTime
+              ? `${startTime} – ${endTime}`
+              : startTime || "";
+
+          const cleanedAI = escHtml(
+            truncate(stripMd(event.ai_response || ""), 180)
+          );
+          const userQuery = escHtml(
+            event.description || "AI health consultation"
+          );
+
+          bodyHTML = `
+            <p style="margin:0 0 0.6rem">
+              <span style="color:#94a3b8;font-size:0.82rem">User asked:</span>
+              <span style="font-weight:500"> "${userQuery}"</span>
+            </p>
+            ${
+              cleanedAI
+                ? `
+            <div style="background:rgba(139,92,246,0.07);padding:0.75rem 1rem;border-radius:8px;border-left:3px solid #8b5cf6;margin-bottom:0.6rem">
+              <p style="margin:0 0 3px;font-weight:600;color:#a78bfa;font-size:0.8rem">AI Response</p>
+              <p style="margin:0;font-size:0.875rem;color:#94a3b8;line-height:1.5">${cleanedAI}</p>
+            </div>`
+                : ""
+            }
+            <div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:0.4rem;font-size:0.8rem;color:#64748b">
+              <span><i class="fas fa-comment-dots" style="margin-right:4px;color:#8b5cf6"></i>${escHtml(
+                msgLabel
+              )}</span>
+              ${
+                durationLabel
+                  ? `<span>·</span><span><i class="fas fa-stopwatch" style="margin-right:4px;color:#8b5cf6"></i>${escHtml(
+                      durationLabel
+                    )}</span>`
+                  : ""
+              }
+              ${
+                timeRange
+                  ? `<span>·</span><span><i class="fas fa-clock" style="margin-right:4px;color:#8b5cf6"></i>${escHtml(
+                      timeRange
+                    )}</span>`
+                  : ""
+              }
+            </div>`;
+        } else if (event.type === "emergency") {
+          bodyHTML = `
+            <p style="color:#fca5a5">${escHtml(
+              event.description || "Emergency detected"
+            )}</p>
+            <div style="background:rgba(239,68,68,0.1);padding:1rem;border-radius:8px;border:1px solid rgba(239,68,68,0.3)">
+              <p style="margin:0;font-weight:700;color:#ef4444">
+                <i class="fas fa-exclamation-triangle"></i> Emergency Alert
+              </p>
+              <p style="margin:5px 0 0;font-size:0.9rem">
+                Emergency protocol was activated. You were directed to call 112.
+              </p>
+            </div>`;
+        } else if (event.type === "image_analysis") {
+          const sevColor = {
+            emergency: "#ef4444",
+            severe: "#f97316",
+            moderate: "#fbbf24",
+            mild: "#10b981",
+          };
+          const sev = (event.severity || "mild").toLowerCase();
+          bodyHTML = `
+            <p>${escHtml(
+              event.description || "Image analyzed by Gemini Vision AI."
+            )}</p>
+            <div class="embedded-card">
+              <div class="card-info">
+                <h4 style="margin:0 0 0.25rem">${escHtml(
+                  event.title.replace("Vision AI: ", "") || "Analysis"
+                )}</h4>
+                <p>Severity: <span style="color:${
+                  sevColor[sev] || "#fbbf24"
+                };font-weight:bold">
+                  ${escHtml(
+                    sev.charAt(0).toUpperCase() + sev.slice(1)
+                  )}</span></p>
+              </div>
+            </div>`;
+        } else if (event.type === "symptom") {
+          const sevLabel =
+            ["", "Mild", "Moderate", "Serious"][event.severity] || "Unknown";
+          const sevColor =
+            ["", "#10b981", "#fbbf24", "#ef4444"][event.severity] || "#94a3b8";
+          bodyHTML = `
+            <p>${escHtml(event.description || "Symptom check recorded.")}</p>
+            <p style="margin:0">Severity: <span style="color:${sevColor};font-weight:600">${sevLabel}</span></p>`;
+        } else {
+          bodyHTML = `<p>${escHtml(
+            event.description || "Health activity recorded."
+          )}</p>`;
+        }
+
+        return `
+          <div class="timeline-item" style="animation-delay:${delay}s">
+            <div class="timeline-icon ${icon.cls}">
+              <i class="fas ${icon.fa}"></i>
+            </div>
+            <div class="${contentClass}">
+              <div class="event-header">
+                <h3 class="event-title">${icon.emoji} ${escHtml(
+          event.title
+        )}</h3>
+                <span class="event-badge ${badgeCls}">${escHtml(
+          event.badge || ""
+        )}</span>
+              </div>
+              <div class="event-body">
+                ${bodyHTML}
+                ${
+                  timeLabel && event.type !== "ai_chat"
+                    ? `<p class="event-time"><i class="fas fa-clock"></i> ${timeLabel}</p>`
+                    : ""
+                }
+              </div>
+            </div>
+          </div>`;
+      }
+
+      // ─────────────────────────────────────────────────────────────────────────
+      //  DEMO EVENTS — dynamic timestamps (always relative to NOW)
+      // ─────────────────────────────────────────────────────────────────────────
+
+      function getDemoEvents() {
+        const now = new Date();
+        const hoursAgo = (h) => new Date(now - h * 3600000).toISOString();
+        const daysAgo = (d) => new Date(now - d * 86400000).toISOString();
+
+        return [
+          {
+            type: "appointment",
+            title: "Appointment Confirmed",
+            doctor: "Dr. Sharma (General Physician)",
+            description: "Fever, body ache, and mild headache",
+            time: "Tomorrow at 10:30 AM",
+            status: "Confirmed",
+            created_at: hoursAgo(2),
+            badge: "Clinical",
+          },
+          {
+            type: "ai_chat",
+            title: "AI Triage: Viral Infection Assessment",
+            description: "I have fever and headache since yesterday",
+            ai_response:
+              "Triage Level: Mild. Symptoms are consistent with a viral infection or flu. Monitoring temperature is advised. Consult Dr. Sharma if symptoms worsen after 48 hours.",
+            user_msg_count: 3,
+            message_count: 6,
+            session_minutes: 9,
+            session_start: hoursAgo(3.15),
+            session_end: hoursAgo(3),
+            created_at: hoursAgo(3),
+            badge: "AI",
+          },
+          {
+            type: "image_analysis",
+            title: "Vision AI: Skin Condition Check",
+            description:
+              "You uploaded an image of a skin rash for initial analysis by Gemini Vision AI.",
+            severity: "mild",
+            created_at: daysAgo(5),
+            badge: "Analysis",
+          },
+          {
+            type: "emergency",
+            title: "Emergency Protocol Activated",
+            description:
+              "The AI detected potential emergency keywords regarding severe chest pain.",
+            created_at: daysAgo(30),
+            badge: "Emergency",
+          },
+        ];
+      }
+
+      // ─────────────────────────────────────────────────────────────────────────
+      //  RENDER TIMELINE
+      // ─────────────────────────────────────────────────────────────────────────
+
+      function renderTimeline(events) {
+        const container = document.getElementById("timelineContainer");
+        container.innerHTML = "";
+
+        if (!events || events.length === 0) {
+          container.innerHTML = `
+            <div class="tl-empty">
+              <i class="fas fa-history"></i>
+              <h3>No health events yet</h3>
+              <p>Your timeline will fill up as you use MedicSense AI.<br>
+                 Start by chatting with the AI assistant!</p>
+            </div>`;
+          return;
+        }
+
+        // Sort newest first
+        events.sort((a, b) => {
+          const da = new Date(a.created_at || 0);
+          const db = new Date(b.created_at || 0);
+          return db - da;
+        });
+
+        // Group by calendar day
+        const groups = new Map(); // key (YYYY-MM-DD) → [events]
+        for (const ev of events) {
+          const key = groupKey(ev.created_at);
+          if (!groups.has(key)) groups.set(key, []);
+          groups.get(key).push(ev);
+        }
+
+        let delay = 0.05;
+        for (const [key, groupEvents] of groups) {
+          // Date group header
+          const label = formatTimelineDate(groupEvents[0].created_at);
+          const groupEl = document.createElement("div");
+          groupEl.className = "timeline-date-group";
+          groupEl.innerHTML = `
+            <span class="tl-date-label">${escHtml(label)}</span>
+            <div class="tl-date-divider"></div>`;
+          container.appendChild(groupEl);
+
+          // Cards in this group
+          for (const ev of groupEvents) {
+            const itemEl = document.createElement("div");
+            itemEl.innerHTML = buildEventCard(ev, delay);
+            container.appendChild(itemEl.firstElementChild);
+            delay += 0.1;
+          }
+        }
+      }
+
+      // ─────────────────────────────────────────────────────────────────────────
+      //  FETCH FROM BACKEND
+      // ─────────────────────────────────────────────────────────────────────────
+
+      async function loadTimeline() {
+        // Get current user_id from Firebase auth storage
+        const userId =
+          localStorage.getItem("medicsense_user_id") ||
+          sessionStorage.getItem("userId") ||
+          null;
+
+        if (!userId) {
+          // Not logged in — show dynamic demo
+          renderTimeline(getDemoEvents());
+          return;
+        }
+
+        try {
+          const res = await fetch(
+            `/api/history?user_id=${encodeURIComponent(userId)}`
+          );
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          const data = await res.json();
+
+          if (data.success && data.events && data.events.length > 0) {
+            renderTimeline(data.events);
+          } else {
+            // Backend returned empty — show dynamic demo with real timestamps
+            renderTimeline(getDemoEvents());
+          }
+        } catch (err) {
+          console.warn("[Timeline] API fetch failed, using demo:", err);
+          renderTimeline(getDemoEvents());
+        }
+      }
+
+      // ─────────────────────────────────────────────────────────────────────────
+      //  UTILITIES
+      // ─────────────────────────────────────────────────────────────────────────
+
+      function escHtml(str) {
+        if (!str) return "";
+        return String(str)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+
+      function truncate(str, max) {
+        if (!str) return "";
+        return str.length > max ? str.slice(0, max) + "…" : str;
+      }
+
+      /** Strip markdown bold/italic markers before displaying AI text */
+      function stripMd(str) {
+        if (!str) return "";
+        return str
+          .replace(/\*\*/g, "") // bold
+          .replace(/\*/g, "") // italic
+          .replace(/#+ /g, "") // headings
+          .replace(/`/g, ""); // inline code
+      }
+
+      // ─────────────────────────────────────────────────────────────────────────
+      //  INIT
+      // ─────────────────────────────────────────────────────────────────────────
+      document.addEventListener("DOMContentLoaded", loadTimeline);
+    </script>
+  </body>
+</html>

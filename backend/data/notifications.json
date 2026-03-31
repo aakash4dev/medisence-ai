@@ -414,5 +414,1531 @@
     "read_at": "2026-01-18T16:59:00.556571+00:00",
     "dedupe_key": "apt:APT4C7FB408:confirmation",
     "deleted_at": null
+  },
+  {
+    "id": "de1f8561-598d-441c-8fc3-04db987c20f9",
+    "user_id": "guest_3hn7nzuymkypqtg9",
+    "type": "appointment",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment with your doctor on 2026-02-18 at 11:30 has been confirmed.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APTEB4F9FCB",
+      "doctor_id": "dr_aakash",
+      "date": "2026-02-18",
+      "time": "11:30",
+      "deep_link": "#appointments"
+    },
+    "created_at": "2026-02-14T20:24:56.820713+00:00",
+    "read_at": "2026-02-14T20:59:18.314353+00:00",
+    "dedupe_key": "apt:APTEB4F9FCB:confirmation",
+    "deleted_at": null
+  },
+  {
+    "id": "712fb43d-baf3-49b5-bccd-7edfa4be3029",
+    "user_id": "guest_3hn7nzuymkypqtg9",
+    "type": "appointment",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment with your doctor on 2026-02-26 at 14:30 has been confirmed.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APT8DBF5550",
+      "doctor_id": "dr_patel",
+      "date": "2026-02-26",
+      "time": "14:30",
+      "deep_link": "#appointments"
+    },
+    "created_at": "2026-02-14T20:58:46.749027+00:00",
+    "read_at": "2026-02-14T20:59:17.270886+00:00",
+    "dedupe_key": "apt:APT8DBF5550:confirmation",
+    "deleted_at": null
+  },
+  {
+    "id": "441f26e5-4e02-427d-9850-5d51487a821b",
+    "user_id": "guest_3hn7nzuymkypqtg9",
+    "type": "appointment",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment with your doctor on 2026-02-17 at 14:30 has been confirmed.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APT01B5BC37",
+      "doctor_id": "dr_aakash",
+      "date": "2026-02-17",
+      "time": "14:30",
+      "deep_link": "#appointments"
+    },
+    "created_at": "2026-02-15T08:47:53.323380+00:00",
+    "read_at": "2026-02-24T07:40:07.110294+00:00",
+    "dedupe_key": "apt:APT01B5BC37:confirmation",
+    "deleted_at": null
+  },
+  {
+    "id": "e3a56efd-be6b-485d-b769-ec9f5786fdcd",
+    "user_id": "test_user_verify",
+    "type": "appointment",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment with your doctor on 2026-03-01 at 10:00 has been confirmed.",
+    "is_read": false,
+    "metadata": {
+      "appointment_id": "APTFC5707F0",
+      "doctor_id": "1",
+      "date": "2026-03-01",
+      "time": "10:00",
+      "deep_link": "#appointments"
+    },
+    "created_at": "2026-02-15T10:12:33.725108+00:00",
+    "read_at": null,
+    "dedupe_key": "apt:APTFC5707F0:confirmation",
+    "deleted_at": null
+  },
+  {
+    "id": "5ab5b5c1-788e-4d0b-a8db-0fffd53bde5c",
+    "user_id": "test_user_verify",
+    "type": "appointment",
+    "title": "Appointment Cancelled",
+    "message": "Your appointment on 2026-03-01 at 10:00 has been cancelled.",
+    "is_read": false,
+    "metadata": {
+      "appointment_id": "APTFC5707F0",
+      "deep_link": "#appointments"
+    },
+    "created_at": "2026-02-15T10:12:37.841886+00:00",
+    "read_at": null,
+    "dedupe_key": "apt:APTFC5707F0:cancelled",
+    "deleted_at": null
+  },
+  {
+    "id": "c3bdf642-e78f-4dd7-885a-852cff137005",
+    "user_id": "test_user_verify",
+    "type": "appointment",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment with your doctor on 2026-03-01 at 10:00 has been confirmed.",
+    "is_read": false,
+    "metadata": {
+      "appointment_id": "APT7C460B71",
+      "doctor_id": "1",
+      "date": "2026-03-01",
+      "time": "10:00",
+      "deep_link": "#appointments"
+    },
+    "created_at": "2026-02-15T10:12:57.011086+00:00",
+    "read_at": null,
+    "dedupe_key": "apt:APT7C460B71:confirmation",
+    "deleted_at": null
+  },
+  {
+    "id": "6abc7db5-9b35-4f2c-b8be-873a76023053",
+    "user_id": "test_user_verify",
+    "type": "appointment",
+    "title": "Appointment Cancelled",
+    "message": "Your appointment on 2026-03-01 at 10:00 has been cancelled.",
+    "is_read": false,
+    "metadata": {
+      "appointment_id": "APT7C460B71",
+      "deep_link": "#appointments"
+    },
+    "created_at": "2026-02-15T10:13:01.133755+00:00",
+    "read_at": null,
+    "dedupe_key": "apt:APT7C460B71:cancelled",
+    "deleted_at": null
+  },
+  {
+    "id": "a58c5798-aa8d-4c3b-9aa7-4fff66a80c96",
+    "user_id": "test_user_verify",
+    "type": "appointment",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment with your doctor on 2026-03-01 at 10:00 has been confirmed.",
+    "is_read": false,
+    "metadata": {
+      "appointment_id": "APT4F21129D",
+      "doctor_id": "1",
+      "date": "2026-03-01",
+      "time": "10:00",
+      "deep_link": "#appointments"
+    },
+    "created_at": "2026-02-15T10:13:30.194024+00:00",
+    "read_at": null,
+    "dedupe_key": "apt:APT4F21129D:confirmation",
+    "deleted_at": null
+  },
+  {
+    "id": "6eb53951-bbcc-43ce-8912-129d8d771e74",
+    "user_id": "test_user_verify",
+    "type": "appointment",
+    "title": "Appointment Cancelled",
+    "message": "Your appointment on 2026-03-01 at 10:00 has been cancelled.",
+    "is_read": false,
+    "metadata": {
+      "appointment_id": "APT4F21129D",
+      "deep_link": "#appointments"
+    },
+    "created_at": "2026-02-15T10:13:34.331810+00:00",
+    "read_at": null,
+    "dedupe_key": "apt:APT4F21129D:cancelled",
+    "deleted_at": null
+  },
+  {
+    "id": "bbc723cf-4da2-4899-9b90-1afe112db91b",
+    "user_id": "user_0",
+    "type": "appointment",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment with your doctor on 2026-12-31 at 10:00 has been confirmed.",
+    "is_read": false,
+    "metadata": {
+      "appointment_id": "APT8A59946E",
+      "doctor_id": "concurrency_test_doc",
+      "date": "2026-12-31",
+      "time": "10:00",
+      "deep_link": "#appointments"
+    },
+    "created_at": "2026-02-15T10:32:38.676998+00:00",
+    "read_at": null,
+    "dedupe_key": "apt:APT8A59946E:confirmation",
+    "deleted_at": null
+  },
+  {
+    "id": "7a523bf2-e868-414a-98f5-7e1b9ce42d21",
+    "user_id": "user_2",
+    "type": "appointment",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment with your doctor on 2026-12-31 at 10:00 has been confirmed.",
+    "is_read": false,
+    "metadata": {
+      "appointment_id": "APT736D6C31",
+      "doctor_id": "concurrency_test_doc",
+      "date": "2026-12-31",
+      "time": "10:00",
+      "deep_link": "#appointments"
+    },
+    "created_at": "2026-02-15T10:32:38.728822+00:00",
+    "read_at": null,
+    "dedupe_key": "apt:APT736D6C31:confirmation",
+    "deleted_at": null
+  },
+  {
+    "id": "63ac4e54-e654-46f7-beb3-8ceb43e73516",
+    "user_id": "user_0",
+    "type": "appointment",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment with your doctor on 2026-12-31 at 10:00 has been confirmed.",
+    "is_read": false,
+    "metadata": {
+      "appointment_id": "APTDB6D2FB8",
+      "doctor_id": "concurrency_test_doc",
+      "date": "2026-12-31",
+      "time": "10:00",
+      "deep_link": "#appointments"
+    },
+    "created_at": "2026-02-15T10:33:04.320335+00:00",
+    "read_at": null,
+    "dedupe_key": "apt:APTDB6D2FB8:confirmation",
+    "deleted_at": null
+  },
+  {
+    "id": "eb33f454-4004-43f8-8bd1-3d2015340396",
+    "user_id": "user_4",
+    "type": "appointment",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment with your doctor on 2026-12-31 at 10:00 has been confirmed.",
+    "is_read": false,
+    "metadata": {
+      "appointment_id": "APT99071F6C",
+      "doctor_id": "concurrency_test_doc",
+      "date": "2026-12-31",
+      "time": "10:00",
+      "deep_link": "#appointments"
+    },
+    "created_at": "2026-02-15T10:33:04.368040+00:00",
+    "read_at": null,
+    "dedupe_key": "apt:APT99071F6C:confirmation",
+    "deleted_at": null
+  },
+  {
+    "id": "a80b4c38-b670-4854-bdc3-aa57649aa172",
+    "user_id": "user_1",
+    "type": "appointment",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment with your doctor on 2026-12-31 at 10:00 has been confirmed.",
+    "is_read": false,
+    "metadata": {
+      "appointment_id": "APTA5D5DA90",
+      "doctor_id": "concurrency_test_doc",
+      "date": "2026-12-31",
+      "time": "10:00",
+      "deep_link": "#appointments"
+    },
+    "created_at": "2026-02-15T10:33:35.016743+00:00",
+    "read_at": null,
+    "dedupe_key": "apt:APTA5D5DA90:confirmation",
+    "deleted_at": null
+  },
+  {
+    "id": "e5def250-b5f4-406d-aceb-ba626e73bac4",
+    "user_id": "user_2",
+    "type": "appointment",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment with your doctor on 2026-12-31 at 10:00 has been confirmed.",
+    "is_read": false,
+    "metadata": {
+      "appointment_id": "APT1B29AA56",
+      "doctor_id": "concurrency_test_doc",
+      "date": "2026-12-31",
+      "time": "10:00",
+      "deep_link": "#appointments"
+    },
+    "created_at": "2026-02-15T10:33:35.041705+00:00",
+    "read_at": null,
+    "dedupe_key": "apt:APT1B29AA56:confirmation",
+    "deleted_at": null
+  },
+  {
+    "id": "e735222c-40c5-4d57-835f-c6e1144b1bee",
+    "user_id": "user_2",
+    "type": "appointment",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment with your doctor on 2026-12-31 at 10:00 has been confirmed.",
+    "is_read": false,
+    "metadata": {
+      "appointment_id": "APTA3FBAB37",
+      "doctor_id": "concurrency_test_doc",
+      "date": "2026-12-31",
+      "time": "10:00",
+      "deep_link": "#appointments"
+    },
+    "created_at": "2026-02-15T10:34:11.268806+00:00",
+    "read_at": null,
+    "dedupe_key": "apt:APTA3FBAB37:confirmation",
+    "deleted_at": null
+  },
+  {
+    "id": "1d7d836f-54b9-45d7-8ed9-45593e14369a",
+    "user_id": "user_4",
+    "type": "appointment",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment with your doctor on 2026-12-31 at 10:00 has been confirmed.",
+    "is_read": false,
+    "metadata": {
+      "appointment_id": "APT55DCFD05",
+      "doctor_id": "concurrency_test_doc",
+      "date": "2026-12-31",
+      "time": "10:00",
+      "deep_link": "#appointments"
+    },
+    "created_at": "2026-02-15T10:34:39.381468+00:00",
+    "read_at": null,
+    "dedupe_key": "apt:APT55DCFD05:confirmation",
+    "deleted_at": null
+  },
+  {
+    "id": "8d0d8672-7868-463f-ba43-8e182c959c83",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment with your doctor is confirmed for 2026-02-18 at 15:00.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APTC4F0E6DB",
+      "deep_link": "#appointments"
+    },
+    "created_at": "2026-02-15T12:21:55.001966+00:00",
+    "read_at": "2026-02-15T12:21:59.212631+00:00",
+    "dedupe_key": "apt:APTC4F0E6DB:confirmation",
+    "deleted_at": null
+  },
+  {
+    "id": "57341417-d205-436a-b54b-de0a0d042833",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment with your doctor is confirmed for 2026-02-18 at 15:30.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APT99CEDF78",
+      "deep_link": "#appointments"
+    },
+    "created_at": "2026-02-15T12:22:16.985078+00:00",
+    "read_at": "2026-02-15T12:22:19.428228+00:00",
+    "dedupe_key": "apt:APT99CEDF78:confirmation",
+    "deleted_at": null
+  },
+  {
+    "id": "dcc40b87-cc28-47e3-8891-7404e3e4043c",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment with your doctor is confirmed for 2026-02-23 at 15:00.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APTC4788104",
+      "deep_link": "#appointments"
+    },
+    "created_at": "2026-02-15T12:23:15.420798+00:00",
+    "read_at": "2026-02-15T12:23:19.143550+00:00",
+    "dedupe_key": "apt:APTC4788104:confirmation",
+    "deleted_at": null
+  },
+  {
+    "id": "bc6e93f5-1d2d-4876-b249-d74eadbff25a",
+    "user_id": "guest_3iodrnc5mlnq3lqm",
+    "type": "appointment",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment with your doctor is confirmed for 2026-02-24 at 10:30.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APT6F8CF3D5",
+      "deep_link": "#appointments"
+    },
+    "created_at": "2026-02-15T12:30:11.963212+00:00",
+    "read_at": "2026-02-15T12:30:16.235758+00:00",
+    "dedupe_key": "apt:APT6F8CF3D5:confirmation",
+    "deleted_at": null
+  },
+  {
+    "id": "a1405887-e941-4dfb-ad81-2d6affb503cd",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment with your doctor is confirmed for 2026-02-19 at 15:30.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APT52BF84D1",
+      "deep_link": "#appointments"
+    },
+    "created_at": "2026-02-15T12:30:50.327800+00:00",
+    "read_at": "2026-02-15T12:30:55.785764+00:00",
+    "dedupe_key": "apt:APT52BF84D1:confirmation",
+    "deleted_at": null
+  },
+  {
+    "id": "02cd5dcf-4500-40ad-b9b6-e9952c01c0fe",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment with your doctor is confirmed for 2026-02-24 at 10:00.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APT1C031CCA",
+      "deep_link": "#appointments"
+    },
+    "created_at": "2026-02-15T12:31:06.181794+00:00",
+    "read_at": "2026-02-15T12:31:08.819920+00:00",
+    "dedupe_key": "apt:APT1C031CCA:confirmation",
+    "deleted_at": null
+  },
+  {
+    "id": "4f0102fc-1394-44cb-97e4-28b2bb1050ed",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment with your doctor is confirmed for 2026-02-25 at 10:00.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APT2603DA8B",
+      "deep_link": "#appointments"
+    },
+    "created_at": "2026-02-15T12:36:40.654856+00:00",
+    "read_at": "2026-02-15T12:40:37.812972+00:00",
+    "dedupe_key": "apt:APT2603DA8B:confirmation",
+    "deleted_at": null
+  },
+  {
+    "id": "838c6c88-b094-4dbb-9fb5-a23589d14f8f",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment with your doctor is confirmed for 2026-03-01 at 11:00.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APT0AA6A708",
+      "deep_link": "#appointments"
+    },
+    "created_at": "2026-02-15T12:42:19.155308+00:00",
+    "read_at": "2026-02-15T13:00:23.325311+00:00",
+    "dedupe_key": "apt:APT0AA6A708:confirmation",
+    "deleted_at": null
+  },
+  {
+    "id": "b03c2697-6592-4249-8290-b90102ef013c",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment with your doctor is confirmed for 2026-04-01 at 10:00.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APTE5C378A2",
+      "deep_link": "#appointments"
+    },
+    "created_at": "2026-02-15T12:49:09.215398+00:00",
+    "read_at": "2026-02-15T13:00:23.325311+00:00",
+    "dedupe_key": "apt:APTE5C378A2:confirmation",
+    "deleted_at": null
+  },
+  {
+    "id": "42e17fa0-a42c-4891-99fe-755c02872214",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment with your doctor is confirmed for 2026-05-01 at 09:00.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APT8F316CDF",
+      "deep_link": "#appointments"
+    },
+    "created_at": "2026-02-15T12:56:12.572135+00:00",
+    "read_at": "2026-02-15T13:00:23.325311+00:00",
+    "dedupe_key": "apt:APT8F316CDF:confirmation",
+    "deleted_at": null
+  },
+  {
+    "id": "135a1de1-5e9a-4310-9be7-ed1561924aaa",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Cancelled",
+    "message": "The appointment (ID: APT1C031CCA) has been cancelled successfully.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APT1C031CCA"
+    },
+    "created_at": "2026-02-15T12:58:46.457004+00:00",
+    "read_at": "2026-02-15T13:00:23.325311+00:00",
+    "dedupe_key": "manual:appointment:5b98c0b0-1da3-403a-a4ee-65946b96357c",
+    "deleted_at": null
+  },
+  {
+    "id": "447737f9-87e1-4cb5-a165-7770bbdd049d",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Cancelled",
+    "message": "The appointment (ID: APT52BF84D1) has been cancelled successfully.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APT52BF84D1"
+    },
+    "created_at": "2026-02-15T12:59:03.828457+00:00",
+    "read_at": "2026-02-15T13:00:23.325311+00:00",
+    "dedupe_key": "manual:appointment:706f2a42-14e4-48bb-909e-372bf86da3d8",
+    "deleted_at": null
+  },
+  {
+    "id": "d2888eeb-f7bd-4281-8a65-7b6f12cb0f49",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment with your doctor is confirmed for 2026-06-01 at 11:00.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APT5AF8FDB9",
+      "deep_link": "#appointments"
+    },
+    "created_at": "2026-02-15T12:59:45.896385+00:00",
+    "read_at": "2026-02-15T13:00:23.325311+00:00",
+    "dedupe_key": "apt:APT5AF8FDB9:confirmation",
+    "deleted_at": null
+  },
+  {
+    "id": "18910c41-71ef-4237-8f3f-c7b1ba333a6c",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Cancelled",
+    "message": "The appointment (ID: APT5AF8FDB9) has been cancelled successfully.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APT5AF8FDB9"
+    },
+    "created_at": "2026-02-15T13:00:22.320306+00:00",
+    "read_at": "2026-02-15T13:00:23.325311+00:00",
+    "dedupe_key": "manual:appointment:2df6c125-50bd-4b0f-a9f3-ddc1b1b41de3",
+    "deleted_at": null
+  },
+  {
+    "id": "ea360e65-ee53-484f-8636-32eac3a75ba9",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment with your doctor is confirmed for 2026-02-19 at 10:30.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APT6B4C8BF5",
+      "deep_link": "#appointments"
+    },
+    "created_at": "2026-02-15T13:14:40.205464+00:00",
+    "read_at": "2026-02-15T13:14:47.826615+00:00",
+    "dedupe_key": "apt:APT6B4C8BF5:confirmation",
+    "deleted_at": null
+  },
+  {
+    "id": "0ecba306-9e58-4bbb-8cf1-1b4be8265987",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Cancelled",
+    "message": "The appointment (ID: APT6B4C8BF5) has been cancelled successfully.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APT6B4C8BF5"
+    },
+    "created_at": "2026-02-15T13:14:44.204906+00:00",
+    "read_at": "2026-02-15T13:14:48.274159+00:00",
+    "dedupe_key": "manual:appointment:12eae4ea-4ad9-4d93-bc24-992224733c14",
+    "deleted_at": null
+  },
+  {
+    "id": "43b3f466-4a88-4038-9a62-127639ab1bc5",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment with your doctor is confirmed for 2026-02-23 at 15:00.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APT6C0E81C9",
+      "deep_link": "#appointments"
+    },
+    "created_at": "2026-02-15T13:15:13.452286+00:00",
+    "read_at": "2026-02-15T13:23:35.081658+00:00",
+    "dedupe_key": "apt:APT6C0E81C9:confirmation",
+    "deleted_at": null
+  },
+  {
+    "id": "42e48cdf-8fbe-48a3-9251-109057b2f301",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Cancelled",
+    "message": "The appointment (ID: APT6C0E81C9) has been cancelled successfully.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APT6C0E81C9"
+    },
+    "created_at": "2026-02-15T13:20:45.647476+00:00",
+    "read_at": "2026-02-15T13:23:34.938874+00:00",
+    "dedupe_key": "manual:appointment:80a57350-2890-4118-80a3-83272254a6ae",
+    "deleted_at": null
+  },
+  {
+    "id": "6acb58d7-9ff5-46fa-9831-80d226573217",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment with your doctor is confirmed for 2026-02-18 at 16:30.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APT6736D1D8",
+      "deep_link": "#appointments"
+    },
+    "created_at": "2026-02-15T13:30:36.604200+00:00",
+    "read_at": "2026-02-15T13:33:11.983467+00:00",
+    "dedupe_key": "apt:APT6736D1D8:confirmation",
+    "deleted_at": null
+  },
+  {
+    "id": "50e9eaed-c375-4bf0-b5ef-8f38855534b6",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment with your doctor is confirmed for 2026-02-18 at 16:30.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APT11041536",
+      "deep_link": "#appointments"
+    },
+    "created_at": "2026-02-15T13:30:48.752880+00:00",
+    "read_at": "2026-02-15T13:33:11.983467+00:00",
+    "dedupe_key": "apt:APT11041536:confirmation",
+    "deleted_at": null
+  },
+  {
+    "id": "48c62109-4e03-4bb5-8818-b0f272ae63e1",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment with your doctor is confirmed for 2026-02-25 at 15:30.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APT3A6CFF32",
+      "deep_link": "#appointments"
+    },
+    "created_at": "2026-02-15T13:31:01.836972+00:00",
+    "read_at": "2026-02-15T13:33:11.983467+00:00",
+    "dedupe_key": "apt:APT3A6CFF32:confirmation",
+    "deleted_at": null
+  },
+  {
+    "id": "80f5cda1-d75c-453a-b496-05570dd94fe0",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Cancelled",
+    "message": "The appointment (ID: APT11041536) has been cancelled successfully.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APT11041536"
+    },
+    "created_at": "2026-02-15T13:33:18.225271+00:00",
+    "read_at": "2026-02-15T13:47:02.992569+00:00",
+    "dedupe_key": "manual:appointment:9476dac9-e420-4d87-8d40-c70c57865022",
+    "deleted_at": null
+  },
+  {
+    "id": "7974b5c0-87ce-4715-9245-cfc67b0b7562",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Cancelled",
+    "message": "The appointment (ID: APT6736D1D8) has been cancelled successfully.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APT6736D1D8"
+    },
+    "created_at": "2026-02-15T13:39:03.313861+00:00",
+    "read_at": "2026-02-15T13:47:02.992569+00:00",
+    "dedupe_key": "manual:appointment:ebf65767-ec0b-40fd-ba42-7292a3d8c564",
+    "deleted_at": null
+  },
+  {
+    "id": "215c67ad-baae-49d9-a1e7-4f7adfcaa786",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Cancelled",
+    "message": "The appointment (ID: APT3A6CFF32) has been cancelled successfully.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APT3A6CFF32"
+    },
+    "created_at": "2026-02-15T13:39:03.381662+00:00",
+    "read_at": "2026-02-15T13:47:02.992569+00:00",
+    "dedupe_key": "manual:appointment:16f7c6e2-fad8-4e00-b497-0409488fd497",
+    "deleted_at": null
+  },
+  {
+    "id": "87b75d71-adaa-4a33-ac50-5ab1ee170a0f",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Cancelled",
+    "message": "The appointment (ID: APT075CAE37) has been cancelled successfully.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APT075CAE37"
+    },
+    "created_at": "2026-02-15T13:47:16.020928+00:00",
+    "read_at": "2026-02-15T13:47:32.706912+00:00",
+    "dedupe_key": "manual:appointment:002ef270-f68e-4643-b375-8f4d48638937",
+    "deleted_at": null
+  },
+  {
+    "id": "800b94d6-4f2f-4509-a642-1b43da6242f7",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment with your doctor is confirmed for 2026-02-17 at 15:30.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APTA1074C92",
+      "deep_link": "#appointments"
+    },
+    "created_at": "2026-02-15T13:55:07.799011+00:00",
+    "read_at": "2026-02-15T13:58:49.253826+00:00",
+    "dedupe_key": "apt:APTA1074C92:confirmation",
+    "deleted_at": null
+  },
+  {
+    "id": "bda7cb8e-30d0-40be-8831-4754324f6c45",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Cancelled",
+    "message": "The appointment (ID: APTA1074C92) has been cancelled successfully.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APTA1074C92"
+    },
+    "created_at": "2026-02-15T13:58:40.467003+00:00",
+    "read_at": "2026-02-15T13:58:50.344983+00:00",
+    "dedupe_key": "manual:appointment:3b7278ba-f290-4ed7-adc4-59712460ec70",
+    "deleted_at": null
+  },
+  {
+    "id": "cb0d1f73-dcad-4e3b-93ae-d02b6759dbf6",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment with your doctor is confirmed for 2026-02-23 at 16:00.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APTBD3C3A07",
+      "deep_link": "#appointments"
+    },
+    "created_at": "2026-02-15T13:59:12.227173+00:00",
+    "read_at": "2026-02-15T13:59:20.099263+00:00",
+    "dedupe_key": "apt:APTBD3C3A07:confirmation",
+    "deleted_at": null
+  },
+  {
+    "id": "85717351-c395-4ff1-bfb0-c426ecde846a",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Cancelled",
+    "message": "The appointment (ID: APTBD3C3A07) has been cancelled successfully.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APTBD3C3A07"
+    },
+    "created_at": "2026-02-15T13:59:14.267377+00:00",
+    "read_at": "2026-02-15T13:59:16.607543+00:00",
+    "dedupe_key": "manual:appointment:3eba8c8b-8471-40e5-a21e-b675dd6daf60",
+    "deleted_at": null
+  },
+  {
+    "id": "5804c656-19fe-419c-91a4-820ba1fe3bea",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment with your doctor is confirmed for 2026-02-25 at 16:30.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APT799720B1",
+      "deep_link": "#appointments"
+    },
+    "created_at": "2026-02-15T13:59:34.728018+00:00",
+    "read_at": "2026-02-15T13:59:39.620206+00:00",
+    "dedupe_key": "apt:APT799720B1:confirmation",
+    "deleted_at": null
+  },
+  {
+    "id": "fb99586b-7ca4-4c15-8e97-d62b40e24e65",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Cancelled",
+    "message": "The appointment (ID: APT799720B1) has been cancelled successfully.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APT799720B1"
+    },
+    "created_at": "2026-02-15T13:59:48.666362+00:00",
+    "read_at": "2026-02-15T13:59:50.940554+00:00",
+    "dedupe_key": "manual:appointment:6808f3ac-f1c6-4ecb-a68a-83aea6d55353",
+    "deleted_at": null
+  },
+  {
+    "id": "86cf88b9-0386-4262-87d4-f153aa5445c9",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment with your doctor is confirmed for 2026-02-18 at 16:00.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APT231FB8C9",
+      "deep_link": "#appointments"
+    },
+    "created_at": "2026-02-15T14:10:22.602813+00:00",
+    "read_at": "2026-02-15T14:10:25.266973+00:00",
+    "dedupe_key": "apt:APT231FB8C9:confirmation",
+    "deleted_at": null
+  },
+  {
+    "id": "4555895f-1ad6-4c08-91ad-fa4cb979fd43",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Cancelled",
+    "message": "The appointment (ID: APT231FB8C9) has been cancelled successfully.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APT231FB8C9"
+    },
+    "created_at": "2026-02-15T14:11:53.732199+00:00",
+    "read_at": "2026-02-15T14:12:37.446956+00:00",
+    "dedupe_key": "manual:appointment:e99cd214-68d5-4c65-8743-ad58711f58a1",
+    "deleted_at": null
+  },
+  {
+    "id": "a06cdc06-6bc3-44b3-bd57-995567c6dd54",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment with your doctor is confirmed for 2026-02-25 at 15:30.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APTBB9AD19F",
+      "deep_link": "#appointments"
+    },
+    "created_at": "2026-02-15T14:21:42.546188+00:00",
+    "read_at": "2026-02-15T14:35:02.451587+00:00",
+    "dedupe_key": "apt:APTBB9AD19F:confirmation",
+    "deleted_at": null
+  },
+  {
+    "id": "752ffe2a-c03b-43d3-93a4-69e451a00767",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Cancelled",
+    "message": "The appointment (ID: APTBB9AD19F) has been cancelled successfully.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APTBB9AD19F"
+    },
+    "created_at": "2026-02-15T14:22:49.731487+00:00",
+    "read_at": "2026-02-15T14:35:13.012680+00:00",
+    "dedupe_key": "manual:appointment:82e8cc5a-b78e-4c04-85fb-11b6f31aa369",
+    "deleted_at": null
+  },
+  {
+    "id": "0d597d15-e48a-4ab4-8032-0935736b4acc",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Cancelled",
+    "message": "The appointment (ID: APTBB9AD19F) has been cancelled successfully.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APTBB9AD19F"
+    },
+    "created_at": "2026-02-15T14:23:13.266535+00:00",
+    "read_at": "2026-02-15T14:35:13.012680+00:00",
+    "dedupe_key": "manual:appointment:18ffa238-65c1-4c9c-bec5-9ad08f8033fe",
+    "deleted_at": null
+  },
+  {
+    "id": "1884a48e-0970-4fe0-90de-fb22c70df0cc",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment with your doctor is confirmed for 2026-02-24 at 15:30.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APT14BA0E25",
+      "deep_link": "#appointments"
+    },
+    "created_at": "2026-02-15T14:23:29.622985+00:00",
+    "read_at": "2026-02-15T14:35:08.014663+00:00",
+    "dedupe_key": "apt:APT14BA0E25:confirmation",
+    "deleted_at": null
+  },
+  {
+    "id": "8b4b2f0c-ef41-4ac7-aa04-ad582149a3b3",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Cancelled",
+    "message": "The appointment (ID: APT14BA0E25) has been cancelled successfully.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APT14BA0E25"
+    },
+    "created_at": "2026-02-15T14:23:33.462530+00:00",
+    "read_at": "2026-02-15T14:35:07.696660+00:00",
+    "dedupe_key": "manual:appointment:6530335e-92a4-4ce8-91cd-fd50418a4c45",
+    "deleted_at": null
+  },
+  {
+    "id": "7215f1a4-85ed-4187-bd95-0e066a9e3e86",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment with your doctor is confirmed for 2026-02-19 at 16:00.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APT2DBDCAA8",
+      "deep_link": "#appointments"
+    },
+    "created_at": "2026-02-15T14:23:45.611346+00:00",
+    "read_at": "2026-02-15T14:35:07.381183+00:00",
+    "dedupe_key": "apt:APT2DBDCAA8:confirmation",
+    "deleted_at": null
+  },
+  {
+    "id": "222e56a5-bcd7-4633-aa99-07c86212f868",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Cancelled",
+    "message": "The appointment (ID: APT2DBDCAA8) has been cancelled successfully.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APT2DBDCAA8"
+    },
+    "created_at": "2026-02-15T14:23:48.977307+00:00",
+    "read_at": "2026-02-15T14:31:16.850046+00:00",
+    "dedupe_key": "manual:appointment:65fc7656-4d26-4a06-ad39-0f98039e155d",
+    "deleted_at": null
+  },
+  {
+    "id": "c472fc77-d31c-40f9-99eb-32d0657fea47",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment with your doctor is confirmed for 2026-02-25 at 15:00.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APT2C6FFEF3",
+      "deep_link": "#appointments"
+    },
+    "created_at": "2026-02-15T14:25:17.275746+00:00",
+    "read_at": "2026-02-15T14:35:09.673285+00:00",
+    "dedupe_key": "apt:APT2C6FFEF3:confirmation",
+    "deleted_at": null
+  },
+  {
+    "id": "9c53008e-224e-4bd8-93ce-420f979fb8f9",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Cancelled",
+    "message": "The appointment (ID: APT2C6FFEF3) has been cancelled successfully.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APT2C6FFEF3"
+    },
+    "created_at": "2026-02-15T14:25:22.445981+00:00",
+    "read_at": "2026-02-15T14:35:06.787433+00:00",
+    "dedupe_key": "manual:appointment:9e1e2666-e733-47ce-854c-86e75efa9954",
+    "deleted_at": null
+  },
+  {
+    "id": "dc527c8c-7693-49f4-bf03-726686674169",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment with your doctor is confirmed for 2026-02-24 at 09:30.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APT295E45D8",
+      "deep_link": "#appointments"
+    },
+    "created_at": "2026-02-15T14:25:39.999331+00:00",
+    "read_at": "2026-02-15T14:31:24.649439+00:00",
+    "dedupe_key": "apt:APT295E45D8:confirmation",
+    "deleted_at": null
+  },
+  {
+    "id": "b6b23666-1d81-4ef2-8fe2-8a8ea8f06144",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Cancelled",
+    "message": "The appointment (ID: APT295E45D8) has been cancelled successfully.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APT295E45D8"
+    },
+    "created_at": "2026-02-15T14:25:43.661670+00:00",
+    "read_at": "2026-02-15T14:34:55.466482+00:00",
+    "dedupe_key": "manual:appointment:d8f7da05-3cb0-4096-9ced-5a538c7346d8",
+    "deleted_at": null
+  },
+  {
+    "id": "e58528a6-339e-43e4-8380-e573cf48dc57",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment with your doctor is confirmed for 2026-02-17 at 09:30.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APTBE081284",
+      "deep_link": "#appointments"
+    },
+    "created_at": "2026-02-15T14:26:10.631641+00:00",
+    "read_at": "2026-02-15T14:30:08.901730+00:00",
+    "dedupe_key": "apt:APTBE081284:confirmation",
+    "deleted_at": null
+  },
+  {
+    "id": "4f73d264-cf23-4484-959b-e2b46f7cdae6",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Cancelled",
+    "message": "The appointment (ID: APTBE081284) has been cancelled successfully.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APTBE081284"
+    },
+    "created_at": "2026-02-15T14:26:16.094192+00:00",
+    "read_at": "2026-02-15T14:30:03.950281+00:00",
+    "dedupe_key": "manual:appointment:63e94a93-ed2c-4b91-acf9-208d5e842984",
+    "deleted_at": null
+  },
+  {
+    "id": "d8d56b7e-4430-4b8c-8b92-bb092d09ba1d",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment with your doctor is confirmed for 2026-02-17 at 15:00.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APTCC0F8845",
+      "deep_link": "#appointments"
+    },
+    "created_at": "2026-02-15T14:28:54.744122+00:00",
+    "read_at": "2026-02-15T14:29:58.272776+00:00",
+    "dedupe_key": "apt:APTCC0F8845:confirmation",
+    "deleted_at": null
+  },
+  {
+    "id": "5dd2192f-0b74-4489-bc0e-d8bab33689a9",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Cancelled",
+    "message": "The appointment (ID: APTCC0F8845) has been cancelled successfully.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APTCC0F8845"
+    },
+    "created_at": "2026-02-15T14:29:41.433426+00:00",
+    "read_at": "2026-02-15T14:29:56.936200+00:00",
+    "dedupe_key": "manual:appointment:7a7930c4-1486-49bc-a08a-4294fd4be018",
+    "deleted_at": null
+  },
+  {
+    "id": "91988b0b-a9c2-42a3-9556-6cd2545ebe0f",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Cancelled",
+    "message": "The appointment (ID: APTBE081284) has been cancelled successfully.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APTBE081284"
+    },
+    "created_at": "2026-02-15T14:29:47.567635+00:00",
+    "read_at": "2026-02-15T14:29:55.074987+00:00",
+    "dedupe_key": "manual:appointment:9b8f9243-9f39-4563-97b5-0c643c7347d1",
+    "deleted_at": null
+  },
+  {
+    "id": "f4126bf0-7db4-47c7-95b8-22f00b7b1c52",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment with your doctor is confirmed for 2026-02-17 at 14:30.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APT57DF3F12",
+      "deep_link": "#appointments"
+    },
+    "created_at": "2026-02-15T14:31:40.733091+00:00",
+    "read_at": "2026-02-15T14:34:48.086739+00:00",
+    "dedupe_key": "apt:APT57DF3F12:confirmation",
+    "deleted_at": null
+  },
+  {
+    "id": "d20b36dd-c89b-45ef-b1bd-fb41cf6f1677",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment with your doctor is confirmed for 2026-02-24 at 11:00.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APTAE4AF907",
+      "deep_link": "#appointments"
+    },
+    "created_at": "2026-02-15T14:33:07.975511+00:00",
+    "read_at": "2026-02-15T14:34:41.943396+00:00",
+    "dedupe_key": "apt:APTAE4AF907:confirmation",
+    "deleted_at": null
+  },
+  {
+    "id": "6d08dfef-324a-48cf-ba3b-d38dd341d8e0",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Cancelled",
+    "message": "The appointment (ID: APTAE4AF907) has been cancelled successfully.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APTAE4AF907"
+    },
+    "created_at": "2026-02-15T14:33:15.877114+00:00",
+    "read_at": "2026-02-15T14:34:38.734311+00:00",
+    "dedupe_key": "manual:appointment:6f61c300-0f47-4599-bbd3-78e9fa06be91",
+    "deleted_at": null
+  },
+  {
+    "id": "993cf88b-1087-4bf1-a100-0e687e8e58e6",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Cancelled",
+    "message": "The appointment (ID: APT57DF3F12) has been cancelled successfully.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APT57DF3F12"
+    },
+    "created_at": "2026-02-15T14:33:19.507516+00:00",
+    "read_at": "2026-02-15T14:34:35.765842+00:00",
+    "dedupe_key": "manual:appointment:5aabbe49-78d5-4f8c-bd9f-084f50919916",
+    "deleted_at": null
+  },
+  {
+    "id": "58507a63-b261-4c00-985a-3207874cfcc6",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment with your doctor is confirmed for 2026-02-24 at 11:00.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APT815EAB23",
+      "deep_link": "#appointments"
+    },
+    "created_at": "2026-02-15T14:35:24.954713+00:00",
+    "read_at": "2026-02-15T14:35:32.212788+00:00",
+    "dedupe_key": "apt:APT815EAB23:confirmation",
+    "deleted_at": null
+  },
+  {
+    "id": "97b3139a-2e41-4fa2-9f23-1f905d4fc792",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Cancelled",
+    "message": "The appointment (ID: APT815EAB23) has been cancelled successfully.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APT815EAB23"
+    },
+    "created_at": "2026-02-15T14:41:53.149448+00:00",
+    "read_at": "2026-02-15T14:41:58.417046+00:00",
+    "dedupe_key": "manual:appointment:8b222de1-71c5-4875-88f2-e440ac641314",
+    "deleted_at": null
+  },
+  {
+    "id": "73ec20ce-002b-43b8-9de0-0b89ff39bf8b",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment with your doctor is confirmed for 2026-02-18 at 14:30.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APT1A10B829",
+      "deep_link": "#appointments"
+    },
+    "created_at": "2026-02-15T14:44:40.089692+00:00",
+    "read_at": "2026-02-15T14:45:31.941100+00:00",
+    "dedupe_key": "apt:APT1A10B829:confirmation",
+    "deleted_at": null
+  },
+  {
+    "id": "d6a08921-5e12-41b6-8281-614d9c70ecb2",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Cancelled",
+    "message": "The appointment (ID: APT1A10B829) has been cancelled successfully.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APT1A10B829"
+    },
+    "created_at": "2026-02-15T14:44:51.764080+00:00",
+    "read_at": "2026-02-15T14:45:27.366347+00:00",
+    "dedupe_key": "manual:appointment:59d15d0e-e2db-4e40-be23-dc3e53462217",
+    "deleted_at": null
+  },
+  {
+    "id": "4edc4ab3-1dbd-4054-b059-fe7c116b2a4a",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment with your doctor is confirmed for 2026-02-24 at 16:00.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APT5FF26488",
+      "deep_link": "#appointments"
+    },
+    "created_at": "2026-02-15T14:46:35.003896+00:00",
+    "read_at": "2026-02-15T14:50:10.273346+00:00",
+    "dedupe_key": "apt:APT5FF26488:confirmation",
+    "deleted_at": null
+  },
+  {
+    "id": "3dfc5fb5-b908-4533-a674-734d8f27faba",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Cancelled",
+    "message": "The appointment (ID: APT5FF26488) has been cancelled successfully.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APT5FF26488"
+    },
+    "created_at": "2026-02-15T14:55:27.889748+00:00",
+    "read_at": "2026-02-15T15:02:56.843664+00:00",
+    "dedupe_key": "manual:appointment:eef3b684-48f7-4c51-b489-f0f2ca42fb38",
+    "deleted_at": null
+  },
+  {
+    "id": "d5a33fe3-3882-4e15-a431-e0d0bf51fbdd",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment with your doctor is confirmed for 2026-02-25 at 11:00.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APT99AF77E7",
+      "deep_link": "#appointments"
+    },
+    "created_at": "2026-02-15T15:18:51.093975+00:00",
+    "read_at": "2026-02-15T15:19:08.318857+00:00",
+    "dedupe_key": "apt:APT99AF77E7:confirmation",
+    "deleted_at": null
+  },
+  {
+    "id": "85e237a9-0805-4f35-a650-347e60042ae8",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Cancelled",
+    "message": "The appointment (ID: APT99AF77E7) has been cancelled successfully.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APT99AF77E7"
+    },
+    "created_at": "2026-02-15T15:18:57.140363+00:00",
+    "read_at": "2026-02-15T15:19:03.893278+00:00",
+    "dedupe_key": "manual:appointment:2e750a97-f1b2-4f26-bfb6-56ee326e4d2b",
+    "deleted_at": null
+  },
+  {
+    "id": "911c9411-0e5e-4916-95fc-4d88cd972c7c",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment with your doctor is confirmed for 2026-02-25 at 11:00.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APTB3B0B50B",
+      "deep_link": "#appointments"
+    },
+    "created_at": "2026-02-15T15:19:18.559467+00:00",
+    "read_at": "2026-02-15T15:19:25.423498+00:00",
+    "dedupe_key": "apt:APTB3B0B50B:confirmation",
+    "deleted_at": null
+  },
+  {
+    "id": "256ae209-bd6c-4dd6-b295-a6bef9d6c1dc",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Cancelled",
+    "message": "The appointment (ID: APTB3B0B50B) has been cancelled successfully.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APTB3B0B50B"
+    },
+    "created_at": "2026-02-15T15:19:42.025750+00:00",
+    "read_at": "2026-02-15T15:19:45.228724+00:00",
+    "dedupe_key": "manual:appointment:a71d3eed-2535-49aa-b784-cf45851cccfa",
+    "deleted_at": null
+  },
+  {
+    "id": "57c36163-67ba-4383-bf71-8aca3d7110d1",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment with your doctor is confirmed for 2026-02-28 at 16:00.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APTD915BCA3",
+      "deep_link": "#appointments"
+    },
+    "created_at": "2026-02-15T16:24:24.558760+00:00",
+    "read_at": "2026-02-15T16:26:10.712292+00:00",
+    "dedupe_key": "apt:APTD915BCA3:confirmation",
+    "deleted_at": null
+  },
+  {
+    "id": "e77d3fcb-d03d-42c1-8941-a07fde4a18d5",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment with your doctor is confirmed for 2026-02-28 at 09:30.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APTD591DAC9",
+      "deep_link": "#appointments"
+    },
+    "created_at": "2026-02-15T16:24:58.015654+00:00",
+    "read_at": "2026-02-15T16:26:10.712292+00:00",
+    "dedupe_key": "apt:APTD591DAC9:confirmation",
+    "deleted_at": null
+  },
+  {
+    "id": "8c9b811f-ad8b-41ba-bada-0bf28efa8377",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Cancelled",
+    "message": "The appointment (ID: APTD591DAC9) has been cancelled successfully.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APTD591DAC9"
+    },
+    "created_at": "2026-02-15T16:25:24.271683+00:00",
+    "read_at": "2026-02-15T16:26:10.712292+00:00",
+    "dedupe_key": "manual:appointment:6c4f166a-1dee-4114-9faa-359056f7aa92",
+    "deleted_at": null
+  },
+  {
+    "id": "37125634-59d7-4c46-8b71-86dae8a5cfd5",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment with your doctor is confirmed for 2026-02-25 at 15:00.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APT5E8336EE",
+      "deep_link": "#appointments"
+    },
+    "created_at": "2026-02-19T05:21:59.473021+00:00",
+    "read_at": "2026-02-19T05:22:02.540574+00:00",
+    "dedupe_key": "apt:APT5E8336EE:confirmation",
+    "deleted_at": null
+  },
+  {
+    "id": "af7747b0-123f-49e9-a4e5-c06f3c678c71",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Cancelled",
+    "message": "The appointment (ID: APT5E8336EE) has been cancelled successfully.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APT5E8336EE"
+    },
+    "created_at": "2026-02-19T05:22:06.784877+00:00",
+    "read_at": "2026-02-19T05:22:15.177445+00:00",
+    "dedupe_key": "manual:appointment:7b60eb59-8f50-4c5e-9175-605e4ad4dc62",
+    "deleted_at": null
+  },
+  {
+    "id": "b4bf3c61-d022-4cd6-ac84-a0a80e587361",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment with your doctor is confirmed for 2026-02-26 at 15:00.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APTB6940AA9",
+      "deep_link": "#appointments"
+    },
+    "created_at": "2026-02-23T18:41:35.789055+00:00",
+    "read_at": "2026-02-23T18:41:39.791291+00:00",
+    "dedupe_key": "apt:APTB6940AA9:confirmation",
+    "deleted_at": null
+  },
+  {
+    "id": "d4393005-76ae-4544-9e52-b327262b8af3",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Cancelled",
+    "message": "The appointment (ID: APTB6940AA9) has been cancelled successfully.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APTB6940AA9"
+    },
+    "created_at": "2026-02-23T18:41:46.836259+00:00",
+    "read_at": "2026-02-23T18:41:52.624990+00:00",
+    "dedupe_key": "manual:appointment:25493d12-2f98-4d7d-b1fe-501f9670edd6",
+    "deleted_at": null
+  },
+  {
+    "id": "1781c20a-cdde-40fd-84d1-8bc5fa4f0211",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment with your doctor is confirmed for 2026-02-24 at 16:30.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APT5857A594",
+      "deep_link": "#appointments"
+    },
+    "created_at": "2026-02-23T18:43:05.011533+00:00",
+    "read_at": "2026-02-23T18:43:13.397074+00:00",
+    "dedupe_key": "apt:APT5857A594:confirmation",
+    "deleted_at": null
+  },
+  {
+    "id": "310a5b18-103f-4354-9d13-0af6603028c3",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Cancelled",
+    "message": "The appointment (ID: APT5857A594) has been cancelled successfully.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APT5857A594"
+    },
+    "created_at": "2026-02-23T18:43:16.747774+00:00",
+    "read_at": "2026-02-23T18:43:21.912502+00:00",
+    "dedupe_key": "manual:appointment:97db2791-497c-4e02-bfd7-9c53994556db",
+    "deleted_at": null
+  },
+  {
+    "id": "286b4fa7-7e35-46b9-866a-5306f60e3a2a",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment with your doctor is confirmed for 2026-02-25 at 11:30.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APTAF080227",
+      "deep_link": "#appointments"
+    },
+    "created_at": "2026-02-24T07:54:07.938185+00:00",
+    "read_at": "2026-02-24T07:54:12.506204+00:00",
+    "dedupe_key": "apt:APTAF080227:confirmation",
+    "deleted_at": null
+  },
+  {
+    "id": "ed2f8579-77eb-4ba4-8fb3-b2d4984bb4a9",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Cancelled",
+    "message": "The appointment (ID: APTAF080227) has been cancelled successfully.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APTAF080227"
+    },
+    "created_at": "2026-02-24T07:54:20.488450+00:00",
+    "read_at": "2026-02-24T07:54:28.128083+00:00",
+    "dedupe_key": "manual:appointment:52f7e8fe-a857-4a17-bddf-eadb2a90fab1",
+    "deleted_at": null
+  },
+  {
+    "id": "f0bf4c4a-b539-4d30-a2a1-24d0b6f8d8b8",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment with your doctor is confirmed for 2026-02-26 at 16:00.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APT2F02FDEB",
+      "deep_link": "#appointments"
+    },
+    "created_at": "2026-02-24T19:12:15.143183+00:00",
+    "read_at": "2026-02-24T19:12:31.567066+00:00",
+    "dedupe_key": "apt:APT2F02FDEB:confirmation",
+    "deleted_at": null
+  },
+  {
+    "id": "ce6fd073-b789-416a-8a7d-66a1b63580f9",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Cancelled",
+    "message": "The appointment (ID: APT2F02FDEB) has been cancelled successfully.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APT2F02FDEB"
+    },
+    "created_at": "2026-02-24T19:12:19.135537+00:00",
+    "read_at": "2026-02-24T19:12:28.542584+00:00",
+    "dedupe_key": "manual:appointment:71da3719-c1c9-400f-8d6c-d188a2adbb96",
+    "deleted_at": null
+  },
+  {
+    "id": "48abe9e8-f8e5-4ed1-b9b1-6a441f5d101a",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment with your doctor is confirmed for 2026-03-04 at 10:00.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APT31215B95",
+      "deep_link": "#appointments"
+    },
+    "created_at": "2026-02-24T19:23:35.513918+00:00",
+    "read_at": "2026-02-24T19:30:53.923913+00:00",
+    "dedupe_key": "apt:APT31215B95:confirmation",
+    "deleted_at": null
+  },
+  {
+    "id": "8e17f88d-f072-4789-87d8-c625d49d53c3",
+    "user_id": "4wvRoFTd7oWy5aDz4y0I8Y6pRTk2",
+    "type": "appointment",
+    "title": "Appointment Cancelled",
+    "message": "The appointment (ID: APT31215B95) has been cancelled successfully.",
+    "is_read": true,
+    "metadata": {
+      "appointment_id": "APT31215B95"
+    },
+    "created_at": "2026-02-24T19:30:51.783005+00:00",
+    "read_at": "2026-02-24T19:30:53.923913+00:00",
+    "dedupe_key": "manual:appointment:c45982ea-c3c8-4165-86dc-602b7604260f",
+    "deleted_at": null
   }
 ]
