@@ -13,7 +13,6 @@ A comprehensive AI-powered medical chatbot with symptom analysis, emergency dete
 - ✅ **Health Records** - Track vitals, symptoms, and medical history
 - ✅ **Image Analysis** - Analyze injury/medical images
 - ✅ **Family Doctor System** - Save and consult family physician
-- ✅ **OTP Authentication** - Secure phone-based login
 - ✅ **Real-time Chat** - LLM-style conversational interface
 
 ### Advanced Features
@@ -61,8 +60,7 @@ medisence-ai/
 
 ### Step 1: Clone the Repository
 ```bash
-git clone https://github.com/aakash4dev/medisence-ai.git
-cd medisence-ai
+git clone https://github.com/Shivansh1146/MedicSense-AI
 ```
 
 ### Step 2: Install Backend Dependencies
@@ -171,7 +169,6 @@ Edit `backend/doctors_db.json` to add local doctors and hospitals.
 
 ## 🔒 Security Features
 
-- ✅ Phone-based OTP authentication
 - ✅ Session token management
 - ✅ Local data storage
 - ✅ CORS protection
@@ -222,8 +219,8 @@ This project is licensed under the MIT License.
 
 ## 👨‍💻 Author
 
-**Aakash**
-- GitHub: [@aakash4dev](https://github.com/aakash4dev)
+**Shivansh**
+- GitHub: [@Shivansh1146](https://github.com/Shivansh1146)
 
 ## 🙏 Acknowledgments
 
@@ -236,13 +233,12 @@ This project is licensed under the MIT License.
 
 For issues and questions:
 - Open an issue on GitHub
-- Email: support@medisenseai.com
+- Email: support@MedicSense-AI.com
 
 ## 🔮 Roadmap
 
 ### Coming Soon
 - [ ] Multi-language support
-- [ ] Voice input/output
 - [ ] Prescription management
 - [ ] Lab report analysis
 - [ ] Medicine reminders
