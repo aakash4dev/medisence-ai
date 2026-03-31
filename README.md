@@ -1,296 +1,263 @@
-# MedicSense AI
+# MedicSense AI - Complete Healthcare Assistant 🏥
 
-## Project Overview
+A comprehensive AI-powered medical chatbot with symptom analysis, emergency detection, appointment scheduling, and health record management.
 
-MedicSense AI is a full-stack AI-assisted healthcare support platform that helps users understand their symptoms, book appointments, and receive health notifications. The system uses Google's Gemini API for intelligent symptom analysis while maintaining strict safety protocols.
+## 🚀 Features
 
-**This application does NOT provide medical diagnosis.** It is designed as a health awareness and navigation tool to help users make informed decisions about seeking appropriate medical care.
+### Core Features
+- ✅ **AI Medical Chatbot** - Natural language symptom analysis
+- ✅ **Emergency Detection** - Instant first-aid guidance for critical situations
+- ✅ **Severity Classification** - 4-level urgency system (Mild to Critical)
+- ✅ **Doctor Matching** - Find specialists based on symptoms
+- ✅ **Appointment Scheduling** - Book and manage appointments
+- ✅ **Health Records** - Track vitals, symptoms, and medical history
+- ✅ **Image Analysis** - Analyze injury/medical images
+- ✅ **Family Doctor System** - Save and consult family physician
+- ✅ **OTP Authentication** - Secure phone-based login
+- ✅ **Real-time Chat** - LLM-style conversational interface
 
-## Key Features
+### Advanced Features
+- 📊 **Health Dashboard** - Visualize health trends
+- 🔔 **Smart Notifications** - Appointment reminders and health alerts
+- 📱 **Responsive Design** - Works on all devices
+- 🌐 **Multi-language Support** - (Coming soon)
+- 🔒 **Data Privacy** - Local storage, HIPAA-compliant ready
 
-### 1. AI-Assisted Symptom Checker
-- Natural language symptom input with duration and severity tracking
-- Google Gemini-powered analysis for context-aware health insights
-- Safety-first design with emergency keyword detection
-- Non-diagnostic guidance with clear disclaimers
-- Downloadable symptom reports
-
-### 2. Smart Appointment Booking
-- Real-time slot availability checking
-- Multiple doctor/department selection
-- In-person and video consultation options
-- Automatic appointment confirmation notifications
-- Appointment history tracking
-
-### 3. Notification System
-- Real-time notification badge updates (without page refresh)
-- Persistent read/unread state (JSON-based storage)
-- Appointment confirmations and reminders
-- Health tips and medication reminders
-- Filter by type (all, unread, appointments, medications, health tips)
-
-### 4. Authentication
-- Google Sign-In integration via Firebase
-- Secure session management
-- User profile with avatar and email display
-- Persistent authentication state across sessions
-
-### 5. Emergency Quick Action
-- One-click emergency assistance button
-- High-risk symptom detection (chest pain, stroke symptoms, severe bleeding, etc.)
-- Immediate safety protocol activation
-
-## Technology Stack
-
-### Frontend
-- **HTML5** - Semantic structure
-- **CSS3** - Modern styling with glassmorphism effects
-- **JavaScript (Vanilla)** - No frameworks, pure ES6+
-- **Firebase SDK** - Authentication
-- **AOS Library** - Scroll animations
-- **Font Awesome** - Icons
-
-### Backend
-- **Python 3.8+** - Core language
-- **Flask 2.3.3** - Web framework
-- **Flask-CORS** - Cross-origin resource sharing
-
-### AI Integration
-- **Google Gemini API** - Natural language processing for symptom analysis
-- **Custom safety classifiers** - Emergency detection and severity assessment
-
-### Storage
-- **JSON files** - Lightweight persistence for appointments, notifications, and user data
-- No SQL database (demo-safe, portable)
-
-## Application Flow
-
-### Symptom Analysis Workflow
-1. User enters symptoms in natural language
-2. User selects duration (hours to weeks) and severity (1-10 scale)
-3. Frontend validates all required fields before enabling analysis
-4. Backend receives symptom data and checks for emergency keywords
-5. If emergency detected: immediate safety protocol with severity level 4
-6. If non-emergency: Gemini API analyzes symptoms and provides supportive guidance
-7. Results displayed with severity classification (1-4) and recommended actions
-8. User can book appointment or download report
-
-### Notification System Behavior
-1. Notifications generated on appointment booking, health tips, medication reminders
-2. Backend stores notifications in `data/notifications.json` with read/unread status
-3. Frontend polls `/api/notifications/summary` every 30 seconds
-4. Bell badge updates WITHOUT page refresh when new notifications arrive
-5. User clicks notification → marks as read → backend updates JSON → badge count decrements
-6. Read/unread state persists across browser sessions and page refreshes
-
-### Authentication Flow
-1. User clicks profile icon → auth modal appears
-2. User clicks "Sign in with Google" → Firebase popup
-3. Firebase returns user token → saved to localStorage
-4. Backend receives token at `/api/auth/google` → validates and creates session
-5. Profile menu updates with user name, email, and avatar
-6. Auth state persists until explicit sign-out
-
-## How to Run the Project
-
-### Prerequisites
-- Python 3.8 or higher
-- Modern web browser (Chrome, Firefox, Edge)
-- Google Gemini API key (required for symptom analysis)
-
-### Backend Setup
-
-1. Navigate to backend directory:
-```powershell
-cd medisence-ai/backend
-```
-
-2. Install dependencies:
-```powershell
-pip install -r requirements.txt
-```
-
-3. Set up environment variables (create `.env` file in backend directory):
-```
-GEMINI_API_KEY=your_gemini_api_key_here
-```
-
-4. Start the Flask server:
-```powershell
-python app.py
-```
-
-The backend will start on **http://localhost:5000**
-
-### Frontend Access
-
-**Option 1: Direct File Open**
-- Open `medisence-ai/frontend/index.html` directly in your browser
-- File path: `file:///C:/Users/shivansh/OneDrive/Desktop/first hackathon project/medisence-ai/frontend/index.html`
-
-**Option 2: Local Server (Recommended)**
-- Use VS Code Live Server extension
-- Right-click `index.html` → "Open with Live Server"
-- Access at `http://localhost:5500` (or assigned port)
-
-### Environment Variables
-The application requires a Gemini API key for symptom analysis. Without it, the symptom checker will not function. All other features (appointments, notifications, authentication) work independently.
-
-## API Endpoints
-
-### Symptom Analysis
-- `POST /api/chat` - Analyze symptoms with AI (requires message, user_id)
-- `POST /api/chat/message` - Alternative chat endpoint
-
-### Appointments
-- `GET /api/appointments/slots` - Get available time slots (requires doctor, date)
-- `POST /api/appointments/book` - Book appointment (requires name, phone, email, doctorId, date, time, reason, type)
-- `GET /api/appointments/<user_id>` - Get user's appointments
-- `PUT /api/appointments/<appointment_id>/cancel` - Cancel appointment
-- `PUT /api/appointments/<appointment_id>/reschedule` - Reschedule appointment
-
-### Notifications
-- `GET /api/notifications` - Fetch notifications (requires user_id query param)
-- `GET /api/notifications/summary` - Get notification counts (requires user_id query param)
-- `POST /api/notifications/read` - Mark single notification as read (requires notification_id, user_id)
-- `PATCH /api/notifications/mark-all-read` - Mark all notifications as read (requires user_id)
-- `POST /api/notifications/refresh` - Refresh notifications from appointments/tips
-
-### Authentication
-- `POST /api/auth/google` - Google OAuth login (requires idToken, user object)
-- `POST /api/auth/logout` - Sign out
-- `GET /api/auth/session` - Check session status
-
-### Emergency
-- `POST /api/emergency/escalate` - Emergency escalation
-- `POST /api/emergency/chat` - Emergency-specific chat
-- `POST /api/emergency/hospitals` - Find nearby emergency hospitals
-
-### Doctors
-- `GET /api/doctors` - List all doctors
-- `GET /api/find-doctors` - Find doctors by city and specialization
-- `POST /api/save-doctor` - Save family doctor
-- `GET /api/get-doctor/<user_id>` - Get user's family doctor
-
-## UX & Safety Notes
-
-### Non-Diagnostic Disclaimer
-This application explicitly states on every symptom analysis:
-> "This tool supports health awareness and does not provide medical diagnosis."
-
-The AI responses are designed to:
-- Provide educational information about symptoms
-- Suggest appropriate next steps (rest, consult doctor, seek emergency care)
-- Never claim to diagnose conditions
-- Always recommend professional medical consultation for serious concerns
-
-### Safety Protocols
-1. **Emergency Detection**: 50+ high-risk keywords trigger immediate safety protocol
-2. **Severity Classification**: 4-level system (Mild, Moderate, Serious, Emergency)
-3. **Clear Escalation**: Emergency symptoms automatically set severity to level 4
-4. **Professional Referral**: All moderate-to-serious symptoms recommend doctor consultation
-
-### Hackathon Compliance
-- No medical diagnosis claims
-- No treatment prescriptions
-- No medication recommendations
-- Educational and awareness purpose only
-- Suitable for demonstration and evaluation
-
-## Screenshots
-
-*Screenshots can be added here to demonstrate:*
-- Symptom checker interface
-- Appointment booking flow
-- Notification panel with read/unread states
-- Emergency quick action
-- Google Sign-In authentication
-
-## Project Structure
+## 📁 Project Structure
 
 ```
 medisence-ai/
-├── frontend/
-│   ├── index.html              # Main application page
-│   ├── notifications.html      # Notifications page
-│   ├── style_ultra.css         # Complete styling
-│   ├── script_ultra.js         # Core application logic
-│   ├── firebase.js             # Firebase authentication
-│   ├── sw.js                   # Service worker (PWA)
-│   └── [other HTML/JS files]
-├── backend/
-│   ├── app.py                  # Main Flask server (1869 lines, 40+ endpoints)
-│   ├── gemini_service.py       # Gemini API integration
+├── backend/                    # Flask backend server
+│   ├── app.py                 # Main Flask application
+│   ├── database.py            # Database management
+│   ├── auth_manager.py        # Authentication & sessions
 │   ├── symptom_analyzer.py    # Symptom extraction
-│   ├── severity_classifier.py # Severity assessment
-│   ├── emergency_detector.py  # Emergency keyword detection
-│   ├── notifications_service.py # Notification management
-│   ├── auth_routes.py          # Authentication endpoints
-│   ├── database.py             # JSON database wrapper
-│   ├── medical_kb.json         # Medical knowledge base
-│   ├── doctors_db.json         # Doctor database
-│   └── requirements.txt        # Python dependencies
-└── data/
-    ├── notifications.json      # Notification persistence
-    ├── appointments.json       # Appointment records
-    └── family_doctor.json      # User's family doctor info
+│   ├── severity_classifier.py # Urgency classification
+│   ├── emergency_detector.py  # Emergency detection
+│   ├── camera_analyzer.py     # Image analysis
+│   ├── gemini_service.py      # AI integration
+│   ├── otp_service.py         # OTP management
+│   ├── medical_kb.json        # Medical knowledge base
+│   ├── doctors_db.json        # Doctors database
+│   └── requirements.txt       # Python dependencies
+│
+├── frontend/                   # Frontend application
+│   ├── index.html             # Main page
+│   ├── script.js              # Core JavaScript
+│   ├── dashboard.js           # Dashboard functionality
+│   ├── style.css              # Styles
+│   └── auth.html              # Authentication page
+│
+├── API_DOCUMENTATION.md        # Complete API docs
+└── README.md                   # This file
 ```
 
-## Technical Highlights
+## 🛠️ Installation & Setup
 
-### Real-Time Updates
-- Notification badge updates every 30 seconds without page refresh
-- Polling-based architecture for demo simplicity
-- Persistent state across sessions via JSON storage
+### Prerequisites
+- Python 3.8 or higher
+- Modern web browser
+- VS Code (recommended)
 
-### Responsive Design
-- Mobile-first approach
-- Glassmorphism UI effects
-- Smooth animations and transitions
-- Accessible color contrast
+### Step 1: Clone the Repository
+```bash
+git clone https://github.com/aakash4dev/medisence-ai.git
+cd medisence-ai
+```
 
-### Error Handling
-- Timeout protection on all API calls (10-15 second limits)
-- Graceful degradation when services unavailable
-- User-friendly error messages
-- Loading states for all async operations
+### Step 2: Install Backend Dependencies
+```bash
+cd backend
+pip install -r requirements.txt
+```
 
-## Limitations & Scope
+**Dependencies installed:**
+- Flask 2.3.3 - Web framework
+- flask-cors 4.0.0 - Cross-origin support
+- Pillow 10.1.0 - Image processing
 
-This is a **hackathon demonstration project**, not production-ready software:
+### Step 3: Start the Backend Server
+```bash
+python app.py
+```
 
-- **No SQL database**: Uses JSON files for simplicity and portability
-- **No HIPAA compliance**: Not suitable for real patient data
-- **Demo-level security**: Authentication is functional but not hardened
-- **No audit logging**: No comprehensive tracking of system interactions
-- **AI safety is heuristic-based**: Emergency detection uses keyword matching, not ML
-- **No regulatory approval**: Educational and demonstration purposes only
+You should see:
+```
+🚀 MedicSense AI Backend Starting...
+📡 Server running at http://localhost:5000
+💊 Medical chatbot ready to assist
+```
 
-## Disclaimer
+### Step 4: Access the Application
+Open your browser and go to:
+```
+http://localhost:5000
+```
 
-**IMPORTANT**: This is a hackathon project for educational and demonstration purposes only.
+## 🎯 How to Use
 
-**This application does NOT:**
-- Provide medical diagnoses
-- Replace professional medical advice
-- Offer treatment recommendations
-- Prescribe medications
-- Guarantee accuracy of health information
+### 1. Start a Conversation
+- Click the chat icon in the bottom-right corner
+- Describe your symptoms naturally
+- Get instant AI-powered analysis
 
-**Always consult qualified healthcare professionals for medical advice.**
+### 2. Example Queries
+```
+"I have a severe headache and fever"
+"My chest hurts and I feel dizzy"
+"I twisted my ankle while playing"
+"I need a doctor for heart problems"
+```
 
-In life-threatening emergencies, call your local emergency services immediately:
-- 🇺🇸 USA: 911
-- 🇬🇧 UK: 999 or 112
-- 🇮🇳 India: 102 (Ambulance), 108 (Emergency)
-- 🇦🇺 Australia: 000
+### 3. Emergency Situations
+The system automatically detects emergencies and provides first-aid guidance:
+- Chest pain
+- Severe bleeding
+- Difficulty breathing
+- Loss of consciousness
 
-## License
+### 4. Book Appointments
+- Save your family doctor
+- Book appointments with specialists
+- Manage and reschedule appointments
 
-This is a hackathon project. Feel free to use, modify, and extend for educational purposes.
+### 5. Track Health
+- Record vital signs
+- Monitor health trends
+- Store medical history
+
+## 🏥 Severity Levels
+
+| Level | Severity | Action Required |
+|-------|----------|----------------|
+| 1 | Mild | Self-care, monitor symptoms |
+| 2 | Moderate | Consult family doctor |
+| 3 | Serious | See specialist soon |
+| 4 | Critical | Emergency - Call 911 |
+
+## 📡 API Endpoints
+
+### Main Endpoints
+- `POST /api/chat` - Chat with AI
+- `POST /api/auth/otp/send` - Send OTP
+- `POST /api/auth/otp/verify` - Verify OTP
+- `POST /api/appointments/book` - Book appointment
+- `GET /api/appointments/<user_id>` - Get appointments
+- `POST /api/health/vitals` - Save vital signs
+- `GET /api/health/vitals/<user_id>` - Get health records
+- `POST /api/analyze-injury-image` - Analyze images
+- `GET /api/find-doctors` - Search doctors
+
+See [API_DOCUMENTATION.md](API_DOCUMENTATION.md) for complete API reference.
+
+## 🔧 Configuration
+
+### Optional: Add Gemini API Key (Enhanced AI)
+1. Get a free API key from [Google AI Studio](https://makersuite.google.com/app/apikey)
+2. Create `.env` file in backend folder:
+```bash
+GEMINI_API_KEY=your_api_key_here
+```
+3. Restart the server
+
+### Customize Medical Knowledge
+Edit `backend/medical_kb.json` to add:
+- New symptoms
+- Medical conditions
+- Treatment recommendations
+
+### Add Doctors
+Edit `backend/doctors_db.json` to add local doctors and hospitals.
+
+## 🔒 Security Features
+
+- ✅ Phone-based OTP authentication
+- ✅ Session token management
+- ✅ Local data storage
+- ✅ CORS protection
+- ✅ Input sanitization
+- ✅ Secure file uploads
+
+## 🧪 Testing
+
+### Test the Chatbot
+```python
+# In backend folder
+python test_api.py
+```
+
+### Test Emergency Detection
+Send messages with emergency keywords:
+- "chest pain"
+- "can't breathe"
+- "severe bleeding"
+
+## 🚀 Deployment
+
+### Deploy to Heroku
+```bash
+heroku create medisense-ai
+git push heroku main
+```
+
+### Deploy to Railway
+1. Connect your GitHub repository
+2. Deploy from `main` branch
+3. Set environment variables
+
+### Deploy to AWS/GCP
+See deployment guides in `docs/` folder.
+
+## 🤝 Contributing
+
+Contributions are welcome! Please:
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Submit a pull request
+
+## 📝 License
+
+This project is licensed under the MIT License.
+
+## 👨‍💻 Author
+
+**Aakash**
+- GitHub: [@aakash4dev](https://github.com/aakash4dev)
+
+## 🙏 Acknowledgments
+
+- Flask framework
+- Google Gemini AI
+- Medical knowledge databases
+- Open-source community
+
+## 📞 Support
+
+For issues and questions:
+- Open an issue on GitHub
+- Email: support@medisenseai.com
+
+## 🔮 Roadmap
+
+### Coming Soon
+- [ ] Multi-language support
+- [ ] Voice input/output
+- [ ] Prescription management
+- [ ] Lab report analysis
+- [ ] Medicine reminders
+- [ ] Telemedicine integration
+- [ ] Insurance integration
+- [ ] Mobile app (React Native)
+
+## ⚠️ Disclaimer
+
+**MedicSense AI is an educational tool and should not replace professional medical advice.**
+
+Always consult with qualified healthcare professionals for medical concerns. In emergencies, call your local emergency number (911 in the US).
 
 ---
 
-**Built for healthcare awareness and intelligent patient engagement**
+Made with ❤️ for better healthcare access
 
-*Last updated: February 2026*
+**Star ⭐ this repository if you find it helpful!**
