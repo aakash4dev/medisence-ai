@@ -2,13 +2,12 @@ services:
   - type: web
     name: medicsense-ai-backend
     runtime: python
-    region: singapore   # closest to India; change to oregon/frankfurt if needed
+    pythonVersion: "3.11"
+    region: singapore
     plan: free
     rootDir: backend
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn app:app --bind 0.0.0.0:$PORT --workers 2 --timeout 120
     envVars:
       - key: GEMINI_API_KEY
-        sync: false          # you will paste this in Render dashboard
-      - key: PYTHON_VERSION
-        value: 3.11.0
+        sync: false
