@@ -6,7 +6,8 @@
 async function syncWithBackend(firebaseUser, idToken) {
   try {
     console.log("📡 Syncing with backend...");
-    const response = await fetch("http://localhost:5000/api/auth/google", {
+    const apiBaseUrl = (window.ENV && window.ENV.API_BASE_URL) || 'http://localhost:5000/api';
+    const response = await fetch(`${apiBaseUrl}/auth/google`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

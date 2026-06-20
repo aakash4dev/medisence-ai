@@ -87,14 +87,12 @@ def init_db():
         )
 
         # ── 4. appointments ───────────────────────────────────────────────────
-        # Drop and recreate only if the schema is wrong (id column type check).
-        cur.execute("PRAGMA table_info(appointments)")
-        cols = {row[1]: row[2] for row in cur.fetchall()}  # name -> type
-        id_col_type = cols.get("id", "")
+        # Check if the table exists at all first
+        cur.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='appointments'")
+        table_exists = cur.fetchone() is not None
 
-        if id_col_type.upper() != "INTEGER":
-            # Migrate: rename old table, create correct one, copy compatible data
-            cur.execute("ALTER TABLE appointments RENAME TO appointments_old")
+        if not table_exists:
+            # Fresh database — create the table from scratch
             cur.execute(
                 """
                 CREATE TABLE appointments (
@@ -112,52 +110,60 @@ def init_db():
                 )
             """
             )
-            # Copy rows that have the required columns; ignore extras
-            cur.execute(
-                """
-                INSERT OR IGNORE INTO appointments
-                    (user_id, doctor_id, date, time, type, status, created_at)
-                SELECT
-                    user_id,
-                    doctor_id,
-                    date,
-                    time,
-                    COALESCE(type, 'in-person'),
-                    COALESCE(status, 'confirmed'),
-                    created_at
-                FROM appointments_old
-            """
-            )
-            cur.execute("DROP TABLE appointments_old")
         else:
-            # Table exists with correct id type — ensure all required columns exist
-            cur.execute(
-                """
-                CREATE TABLE IF NOT EXISTS appointments (
-                    id          INTEGER PRIMARY KEY AUTOINCREMENT,
-                    user_id     TEXT NOT NULL,
-                    doctor_id   TEXT NOT NULL,
-                    doctor_name TEXT,
-                    date        TEXT NOT NULL,
-                    time        TEXT NOT NULL,
-                    type        TEXT NOT NULL,
-                    reason      TEXT,
-                    status      TEXT DEFAULT 'confirmed',
-                    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    UNIQUE(doctor_id, date, time)
-                )
-            """
-            )
-
-            # Migration: Ensure doctor_name and reason columns exist
+            # Table exists — check if schema needs migration (id column type)
             cur.execute("PRAGMA table_info(appointments)")
-            existing_apt_cols = {row[1] for row in cur.fetchall()}
-            if "doctor_name" not in existing_apt_cols:
-                print("Adding column doctor_name to appointments table...")
-                cur.execute("ALTER TABLE appointments ADD COLUMN doctor_name TEXT")
-            if "reason" not in existing_apt_cols:
-                print("Adding column reason to appointments table...")
-                cur.execute("ALTER TABLE appointments ADD COLUMN reason TEXT")
+            cols = {row[1]: row[2] for row in cur.fetchall()}  # name -> type
+            id_col_type = cols.get("id", "")
+
+            if id_col_type.upper() != "INTEGER":
+                # Migrate: rename old table, create correct one, copy compatible data
+                cur.execute("ALTER TABLE appointments RENAME TO appointments_old")
+                cur.execute(
+                    """
+                    CREATE TABLE appointments (
+                        id          INTEGER PRIMARY KEY AUTOINCREMENT,
+                        user_id     TEXT NOT NULL,
+                        doctor_id   TEXT NOT NULL,
+                        doctor_name TEXT,
+                        date        TEXT NOT NULL,
+                        time        TEXT NOT NULL,
+                        type        TEXT NOT NULL,
+                        reason      TEXT,
+                        status      TEXT DEFAULT 'confirmed',
+                        created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                        UNIQUE(doctor_id, date, time)
+                    )
+                """
+                )
+                # Copy rows that have the required columns; ignore extras
+                cur.execute(
+                    """
+                    INSERT OR IGNORE INTO appointments
+                        (user_id, doctor_id, date, time, type, status, created_at)
+                    SELECT
+                        user_id,
+                        doctor_id,
+                        date,
+                        time,
+                        COALESCE(type, 'in-person'),
+                        COALESCE(status, 'confirmed'),
+                        created_at
+                    FROM appointments_old
+                """
+                )
+                cur.execute("DROP TABLE appointments_old")
+            else:
+                # Table exists with correct id type — ensure all required columns exist
+                cur.execute("PRAGMA table_info(appointments)")
+                existing_apt_cols = {row[1] for row in cur.fetchall()}
+                if "doctor_name" not in existing_apt_cols:
+                    print("Adding column doctor_name to appointments table...")
+                    cur.execute("ALTER TABLE appointments ADD COLUMN doctor_name TEXT")
+                if "reason" not in existing_apt_cols:
+                    print("Adding column reason to appointments table...")
+                    cur.execute("ALTER TABLE appointments ADD COLUMN reason TEXT")
+
 
         # ── 5. notifications ──────────────────────────────────────────────────
         cur.execute(

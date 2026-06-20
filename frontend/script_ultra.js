@@ -9,8 +9,10 @@
 // ========================================
 // Load configuration from environment variables
 const getConfig = () => {
+  console.log("🔍 Checking window.ENV:", window.ENV);
   // Try to get from window.ENV (loaded by env-loader.js)
   if (window.ENV) {
+    console.log("🔍 window.ENV found! API_BASE_URL is:", window.ENV.API_BASE_URL);
     return {
       API_BASE_URL: window.ENV.API_BASE_URL || "/api",
       USER_ID: "user_" + Math.random().toString(36).substr(2, 9),
@@ -27,6 +29,7 @@ const getConfig = () => {
     };
   }
 
+  console.log("🔍 window.ENV NOT found, falling back to default config");
   // Fallback to default values
   return {
     API_BASE_URL: "/api",
@@ -306,7 +309,7 @@ async function saveAuthState(user, token) {
   if (token) {
     try {
       console.log("📡 Registering with backend...");
-      const response = await fetch("http://localhost:5000/api/auth/google", {
+      const response = await fetch(`${CONFIG.API_BASE_URL}/auth/google`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -3054,7 +3057,7 @@ function emergencyChat() {
     // BACKEND EMERGENCY MODE: Activate strict emergency context
     const emergencyMessage = "I need urgent help!";
 
-    fetch("http://localhost:5000/api/emergency/chat", {
+    fetch(`${CONFIG.API_BASE_URL}/emergency/chat`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -3116,7 +3119,7 @@ function findNearestHospital() {
       const { latitude, longitude } = position.coords;
 
       // Try backend hospital lookup first
-      fetch("http://localhost:5000/api/emergency/hospitals", {
+      fetch(`${CONFIG.API_BASE_URL}/emergency/hospitals`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ latitude, longitude }),
@@ -3166,7 +3169,7 @@ function handleEmergencyCall(e) {
 
   navigator.geolocation.getCurrentPosition(
     (position) => {
-      fetch("http://localhost:5000/api/emergency/escalate", {
+      fetch(`${CONFIG.API_BASE_URL}/emergency/escalate`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -3192,7 +3195,7 @@ function handleEmergencyCall(e) {
     },
     (error) => {
       // Log without location if unavailable
-      fetch("http://localhost:5000/api/emergency/escalate", {
+      fetch(`${CONFIG.API_BASE_URL}/emergency/escalate`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

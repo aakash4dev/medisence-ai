@@ -441,15 +441,12 @@
       </div>
     </div>
 
-    <!-- Configuration -->
-    <script src="env-loader.js"></script>
-    <script src="load-env.js"></script>
+    <!-- Configuration - auto-detects local vs production -->
+    <script src="config.js"></script>
     <script>
       // CONFIG Setup
       const CONFIG = {
-        API_BASE_URL:
-          (window.ENV && window.ENV.API_BASE_URL) ||
-          "http://localhost:5000/api",
+        API_BASE_URL: window.ENV.API_BASE_URL,
       };
 
       // 1. GLOBALS (AS REQUESTED)
