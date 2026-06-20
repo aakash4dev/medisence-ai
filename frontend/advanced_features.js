@@ -3,6 +3,9 @@
  * Health Tracking, Appointments, Medications, and More
  */
 
+// Central API base URL - reads from config.js / window.ENV
+const AF_API = () => (window.ENV && window.ENV.API_BASE_URL) || 'http://localhost:5000/api';
+
 // ========== HEALTH TRACKING ==========
 
 async function recordVitals() {
@@ -16,7 +19,7 @@ async function recordVitals() {
   };
 
   try {
-    const response = await fetch("http://localhost:5000/api/health/vitals", {
+    const response = await fetch(`${AF_API()}/health/vitals`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(vitalsData),
@@ -37,7 +40,7 @@ async function recordVitals() {
 async function loadHealthHistory() {
   try {
     const response = await fetch(
-      `http://localhost:5000/api/health/vitals/${userState.userId}`
+      `${AF_API()}/health/vitals/${userState.userId}`
     );
     const data = await response.json();
 
@@ -103,7 +106,7 @@ async function scheduleAppointment() {
 
   try {
     const response = await fetch(
-      "http://localhost:5000/api/appointments/book",
+      `${AF_API()}/appointments/book`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -127,7 +130,7 @@ async function scheduleAppointment() {
 async function loadAppointments() {
   try {
     const response = await fetch(
-      `http://localhost:5000/api/appointments/${userState.userId}`
+      `${AF_API()}/appointments/${userState.userId}`
     );
     const data = await response.json();
 
@@ -185,7 +188,7 @@ async function cancelAppointment(appointmentId) {
 
   try {
     const response = await fetch(
-      `http://localhost:5000/api/appointments/${appointmentId}/cancel`,
+      `${AF_API()}/appointments/${appointmentId}/cancel`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -226,7 +229,7 @@ async function addMedication() {
   };
 
   try {
-    const response = await fetch("http://localhost:5000/api/medications/add", {
+    const response = await fetch(`${AF_API()}/medications/add`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(medicationData),
@@ -248,7 +251,7 @@ async function addMedication() {
 async function loadMedications() {
   try {
     const response = await fetch(
-      `http://localhost:5000/api/medications/${userState.userId}`
+      `${AF_API()}/medications/${userState.userId}`
     );
     const data = await response.json();
 
@@ -302,7 +305,7 @@ function displayMedications(medications) {
 async function loadMedicationSchedule() {
   try {
     const response = await fetch(
-      `http://localhost:5000/api/medications/schedule/${userState.userId}`
+      `${AF_API()}/medications/schedule/${userState.userId}`
     );
     const data = await response.json();
 
@@ -383,7 +386,7 @@ async function checkDrugInteraction() {
   }
 
   try {
-    const response = await fetch("http://localhost:5000/api/drug-interaction", {
+    const response = await fetch(`${AF_API()}/drug-interaction`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ drug1, drug2 }),

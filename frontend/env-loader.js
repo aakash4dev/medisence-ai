@@ -56,12 +56,12 @@ for (const key in defaultEnv) {
 }
 
 // Helper function to get env variable
-export function getEnv(key, defaultValue = null) {
+function getEnv(key, defaultValue = null) {
     return config[key] !== undefined ? config[key] : defaultValue;
 }
 
 // Export config object
-export const ENV = {
+const ENV = {
     API_BASE_URL: config.API_BASE_URL,
     
     FIREBASE: {
@@ -92,5 +92,4 @@ export const ENV = {
 // Make available globally
 window.ENV = ENV;
 
-export default ENV;
 

@@ -1135,12 +1135,11 @@
   <!-- Scripts -->
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-  <!-- Environment Variables - Load before other scripts -->
-  <script src="env-loader.js"></script>
-  <script src="load-env.js"></script>
+  <!-- Environment Variables - auto-detects local vs production -->
+  <script src="config.js"></script>
   <script type="module" src="firebase.js"></script>
   <script src="profile_menu.js" defer></script>
-  <script src="script_ultra.js" defer></script>
+  <script src="script_ultra.js?v=20" defer></script>
   <script src="premium_ui_enhancements.js" defer></script>
 
   <!-- ── Testimonial Auto-Rotate ── -->
@@ -1203,15 +1202,17 @@
         dateInput.min = today;
       }
 
-      // Register Service Worker for PWA
+      // Unregister Service Worker for PWA (Development/Testing)
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/sw.js')
-          .then((registration) => {
-            console.log('✅ Service Worker registered:', registration);
-          })
-          .catch((error) => {
-            console.warn('⚠️ Service Worker registration failed:', error);
-          });
+        navigator.serviceWorker.getRegistrations().then((registrations) => {
+          for (let registration of registrations) {
+            registration.unregister().then(() => {
+              console.log('✅ Service Worker unregistered successfully');
+            });
+          }
+        }).catch((error) => {
+          console.warn('⚠️ Service Worker unregistration failed:', error);
+        });
       }
     });
 

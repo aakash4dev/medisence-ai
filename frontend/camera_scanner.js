@@ -73,7 +73,8 @@ async function analyzeInjury() {
     animateLoadingSteps();
 
     try {
-        const response = await fetch('http://localhost:5000/api/analyze-injury-image', {
+        const apiBaseUrl = (window.ENV && window.ENV.API_BASE_URL) || 'http://localhost:5000/api';
+        const response = await fetch(`${apiBaseUrl}/analyze-injury-image`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
